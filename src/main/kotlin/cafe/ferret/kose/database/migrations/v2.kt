@@ -12,6 +12,8 @@ import org.litote.kmongo.coroutine.CoroutineDatabase
  */
 suspend fun v2(database: CoroutineDatabase) {
     val quotes = database.getCollection<Note>("quotes").find().toList()
-    database.getCollection<Note>("notes").insertMany(quotes)
-    database.dropCollection("quotes")
+    if (!quotes.isEmpty()) {
+        database.getCollection<Note>("notes").insertMany(quotes)
+        database.dropCollection("quotes")
+    }
 }
