@@ -23,4 +23,14 @@ appender("CONSOLE", ConsoleAppender) {
     target = defaultTarget
 }
 
-root(defaultLevel, ["CONSOLE"])
+appender("FILE", FileAppender) {
+    file = "bot.log"
+
+    encoder(PatternLayoutEncoder) {
+        pattern = "%d{yyyy-MM-dd} %d{HH:mm:ss} | %5level | %40.40logger{40} | %msg%n"
+
+        withJansi = true
+    }
+}
+
+root(defaultLevel, ["CONSOLE", "FILE"])
