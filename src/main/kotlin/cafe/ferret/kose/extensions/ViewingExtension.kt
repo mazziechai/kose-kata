@@ -4,7 +4,7 @@
 
 package cafe.ferret.kose.extensions
 
-import cafe.ferret.kose.database.collections.QuoteCollection
+import cafe.ferret.kose.database.collections.NoteCollection
 import com.kotlindiscord.kord.extensions.checks.anyGuild
 import com.kotlindiscord.kord.extensions.commands.Arguments
 import com.kotlindiscord.kord.extensions.commands.converters.impl.string
@@ -18,31 +18,31 @@ import org.koin.core.component.inject
 class ViewingExtension : Extension() {
     override val name = "viewing"
 
-    private val quoteCollection: QuoteCollection by inject()
+    private val noteCollection: NoteCollection by inject()
 
     override suspend fun setup() {
         /**
-         * Gets a quote and then sends its contents ephemerally.
+         * Gets a note and then sends its contents ephemerally.
          */
         ephemeralSlashCommand(::ViewCommandArgs) {
             name = "view"
-            description = "View a quote"
+            description = "View a note"
 
             check { anyGuild() }
 
             action {
-                val guildQuotes = quoteCollection.getByGuild(guild!!.id)
+                val guildNotes = noteCollection.getByGuild(guild!!.id)
 
-                val quote = guildQuotes.find { it.name == arguments.quoteName }
+                val note = guildNotes.find { it.name == arguments.noteName }
 
-                if (quote == null) {
+                if (note == null) {
                     respond {
-                        content = "I couldn't find that quote."
+                        content = "I couldn't find that note."
                     }
                     return@action
                 }
 
-                val author = guild!!.getMemberOrNull(quote.author)
+                val author = guild!!.getMemberOrNull(note.author)
 
                 respond {
                     embed {
@@ -51,36 +51,36 @@ class ViewingExtension : Extension() {
                             icon = author?.avatar?.url
                         }
 
-                        title = quote.name
+                        title = note.name
 
-                        description = quote.content
+                        description = note.content
                     }
                 }
             }
         }
 
         /**
-         * Gets a quote and sends its contents publicly.
+         * Gets a note and sends its contents publicly.
          */
         publicSlashCommand(::ViewCommandArgs) {
             name = "post"
-            description = "Posts a quote to chat"
+            description = "Posts a note to chat"
 
             check { anyGuild() }
 
             action {
-                val guildQuotes = quoteCollection.getByGuild(guild!!.id)
+                val guildNotes = noteCollection.getByGuild(guild!!.id)
 
-                val quote = guildQuotes.find { it.name == arguments.quoteName }
+                val note = guildNotes.find { it.name == arguments.noteName }
 
-                if (quote == null) {
+                if (note == null) {
                     respond {
-                        content = "I couldn't find that quote."
+                        content = "I couldn't find that note."
                     }
                     return@action
                 }
 
-                val author = guild!!.getMemberOrNull(quote.author)
+                val author = guild!!.getMemberOrNull(note.author)
 
                 respond {
                     embed {
@@ -89,9 +89,9 @@ class ViewingExtension : Extension() {
                             icon = author?.avatar?.url
                         }
 
-                        title = quote.name
+                        title = note.name
 
-                        description = quote.content
+                        description = note.content
                     }
                 }
             }
@@ -99,9 +99,9 @@ class ViewingExtension : Extension() {
     }
 
     inner class ViewCommandArgs : Arguments() {
-        val quoteName by string {
-            name = "quote"
-            description = "The quote you want to view"
+        val noteName by string {
+            name = "note"
+            description = "The note you want to view"
         }
     }
 }

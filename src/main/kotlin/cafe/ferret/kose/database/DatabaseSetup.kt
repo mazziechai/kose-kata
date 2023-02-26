@@ -6,7 +6,7 @@ package cafe.ferret.kose.database
 
 import cafe.ferret.kose.database.collections.GuildDataCollection
 import cafe.ferret.kose.database.collections.MetaCollection
-import cafe.ferret.kose.database.collections.QuoteCollection
+import cafe.ferret.kose.database.collections.NoteCollection
 import cafe.ferret.kose.database.collections.UserCollection
 import com.kotlindiscord.kord.extensions.builders.ExtensibleBotBuilder
 import com.kotlindiscord.kord.extensions.utils.env
@@ -29,7 +29,7 @@ suspend fun ExtensibleBotBuilder.database(migrate: Boolean) {
 
             loadModule {
                 single { GuildDataCollection() } bind GuildDataCollection::class
-                single { QuoteCollection() } bind QuoteCollection::class
+                single { NoteCollection() } bind NoteCollection::class
                 single { UserCollection() } bind UserCollection::class
                 single { MetaCollection() } bind MetaCollection::class
             }

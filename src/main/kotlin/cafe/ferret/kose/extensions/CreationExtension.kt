@@ -4,7 +4,7 @@
 
 package cafe.ferret.kose.extensions
 
-import cafe.ferret.kose.database.collections.QuoteCollection
+import cafe.ferret.kose.database.collections.NoteCollection
 import com.kotlindiscord.kord.extensions.checks.anyGuild
 import com.kotlindiscord.kord.extensions.components.forms.ModalForm
 import com.kotlindiscord.kord.extensions.extensions.Extension
@@ -19,14 +19,14 @@ import org.koin.core.component.inject
 class CreationExtension : Extension() {
     override val name = "creation"
 
-    private val quoteCollection: QuoteCollection by inject()
+    private val noteCollection: NoteCollection by inject()
 
     override suspend fun setup() {
         /**
-         * Context command to create a quote from an existing message.
+         * Context command to create a note from an existing message.
          */
-        ephemeralMessageCommand(::CreateQuoteFromMessageModal) {
-            name = "New quote"
+        ephemeralMessageCommand(::CreateNoteFromMessageModal) {
+            name = "New note"
 
             check {
                 anyGuild()
@@ -35,22 +35,22 @@ class CreationExtension : Extension() {
             }
 
             action { modal ->
-                val quoteName = modal?.name!!.value
+                val noteName = modal?.name!!.value
 
                 val message = targetMessages.first()
-                quoteCollection.new(member!!.id, guild!!.id, quoteName!!, message.content, message.author?.id)
+                noteCollection.new(member!!.id, guild!!.id, noteName!!, message.content, message.author?.id)
 
-                respond { content = "Successfully created quote `$quoteName`!" }
+                respond { content = "Successfully created note `$noteName`!" }
 
             }
         }
 
         /**
-         * Slash command to create a quote.
+         * Slash command to create a note.
          */
-        ephemeralSlashCommand(::CreateQuoteFromCommandModal) {
+        ephemeralSlashCommand(::CreateNoteFromCommandModal) {
             name = "new"
-            description = "Create a new quote"
+            description = "Create a new note"
 
             check {
                 anyGuild()
@@ -59,37 +59,37 @@ class CreationExtension : Extension() {
             }
 
             action { modal ->
-                val quoteName = modal?.name!!.value
-                val quoteContent = modal.content.value
+                val noteName = modal?.name!!.value
+                val noteContent = modal.content.value
 
-                quoteCollection.new(member!!.id, guild!!.id, quoteName!!, quoteContent!!)
+                noteCollection.new(member!!.id, guild!!.id, noteName!!, noteContent!!)
 
-                respond { content = "Successfully created quote `$quoteName`!" }
+                respond { content = "Successfully created note `$noteName`!" }
             }
         }
     }
 
-    inner class CreateQuoteFromMessageModal : ModalForm() {
-        override var title = "Create quote"
+    inner class CreateNoteFromMessageModal : ModalForm() {
+        override var title = "Create note"
 
         val name = lineText {
-            label = "Name of the quote"
+            label = "Name of the note"
             required = true
             maxLength = 32
         }
     }
 
-    inner class CreateQuoteFromCommandModal : ModalForm() {
-        override var title = "Create quote"
+    inner class CreateNoteFromCommandModal : ModalForm() {
+        override var title = "Create note"
 
         val name = lineText {
-            label = "Name of the quote"
+            label = "Name of the note"
             required = true
             maxLength = 32
         }
 
         val content = paragraphText {
-            label = "Content of the quote"
+            label = "Content of the note"
             required = true
             maxLength = 2000
         }

@@ -7,6 +7,7 @@ package cafe.ferret.kose.database
 import cafe.ferret.kose.database.collections.MetaCollection
 import cafe.ferret.kose.database.entities.Meta
 import cafe.ferret.kose.database.migrations.v1
+import cafe.ferret.kose.database.migrations.v2
 import com.kotlindiscord.kord.extensions.koin.KordExKoinComponent
 import mu.KotlinLogging
 import org.koin.core.component.inject
@@ -33,11 +34,10 @@ object Migrations : KordExKoinComponent {
         while (true) {
             val nextVersion = currentVersion + 1
 
-            @Suppress("TooGenericExceptionCaught")
             try {
-                @Suppress("MagicNumber")
                 when (nextVersion) {
                     1 -> ::v1
+                    2 -> ::v2
 
                     else -> break
                 }(database.mongo)

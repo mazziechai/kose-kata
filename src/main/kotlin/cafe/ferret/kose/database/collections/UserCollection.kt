@@ -7,7 +7,7 @@ package cafe.ferret.kose.database.collections
 import cafe.ferret.kose.database.Database
 import cafe.ferret.kose.database.DbCollection
 import cafe.ferret.kose.database.entities.BotUser
-import cafe.ferret.kose.database.entities.Quote
+import cafe.ferret.kose.database.entities.Note
 import com.kotlindiscord.kord.extensions.koin.KordExKoinComponent
 import dev.kord.common.entity.Snowflake
 import org.koin.core.component.inject
@@ -21,13 +21,13 @@ class UserCollection : KordExKoinComponent {
     private val col = database.mongo.getCollection<BotUser>(name)
 
     /**
-     * Creates a new [BotUser] with an empty quotes list by default and adds it to the collection.
+     * Creates a new [BotUser] with an empty notes list by default and adds it to the collection.
      *
      * @param id The ID of the user.
      * @return The created [BotUser].
      */
-    suspend fun new(id: Snowflake, quotes: MutableList<Quote> = mutableListOf()): BotUser {
-        val botUser = BotUser(id, quotes)
+    suspend fun new(id: Snowflake, notes: MutableList<Note> = mutableListOf()): BotUser {
+        val botUser = BotUser(id, notes)
         set(botUser)
         return botUser
     }

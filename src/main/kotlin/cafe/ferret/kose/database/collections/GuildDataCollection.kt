@@ -7,7 +7,7 @@ package cafe.ferret.kose.database.collections
 import cafe.ferret.kose.database.Database
 import cafe.ferret.kose.database.DbCollection
 import cafe.ferret.kose.database.entities.GuildData
-import cafe.ferret.kose.database.entities.Quote
+import cafe.ferret.kose.database.entities.Note
 import com.kotlindiscord.kord.extensions.koin.KordExKoinComponent
 import dev.kord.common.entity.Snowflake
 import org.koin.core.component.inject
@@ -21,13 +21,13 @@ class GuildDataCollection : KordExKoinComponent {
     private val col = database.mongo.getCollection<GuildData>(name)
 
     /**
-     * Creates a new [GuildData] with an empty quotes list by default and adds it to the collection.
+     * Creates a new [GuildData] with an empty notes list by default and adds it to the collection.
      *
      * @param id The ID of the guild.
      * @return The created [GuildData].
      */
-    suspend fun new(id: Snowflake, quotes: MutableList<Quote> = mutableListOf()): GuildData {
-        val guildData = GuildData(id, quotes)
+    suspend fun new(id: Snowflake, notes: MutableList<Note> = mutableListOf()): GuildData {
+        val guildData = GuildData(id, notes)
         set(guildData)
         return guildData
     }

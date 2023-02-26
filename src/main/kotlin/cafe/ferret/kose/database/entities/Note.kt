@@ -9,10 +9,10 @@ import dev.kord.common.entity.Snowflake
 import kotlinx.serialization.Serializable
 
 /**
- * A quote, containing information about itself and the content of the quote.
+ * A note, containing information about itself and the content of the note.
  */
 @Serializable
-data class Quote(
+data class Note(
     override val _id: Int,
     val author: Snowflake,
     val guild: Snowflake,

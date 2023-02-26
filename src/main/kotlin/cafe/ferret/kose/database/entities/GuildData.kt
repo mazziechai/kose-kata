@@ -9,7 +9,7 @@ import dev.kord.common.entity.Snowflake
 import kotlinx.serialization.Serializable
 
 /**
- * A guild, containing the quotes that have been created in it.
+ * A guild, containing the notes that have been created in it.
  */
 @Serializable
-data class GuildData(override val _id: Snowflake, var quotes: MutableList<Quote>) : Entity<Snowflake>
+data class GuildData(override val _id: Snowflake, var notes: MutableList<Note>) : Entity<Snowflake>

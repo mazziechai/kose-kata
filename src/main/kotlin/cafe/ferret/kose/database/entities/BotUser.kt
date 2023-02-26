@@ -9,7 +9,7 @@ import dev.kord.common.entity.Snowflake
 import kotlinx.serialization.Serializable
 
 /**
- * A user that has used the bot, containing their quotes that they have created.
+ * A user that has used the bot, containing their notes that they have created.
  */
 @Serializable
-data class BotUser(override val _id: Snowflake, val quotes: MutableList<Quote>) : Entity<Snowflake>
+data class BotUser(override val _id: Snowflake, val notes: MutableList<Note>) : Entity<Snowflake>
