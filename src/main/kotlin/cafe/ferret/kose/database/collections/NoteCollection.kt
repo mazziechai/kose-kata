@@ -10,6 +10,7 @@ import cafe.ferret.kose.database.entities.BotUser
 import cafe.ferret.kose.database.entities.Note
 import com.kotlindiscord.kord.extensions.koin.KordExKoinComponent
 import dev.kord.common.entity.Snowflake
+import kotlinx.datetime.Clock
 import org.koin.core.component.inject
 import org.litote.kmongo.eq
 import kotlin.random.Random
@@ -25,7 +26,7 @@ class NoteCollection : KordExKoinComponent {
     private val guildDataCollection: GuildDataCollection by inject()
 
     /**
-     * Creates a new [Note] and adds it to the collection, updating the other collection data as well.
+     * Creates a new [Note] and adds it to the collection, updating the other collections' data as well.
      * This method creates a randomly generated ID for the [Note].
      *
      * @param author The author's [Snowflake].
@@ -39,7 +40,7 @@ class NoteCollection : KordExKoinComponent {
         guild: Snowflake,
         name: String,
         content: String,
-        originalAuthor: Snowflake? = null
+        originalAuthor: Snowflake? = null,
     ): Note {
         var id: Int
 
@@ -47,28 +48,52 @@ class NoteCollection : KordExKoinComponent {
             id = Random.nextInt(0x0, 0xFFFFFF)
         } while (col.countDocuments(Note::_id eq id) != 0L)
 
-        val note = Note(id, author, guild, name, content, originalAuthor)
+        val note = Note(id, author, guild, name, content, originalAuthor, Clock.System.now())
+
         set(note)
 
         val botUser = userCollection.get(author)
 
         if (botUser == null) {
-            userCollection.new(author, mutableListOf(note))
+            userCollection.new(author, mutableListOf(note._id))
         } else {
-            botUser.notes.add(note)
+            botUser.notes.add(note._id)
             userCollection.set(botUser)
         }
 
         val guildData = guildDataCollection.get(guild)
 
         if (guildData == null) {
-            guildDataCollection.new(guild, mutableListOf(note))
+            guildDataCollection.new(guild, mutableListOf(note._id))
         } else {
-            guildData.notes.add(note)
+            guildData.notes.add(note._id)
             guildDataCollection.set(guildData)
         }
 
         return note
+    }
+
+    /**
+     * Deletes a [Note] from the collection, updating the other collections' data as well.
+     *
+     * @param note The [Note] to delete from the collection.
+     */
+    suspend fun delete(note: Note) {
+        val guildData = guildDataCollection.get(note.guild)
+
+        if (guildData != null) {
+            guildData.notes.remove(note._id)
+            guildDataCollection.set(guildData)
+        }
+
+        val botUser = userCollection.get(note.author)
+
+        if (botUser != null) {
+            botUser.notes.remove(note._id)
+            userCollection.set(botUser)
+        }
+
+        col.deleteOne(Note::_id eq note._id)
     }
 
     /**

@@ -6,6 +6,7 @@ package cafe.ferret.kose.database.entities
 
 import cafe.ferret.kose.database.Entity
 import dev.kord.common.entity.Snowflake
+import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
 /**
@@ -18,6 +19,7 @@ data class Note(
     val guild: Snowflake,
     val name: String,
     val content: String,
-    val originalAuthor: Snowflake?
+    val originalAuthor: Snowflake?,
+    val timeCreated: Instant
 ) :
     Entity<Int>

@@ -7,7 +7,6 @@ package cafe.ferret.kose.database.collections
 import cafe.ferret.kose.database.Database
 import cafe.ferret.kose.database.DbCollection
 import cafe.ferret.kose.database.entities.BotUser
-import cafe.ferret.kose.database.entities.Note
 import com.kotlindiscord.kord.extensions.koin.KordExKoinComponent
 import dev.kord.common.entity.Snowflake
 import org.koin.core.component.inject
@@ -26,7 +25,7 @@ class UserCollection : KordExKoinComponent {
      * @param id The ID of the user.
      * @return The created [BotUser].
      */
-    suspend fun new(id: Snowflake, notes: MutableList<Note> = mutableListOf()): BotUser {
+    suspend fun new(id: Snowflake, notes: MutableList<Int> = mutableListOf()): BotUser {
         val botUser = BotUser(id, notes)
         set(botUser)
         return botUser

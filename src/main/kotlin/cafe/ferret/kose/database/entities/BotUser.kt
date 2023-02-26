@@ -12,4 +12,4 @@ import kotlinx.serialization.Serializable
  * A user that has used the bot, containing their notes that they have created.
  */
 @Serializable
-data class BotUser(override val _id: Snowflake, val notes: MutableList<Note>) : Entity<Snowflake>
+data class BotUser(override val _id: Snowflake, val notes: MutableList<Int>) : Entity<Snowflake>

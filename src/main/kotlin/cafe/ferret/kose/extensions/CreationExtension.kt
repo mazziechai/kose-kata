@@ -38,7 +38,7 @@ class CreationExtension : Extension() {
                 val noteName = modal?.name!!.value
 
                 val message = targetMessages.first()
-                noteCollection.new(member!!.id, guild!!.id, noteName!!, message.content, message.author?.id)
+                noteCollection.new(user.id, guild!!.id, noteName!!, message.content, message.author?.id)
 
                 respond { content = "Successfully created note `$noteName`!" }
 
@@ -62,7 +62,7 @@ class CreationExtension : Extension() {
                 val noteName = modal?.name!!.value
                 val noteContent = modal.content.value
 
-                noteCollection.new(member!!.id, guild!!.id, noteName!!, noteContent!!)
+                noteCollection.new(user.id, guild!!.id, noteName!!, noteContent!!)
 
                 respond { content = "Successfully created note `$noteName`!" }
             }
