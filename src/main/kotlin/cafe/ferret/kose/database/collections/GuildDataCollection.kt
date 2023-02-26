@@ -1,0 +1,51 @@
+/*
+ * Copyright (c) 2023 mazziechai
+ */
+
+package cafe.ferret.kose.database.collections
+
+import cafe.ferret.kose.database.Database
+import cafe.ferret.kose.database.DbCollection
+import cafe.ferret.kose.database.entities.GuildData
+import cafe.ferret.kose.database.entities.Quote
+import com.kotlindiscord.kord.extensions.koin.KordExKoinComponent
+import dev.kord.common.entity.Snowflake
+import org.koin.core.component.inject
+import org.litote.kmongo.eq
+
+/**
+ * MongoDB collection for [GuildData].
+ */
+class GuildDataCollection : KordExKoinComponent {
+    private val database: Database by inject()
+    private val col = database.mongo.getCollection<GuildData>(name)
+
+    /**
+     * Creates a new [GuildData] with an empty quotes list by default and adds it to the collection.
+     *
+     * @param id The ID of the guild.
+     * @return The created [GuildData].
+     */
+    suspend fun new(id: Snowflake, quotes: MutableList<Quote> = mutableListOf()): GuildData {
+        val guildData = GuildData(id, quotes)
+        set(guildData)
+        return guildData
+    }
+
+    /**
+     * Gets a [GuildData] from the collection from a [Snowflake].
+     *
+     * @param id The ID of the guild.
+     * @return The [GuildData], if any.
+     */
+    suspend fun get(id: Snowflake) = col.findOne(GuildData::_id eq id)
+
+    /**
+     * Saves a [GuildData] to the collection.
+     *
+     * @param guildData The [GuildData] to save to the collection.
+     */
+    suspend fun set(guildData: GuildData) = col.save(guildData)
+
+    companion object : DbCollection("guild_data")
+}
