@@ -6,7 +6,6 @@ package cafe.ferret.kose.database.collections
 
 import cafe.ferret.kose.database.Database
 import cafe.ferret.kose.database.DbCollection
-import cafe.ferret.kose.database.entities.BotUser
 import cafe.ferret.kose.database.entities.Note
 import com.kotlindiscord.kord.extensions.koin.KordExKoinComponent
 import dev.kord.common.entity.Snowflake
@@ -115,10 +114,10 @@ class NoteCollection : KordExKoinComponent {
     /**
      * Gets [Note]s from a user's [Snowflake].
      *
-     * @param botUser The user's snowflake.
+     * @param user The user's snowflake.
      * @return The [Note]s, if any.
      */
-    suspend fun getByUser(botUser: BotUser) = col.find(Note::author eq botUser._id).toList()
+    suspend fun getByUser(user: Snowflake) = col.find(Note::author eq user).toList()
 
     /**
      * Gets [Note]s from a guild's [Snowflake].

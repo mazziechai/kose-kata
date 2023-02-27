@@ -63,7 +63,11 @@ class ManagementExtension : Extension() {
 
                     embed {
                         author {
-                            name = "${author?.nickname ?: "Unknown user"} (${author?.tag ?: "Unknown user"} )"
+                            name = if (author?.nickname != null) {
+                                "${author.nickname} (${author.tag})"
+                            } else {
+                                author?.tag ?: "Unknown user"
+                            }
                             icon = author?.avatar?.url
                         }
 
@@ -165,7 +169,11 @@ class ManagementExtension : Extension() {
 
                     embed {
                         author {
-                            name = "${author?.nickname ?: "Unknown user"} (${author?.tag ?: "Unknown user"})"
+                            name = if (author?.nickname != null) {
+                                "${author.nickname} (${author.tag})"
+                            } else {
+                                author?.tag ?: "Unknown user"
+                            }
                             icon = author?.avatar?.url
                         }
 
