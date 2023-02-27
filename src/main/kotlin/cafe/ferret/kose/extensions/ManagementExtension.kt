@@ -60,6 +60,8 @@ class ManagementExtension : Extension() {
                 }
 
                 respond {
+                    content = "Are you sure you want to delete this note?"
+
                     embed {
                         author {
                             name = if (authorMember?.nickname != null) {
