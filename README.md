@@ -19,3 +19,21 @@ A Discord bot for creating "notes", a message that is stored in the bot then can
 ## Technical to-do list
 
 - [ ] Make all note related commands subcommands of a larger note command
+
+## Setup
+
+- Make a MongoDB cluster
+- Create a `.env` file:
+
+```
+TOKEN=your token
+TEST_SERVER=your server ID
+ENVIRONMENT=(production | dev)
+DB_URI=mongodb://localhost
+DEVELOPER=your ID
+```
+
+- Download the main JAR from the CI artifacts
+- Run `java -jar kose-X.Y-SNAPSHOT.jar`
+
+The bot is now set up.
