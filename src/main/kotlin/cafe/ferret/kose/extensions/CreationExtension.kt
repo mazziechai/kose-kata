@@ -93,6 +93,5 @@ class CreationExtension : Extension() {
             required = true
             maxLength = 2000
         }
-
     }
 }

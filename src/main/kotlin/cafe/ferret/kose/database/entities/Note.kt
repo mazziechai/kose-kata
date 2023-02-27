@@ -18,7 +18,7 @@ data class Note(
     val author: Snowflake,
     val guild: Snowflake,
     val name: String,
-    val content: String,
+    var content: String,
     val originalAuthor: Snowflake?,
     val timeCreated: Instant
 ) :

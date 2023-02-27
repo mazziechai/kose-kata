@@ -4,6 +4,7 @@
 
 package cafe.ferret.kose.extensions
 
+import cafe.ferret.kose.ByIdArgs
 import cafe.ferret.kose.database.collections.NoteCollection
 import cafe.ferret.kose.formatTime
 import com.kotlindiscord.kord.extensions.checks.anyGuild
@@ -115,7 +116,7 @@ class ViewingExtension : Extension() {
         /**
          * Gets a note by ID and then sends its contents ephemerally.
          */
-        ephemeralSlashCommand(::ViewByIdCommandArgs) {
+        ephemeralSlashCommand(::ByIdArgs) {
             name = "viewid"
             description = "Views a note by its ID"
 
@@ -157,7 +158,7 @@ class ViewingExtension : Extension() {
             }
         }
 
-        publicSlashCommand(::ViewByIdCommandArgs) {
+        publicSlashCommand(::ByIdArgs) {
             name = "postid"
             description = "Post a note to chat by its ID"
 
@@ -204,19 +205,6 @@ class ViewingExtension : Extension() {
         val noteName by string {
             name = "note"
             description = "The note you want to view"
-        }
-    }
-
-    inner class ViewByIdCommandArgs : Arguments() {
-        val noteId by string {
-            name = "note"
-            description = "The note you want to view"
-
-            validate {
-                failIf("That's not a valid ID!") {
-                    value.toIntOrNull(16) == null
-                }
-            }
         }
     }
 }

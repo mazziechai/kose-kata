@@ -8,7 +8,7 @@ A Discord bot for creating "notes", a message that is stored in the bot then can
 - [x] Creating notes with a command
 - [x] Viewing a note with an ephemeral message
 - [x] Posting a note to chat
-- [ ] Editing notes
+- [x] Editing notes
 - [x] Deleting notes
 - [ ] Referencing other notes with buttons to view those quotes as well
 - [ ] Exporting notes to a JSON file
