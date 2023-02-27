@@ -15,6 +15,8 @@ import com.kotlindiscord.kord.extensions.time.TimestampType
 import com.kotlindiscord.kord.extensions.time.toDiscord
 import com.kotlindiscord.kord.extensions.types.editingPaginator
 import com.kotlindiscord.kord.extensions.types.respond
+import dev.kord.core.entity.Member
+import dev.kord.rest.Image
 import org.koin.core.component.inject
 
 class UtilityExtension : Extension() {
@@ -67,7 +69,62 @@ class UtilityExtension : Extension() {
 
                                 description = buildString {
                                     chunkedNotes.forEach { note ->
-                                        append("${note.name} | #${note._id} | ")
+                                        append("*${note.name}* | #${note._id} | ")
+                                        appendLine("Created on ${note.timeCreated.toDiscord(TimestampType.ShortDateTime)}")
+                                    }
+                                }
+                            }
+                        }
+                    }.send()
+                }
+            }
+
+            ephemeralSubCommand {
+                name = "server"
+                description = "Gets this server's notes"
+
+                check { anyGuild() }
+
+                action {
+                    val notes = noteCollection.getByGuild(guild!!.id).sortedBy { it.name }
+
+                    if (notes.isEmpty()) {
+                        respond {
+                            content = "This server has no notes."
+                        }
+
+                        return@action
+                    }
+
+                    val thisGuild = guild!!.asGuild()
+                    val cachedMembers = mutableListOf<Member>()
+
+                    editingPaginator {
+                        timeoutSeconds = 60
+
+                        notes.chunked(10).forEach { chunkedNotes ->
+                            page {
+                                author {
+                                    name = thisGuild.name
+                                    icon = thisGuild.getIconUrl(Image.Format.PNG)
+                                }
+
+                                title = "Notes"
+
+                                description = buildString {
+                                    chunkedNotes.forEach { note ->
+                                        var member = cachedMembers.find { it.id == note.author }
+
+                                        if (member == null) {
+                                            member = guild!!.getMemberOrNull(note.author)
+
+                                            if (member != null) {
+                                                cachedMembers.add(member)
+                                            }
+                                        }
+
+                                        append("${member?.tag ?: "Unknown user"} → ")
+                                        append("*${note.name}* | #${note._id} | ")
                                         appendLine("Created on ${note.timeCreated.toDiscord(TimestampType.ShortDateTime)}")
                                     }
                                 }
