@@ -5,6 +5,7 @@
 package cafe.ferret.kose.extensions
 
 import cafe.ferret.kose.database.collections.NoteCollection
+import cafe.ferret.kose.formatTime
 import com.kotlindiscord.kord.extensions.checks.anyGuild
 import com.kotlindiscord.kord.extensions.commands.Arguments
 import com.kotlindiscord.kord.extensions.commands.converters.impl.string
@@ -29,15 +30,16 @@ class ManagementExtension : Extension() {
     override suspend fun setup() {
         ephemeralSlashCommand(::DeleteCommandArgs) {
             name = "delete"
-            description = "Delete a note. This is irreversible!"
+            description = "Delete a note by its ID. This is irreversible!"
 
             check { anyGuild() }
 
             action {
-                val guildNotes = noteCollection.getByGuild(guild!!.id)
-                val note = guildNotes.find { it.name == arguments.noteName }
+                val noteId = arguments.noteId.toInt(16)
 
-                if (note == null) {
+                val note = noteCollection.get(noteId)
+
+                if (note == null || note.guild != guild!!.id) {
                     respond {
                         content = "I couldn't find that note."
                     }
@@ -68,6 +70,13 @@ class ManagementExtension : Extension() {
                         title = note.name
 
                         description = note.content
+
+                        footer {
+                            text = buildString {
+                                append("#${note._id.toString(16)} ")
+                                append("| Created on ${formatTime(note.timeCreated)}")
+                            }
+                        }
                     }
 
                     components(15.seconds) {
@@ -114,9 +123,15 @@ class ManagementExtension : Extension() {
     }
 
     inner class DeleteCommandArgs : Arguments() {
-        val noteName by string {
-            name = "name"
-            description = "The name of the command you wish to delete"
+        val noteId by string {
+            name = "id"
+            description = "The ID of the note you want to delete"
+
+            validate {
+                failIf("That's not a valid ID!") {
+                    value.toIntOrNull(16) == null
+                }
+            }
         }
     }
 }

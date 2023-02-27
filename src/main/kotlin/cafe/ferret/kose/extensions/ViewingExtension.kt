@@ -5,6 +5,7 @@
 package cafe.ferret.kose.extensions
 
 import cafe.ferret.kose.database.collections.NoteCollection
+import cafe.ferret.kose.formatTime
 import com.kotlindiscord.kord.extensions.checks.anyGuild
 import com.kotlindiscord.kord.extensions.commands.Arguments
 import com.kotlindiscord.kord.extensions.commands.converters.impl.string
@@ -22,25 +23,25 @@ class ViewingExtension : Extension() {
 
     override suspend fun setup() {
         /**
-         * Gets a note and then sends its contents ephemerally.
+         * Gets a note by name and then sends its contents ephemerally.
          */
-        ephemeralSlashCommand(::ViewCommandArgs) {
+        ephemeralSlashCommand(::ViewByNameCommandArgs) {
             name = "view"
             description = "View a note"
 
             check { anyGuild() }
 
             action {
-                val guildNotes = noteCollection.getByGuild(guild!!.id)
+                val guildNotes = noteCollection.getByGuildAndName(guild!!.id, arguments.noteName)
 
-                val note = guildNotes.find { it.name == arguments.noteName }
-
-                if (note == null) {
+                if (guildNotes.isEmpty()) {
                     respond {
                         content = "I couldn't find that note."
                     }
                     return@action
                 }
+
+                val note = guildNotes.random()
 
                 val author = guild!!.getMemberOrNull(note.author)
 
@@ -54,26 +55,78 @@ class ViewingExtension : Extension() {
                         title = note.name
 
                         description = note.content
+
+                        footer {
+                            text = buildString {
+                                append("#${note._id.toString(16)} ")
+                                append("| Created on ${formatTime(note.timeCreated)}")
+                            }
+                        }
                     }
                 }
             }
         }
 
         /**
-         * Gets a note and sends its contents publicly.
+         * Gets a note by name and sends its contents publicly.
          */
-        publicSlashCommand(::ViewCommandArgs) {
+        publicSlashCommand(::ViewByNameCommandArgs) {
             name = "post"
             description = "Posts a note to chat"
 
             check { anyGuild() }
 
             action {
-                val guildNotes = noteCollection.getByGuild(guild!!.id)
+                val guildNotes = noteCollection.getByGuildAndName(guild!!.id, arguments.noteName)
 
-                val note = guildNotes.find { it.name == arguments.noteName }
+                if (guildNotes.isEmpty()) {
+                    respond {
+                        content = "I couldn't find that note."
+                    }
+                    return@action
+                }
 
-                if (note == null) {
+                val note = guildNotes.random()
+
+                val author = guild!!.getMemberOrNull(note.author)
+
+                respond {
+                    embed {
+                        author {
+                            name = "${author?.nickname ?: "Unknown user"} (${author?.tag ?: "Unknown user"})"
+                            icon = author?.avatar?.url
+                        }
+
+                        title = note.name
+
+                        description = note.content
+
+                        footer {
+                            text = buildString {
+                                append("#${note._id.toString(16)} ")
+                                append("| Created on ${formatTime(note.timeCreated)}")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /**
+         * Gets a note by ID and then sends its contents ephemerally.
+         */
+        ephemeralSlashCommand(::ViewByIdCommandArgs) {
+            name = "viewid"
+            description = "Views a note by its ID"
+
+            check { anyGuild() }
+
+            action {
+                val noteId = arguments.noteId.toInt(16)
+
+                val note = noteCollection.get(noteId)
+
+                if (note == null || note.guild != guild!!.id) {
                     respond {
                         content = "I couldn't find that note."
                     }
@@ -92,16 +145,78 @@ class ViewingExtension : Extension() {
                         title = note.name
 
                         description = note.content
+
+                        footer {
+                            text = buildString {
+                                append("#${note._id.toString(16)} ")
+                                append("| Created on ${formatTime(note.timeCreated)}")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        publicSlashCommand(::ViewByIdCommandArgs) {
+            name = "postid"
+            description = "Post a note to chat by its ID"
+
+            check { anyGuild() }
+
+            action {
+                val noteId = arguments.noteId.toInt(16)
+
+                val note = noteCollection.get(noteId)
+
+                if (note == null || note.guild != guild!!.id) {
+                    respond {
+                        content = "I couldn't find that note."
+                    }
+                    return@action
+                }
+
+                val author = guild!!.getMemberOrNull(note.author)
+
+                respond {
+                    embed {
+                        author {
+                            name = "${author?.nickname ?: "Unknown user"} (${author?.tag ?: "Unknown user"})"
+                            icon = author?.avatar?.url
+                        }
+
+                        title = note.name
+
+                        description = note.content
+
+                        footer {
+                            text = buildString {
+                                append("#${note._id.toString(16)} ")
+                                append("| Created on ${formatTime(note.timeCreated)}")
+                            }
+                        }
                     }
                 }
             }
         }
     }
 
-    inner class ViewCommandArgs : Arguments() {
+    inner class ViewByNameCommandArgs : Arguments() {
         val noteName by string {
             name = "note"
             description = "The note you want to view"
+        }
+    }
+
+    inner class ViewByIdCommandArgs : Arguments() {
+        val noteId by string {
+            name = "note"
+            description = "The note you want to view"
+
+            validate {
+                failIf("That's not a valid ID!") {
+                    value.toIntOrNull(16) == null
+                }
+            }
         }
     }
 }

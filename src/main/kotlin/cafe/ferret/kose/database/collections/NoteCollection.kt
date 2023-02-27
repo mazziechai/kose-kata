@@ -12,6 +12,7 @@ import com.kotlindiscord.kord.extensions.koin.KordExKoinComponent
 import dev.kord.common.entity.Snowflake
 import kotlinx.datetime.Clock
 import org.koin.core.component.inject
+import org.litote.kmongo.and
 import org.litote.kmongo.eq
 import kotlin.random.Random
 
@@ -120,12 +121,22 @@ class NoteCollection : KordExKoinComponent {
     suspend fun getByUser(botUser: BotUser) = col.find(Note::author eq botUser._id).toList()
 
     /**
-     * Gets [Note]s from a [Snowflake].
+     * Gets [Note]s from a guild's [Snowflake].
      *
      * @param guild The guild's snowflake.
      * @return The [Note]s, if any.
      */
     suspend fun getByGuild(guild: Snowflake) = col.find(Note::guild eq guild).toList()
+
+    /**
+     * Gets [Note]s from a guild's [Snowflake] and a name of the note.
+     *
+     * @param guild The guild's snowflake.
+     * @param name The name of the note.
+     * @return The [Note]s, if any.
+     */
+    suspend fun getByGuildAndName(guild: Snowflake, name: String) =
+        col.find(and(Note::guild eq guild, Note::name eq name)).toList()
 
     companion object : DbCollection("notes")
 }
