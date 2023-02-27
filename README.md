@@ -14,8 +14,8 @@ A Discord bot for creating "notes", a message that is stored in the bot then can
 - [ ] Exporting notes to a JSON file
 - [ ] Importing notes from a JSON file, including other bots' formats
 - [x] Getting a list of a user's notes in a guild
-- [ ] Getting a list of a user's notes in general
-- [ ] Getting a list of a guild's notes
+- [x] Getting a list of a user's notes in general
+- [x] Getting a list of a guild's notes
 
 ## Technical to-do list
 

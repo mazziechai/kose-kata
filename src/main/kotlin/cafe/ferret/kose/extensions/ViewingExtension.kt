@@ -44,15 +44,16 @@ class ViewingExtension : Extension() {
 
                 val note = guildNotes.random()
 
-                val author = guild!!.getMemberOrNull(note.author)
+                val user = this@ephemeralSlashCommand.kord.getUser(note.author)
+                val author = user?.asMemberOrNull(guild!!.id)
 
                 respond {
                     embed {
                         author {
                             name = if (author?.nickname != null) {
-                                "${author.nickname} (${author.tag})"
+                                "${author.nickname} (${user.tag})"
                             } else {
-                                author?.tag ?: "Unknown user"
+                                user?.tag ?: "Unknown user"
                             }
                             icon = author?.avatar?.url
                         }
@@ -93,15 +94,16 @@ class ViewingExtension : Extension() {
 
                 val note = guildNotes.random()
 
-                val author = guild!!.getMemberOrNull(note.author)
+                val user = this@publicSlashCommand.kord.getUser(note.author)
+                val author = user?.asMemberOrNull(guild!!.id)
 
                 respond {
                     embed {
                         author {
                             name = if (author?.nickname != null) {
-                                "${author.nickname} (${author.tag})"
+                                "${author.nickname} (${user.tag})"
                             } else {
-                                author?.tag ?: "Unknown user"
+                                user?.tag ?: "Unknown user"
                             }
                             icon = author?.avatar?.url
                         }
@@ -142,15 +144,16 @@ class ViewingExtension : Extension() {
                     return@action
                 }
 
-                val author = guild!!.getMemberOrNull(note.author)
+                val user = this@ephemeralSlashCommand.kord.getUser(note.author)
+                val author = user?.asMemberOrNull(guild!!.id)
 
                 respond {
                     embed {
                         author {
                             name = if (author?.nickname != null) {
-                                "${author.nickname} (${author.tag})"
+                                "${author.nickname} (${user.tag})"
                             } else {
-                                author?.tag ?: "Unknown user"
+                                user?.tag ?: "Unknown user"
                             }
                             icon = author?.avatar?.url
                         }
@@ -188,15 +191,16 @@ class ViewingExtension : Extension() {
                     return@action
                 }
 
-                val author = guild!!.getMemberOrNull(note.author)
+                val user = this@publicSlashCommand.kord.getUser(note.author)
+                val author = user?.asMemberOrNull(guild!!.id)
 
                 respond {
                     embed {
                         author {
                             name = if (author?.nickname != null) {
-                                "${author.nickname} (${author.tag})"
+                                "${author.nickname} (${user.tag})"
                             } else {
-                                author?.tag ?: "Unknown user"
+                                user?.tag ?: "Unknown user"
                             }
                             icon = author?.avatar?.url
                         }

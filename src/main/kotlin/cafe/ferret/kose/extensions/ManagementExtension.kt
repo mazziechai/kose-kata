@@ -47,9 +47,10 @@ class ManagementExtension : Extension() {
                     return@action
                 }
 
-                val author = guild!!.getMemberOrNull(note.author)
+                val authorUser = this@ephemeralSlashCommand.kord.getUser(note.author)
+                val authorMember = guild!!.getMemberOrNull(note.author)
 
-                if (author?.id != member!!.id && !member!!.asMember(guild!!.id)
+                if (authorMember?.id != member!!.id && !member!!.asMember(guild!!.id)
                         .hasPermission(Permission.ManageMessages)
                 ) {
                     respond {
@@ -59,16 +60,14 @@ class ManagementExtension : Extension() {
                 }
 
                 respond {
-                    content = "Are you sure you want to delete this note?"
-
                     embed {
                         author {
-                            name = if (author?.nickname != null) {
-                                "${author.nickname} (${author.tag})"
+                            name = if (authorMember?.nickname != null) {
+                                "${authorMember.nickname} (${authorMember.tag})"
                             } else {
-                                author?.tag ?: "Unknown user"
+                                authorUser?.tag ?: "Unknown user"
                             }
-                            icon = author?.avatar?.url
+                            icon = authorMember?.avatar?.url
                         }
 
                         title = note.name
@@ -149,9 +148,10 @@ class ManagementExtension : Extension() {
                     return@action
                 }
 
-                val author = guild!!.getMemberOrNull(note.author)
+                val authorUser = this@ephemeralSlashCommand.kord.getUser(note.author)
+                val authorMember = guild!!.getMemberOrNull(note.author)
 
-                if (author?.id != member!!.id && !member!!.asMember(guild!!.id)
+                if (authorMember?.id != member!!.id && !member!!.asMember(guild!!.id)
                         .hasPermission(Permission.ManageMessages)
                 ) {
                     respond {
@@ -169,12 +169,12 @@ class ManagementExtension : Extension() {
 
                     embed {
                         author {
-                            name = if (author?.nickname != null) {
-                                "${author.nickname} (${author.tag})"
+                            name = if (authorMember?.nickname != null) {
+                                "${authorMember.nickname} (${authorMember.tag})"
                             } else {
-                                author?.tag ?: "Unknown user"
+                                authorUser?.tag ?: "Unknown user"
                             }
-                            icon = author?.avatar?.url
+                            icon = authorMember?.avatar?.url
                         }
 
                         title = note.name
