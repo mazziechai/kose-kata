@@ -415,6 +415,20 @@ class UtilityExtension : Extension() {
                 }
             }
         }
+
+        ephemeralSlashCommand {
+            name = "help"
+            description = "Sends the help page"
+
+            action {
+                respond {
+                    content = buildString {
+                        appendLine("The help page for kose kata can be found here: ")
+                        appendLine("https://github.com/mazziechai/kose-kata/wiki")
+                    }
+                }
+            }
+        }
     }
 
     inner class UserNotesArgs : Arguments() {
