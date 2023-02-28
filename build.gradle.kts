@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "cafe.ferret"
-version = "0.1-SNAPSHOT"
+version = "1.0"
 
 repositories {
     google()
