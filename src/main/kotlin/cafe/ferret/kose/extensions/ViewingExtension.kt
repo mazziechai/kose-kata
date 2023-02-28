@@ -54,6 +54,18 @@ class ViewingExtension : Extension() {
                 val note = guildNotes.random()
 
                 viewNoteResponse(note)
+
+                val regex = Regex("""(http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])""")
+                val urls = regex.findAll(note.content)
+
+                respond {
+                    content = buildString {
+                        appendLine("**URLs** (for embeds)")
+                        for (url in urls) {
+                            appendLine(url.value)
+                        }
+                    }
+                }
             }
         }
 
@@ -79,6 +91,18 @@ class ViewingExtension : Extension() {
                 val note = guildNotes.random()
 
                 viewNoteResponse(note)
+
+                val regex = Regex("""(http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])""")
+                val urls = regex.findAll(note.content)
+
+                respond {
+                    content = buildString {
+                        appendLine("**URLs** (for embeds)")
+                        for (url in urls) {
+                            appendLine(url.value)
+                        }
+                    }
+                }
             }
         }
 
@@ -104,6 +128,18 @@ class ViewingExtension : Extension() {
                 }
 
                 viewNoteResponse(note)
+
+                val regex = Regex("""(http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])""")
+                val urls = regex.findAll(note.content)
+
+                respond {
+                    content = buildString {
+                        appendLine("**URLs** (for embeds)")
+                        for (url in urls) {
+                            appendLine(url.value)
+                        }
+                    }
+                }
             }
         }
 
@@ -129,6 +165,18 @@ class ViewingExtension : Extension() {
                 }
 
                 viewNoteResponse(note)
+
+                val regex = Regex("""(http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])""")
+                val urls = regex.findAll(note.content)
+
+                respond {
+                    content = buildString {
+                        appendLine("**URLs** (for embeds)")
+                        for (url in urls) {
+                            appendLine(url.value)
+                        }
+                    }
+                }
             }
         }
     }
