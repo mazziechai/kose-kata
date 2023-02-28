@@ -31,12 +31,15 @@ import dev.kord.core.entity.User
 import dev.kord.rest.Image
 import io.ktor.client.request.forms.*
 import io.ktor.util.cio.*
+import kotlinx.datetime.toInstant
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.*
 import org.koin.core.component.inject
 import java.nio.charset.Charset
+import java.text.SimpleDateFormat
+import java.time.Clock
 import kotlin.time.Duration.Companion.seconds
 
 class UtilityExtension : Extension() {
@@ -233,16 +236,19 @@ class UtilityExtension : Extension() {
 
             action {
                 val notes = noteCollection.getByGuild(guild!!.id)
-
                 val json = Json.encodeToString(notes)
 
+                val timeFormat = SimpleDateFormat("yyyy-MM-dd")
+
                 respond {
-                    addFile("${guild!!.id}.json", ChannelProvider { json.byteInputStream().toByteReadChannel() })
+                    addFile(
+                        "kose-${guild!!.id}-{${timeFormat.format(Clock.systemUTC())}.json",
+                        ChannelProvider { json.byteInputStream().toByteReadChannel() })
                 }
             }
         }
 
-        ephemeralSlashCommand(::ImportArgs) {
+        ephemeralSlashCommand {
             name = "import"
             description = "Imports all notes from a file"
 
@@ -252,32 +258,89 @@ class UtilityExtension : Extension() {
                 failIfNot(member.hasPermission(Permission.ManageGuild))
             }
 
-            action {
-                lateinit var notes: List<Note>
+            ephemeralSubCommand(::ImportArgs) {
+                name = "kose"
+                description = "Import notes from a kose kata notes file"
 
-                try {
-                    notes = Json.decodeFromString(arguments.file.download().toString(Charset.forName("UTF-8")))
-                } catch (t: SerializationException) {
-                    respond {
-                        content = "That's not a valid importable note file."
+                action {
+                    val notes: List<Note>
+
+                    try {
+                        notes = Json.decodeFromString(arguments.file.download().toString(Charset.forName("UTF-8")))
+                    } catch (t: SerializationException) {
+                        respond {
+                            content = buildString {
+                                appendLine("Malformed JSON See the following for more information:")
+                                appendLine("```\n${t}\n```")
+                            }
+                        }
+
+                        return@action
                     }
 
-                    return@action
-                }
+                    for (note in notes) {
+                        noteCollection.new(
+                            note.author,
+                            guild!!.id,
+                            note.name,
+                            note.content,
+                            note.originalAuthor,
+                            note.timeCreated
+                        )
+                    }
 
-                for (note in notes) {
-                    noteCollection.new(
-                        note.author,
-                        guild!!.id,
-                        note.name,
-                        note.content,
-                        note.originalAuthor,
-                        note.timeCreated
-                    )
+                    respond {
+                        content = "Successfully imported ${notes.count()} notes!"
+                    }
                 }
+            }
 
-                respond {
-                    content = "Successfully imported ${notes.count()} notes!"
+            ephemeralSubCommand(::ImportArgs) {
+                name = "qbot"
+                description = "Import notes from a qbot notes file"
+
+                action {
+                    val qbotJson: JsonElement
+
+                    try {
+                        qbotJson = Json.parseToJsonElement(arguments.file.download().toString(Charset.forName("UTF-8")))
+                    } catch (t: SerializationException) {
+                        respond {
+                            content = buildString {
+                                appendLine("Malformed JSON. See the following for more information:")
+                                appendLine("```\n${t}\n```")
+                            }
+                        }
+
+                        return@action
+                    }
+
+                    for (element in qbotJson.jsonArray) {
+                        val jsonObject = element.jsonObject
+                        try {
+                            noteCollection.new(
+                                Snowflake(jsonObject["user_id"]!!.jsonPrimitive.long),
+                                guild!!.id,
+                                jsonObject["name"]!!.jsonPrimitive.content,
+                                jsonObject["text"]!!.jsonPrimitive.content,
+                                timeCreated = jsonObject["created_at"]!!.jsonPrimitive.content.toInstant()
+                            )
+                        } catch (t: Throwable) {
+                            respond {
+                                content = buildString {
+                                    appendLine("Malformed JSON; import halted. Notes were partially imported.")
+                                    appendLine("See the following for more information:")
+                                    appendLine("```\n${t}\n```")
+                                }
+                            }
+
+                            return@action
+                        }
+                    }
+
+                    respond {
+                        content = "Successfully imported ${qbotJson.jsonArray.count()} notes!"
+                    }
                 }
             }
         }
@@ -356,7 +419,7 @@ class UtilityExtension : Extension() {
 
             validate {
                 failIf("File is too large!") {
-                    value.size > 50 * 1000
+                    value.size > 52428800 // 50 MiB
                 }
             }
         }
