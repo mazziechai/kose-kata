@@ -47,7 +47,7 @@ dependencies {
 
 application {
     // This is deprecated, but the Shadow plugin requires it
-    mainClassName = "cafe.ferret.kose.AppKt"
+    mainClassName = "cafe.ferret.kosekata.AppKt"
 }
 
 tasks.withType<KotlinCompile> {
@@ -60,7 +60,7 @@ tasks.withType<KotlinCompile> {
 tasks.jar {
     manifest {
         attributes(
-            "Main-Class" to "cafe.ferret.kose.AppKt"
+            "Main-Class" to "cafe.ferret.kosekata.AppKt"
         )
     }
 }
