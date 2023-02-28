@@ -13,7 +13,7 @@ A Discord bot for creating "notes", a message that is stored in the bot then can
 - [x] Referencing other notes with buttons to view those quotes as well
 - [x] Exporting notes to a JSON file
 - [x] Importing notes from a JSON file
-    - [ ] Other bot formats
+  - [x] Other bot formats
 - [x] Getting a list of a user's notes in a guild
 - [x] Getting a list of a user's notes in general
 - [x] Getting a list of a guild's notes
