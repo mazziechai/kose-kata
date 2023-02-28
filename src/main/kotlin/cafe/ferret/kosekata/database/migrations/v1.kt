@@ -2,11 +2,11 @@
  * Copyright (c) 2023 mazziechai
  */
 
-package cafe.ferret.kose.database.migrations
+package cafe.ferret.kosekata.database.migrations
 
-import cafe.ferret.kose.database.collections.GuildDataCollection
-import cafe.ferret.kose.database.collections.NoteCollection
-import cafe.ferret.kose.database.collections.UserCollection
+import cafe.ferret.kosekata.database.collections.GuildDataCollection
+import cafe.ferret.kosekata.database.collections.NoteCollection
+import cafe.ferret.kosekata.database.collections.UserCollection
 import org.litote.kmongo.coroutine.CoroutineDatabase
 
 suspend fun v1(database: CoroutineDatabase) {

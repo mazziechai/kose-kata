@@ -2,10 +2,10 @@
  * Copyright (c) 2023 mazziechai
  */
 
-package cafe.ferret.kose.extensions
+package cafe.ferret.kosekata.extensions
 
-import cafe.ferret.kose.database.collections.NoteCollection
-import cafe.ferret.kose.database.entities.Note
+import cafe.ferret.kosekata.database.collections.NoteCollection
+import cafe.ferret.kosekata.database.entities.Note
 import com.kotlindiscord.kord.extensions.checks.anyGuild
 import com.kotlindiscord.kord.extensions.commands.Arguments
 import com.kotlindiscord.kord.extensions.commands.application.slash.ephemeralSubCommand

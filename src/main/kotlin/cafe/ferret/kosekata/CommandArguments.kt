@@ -2,7 +2,7 @@
  * Copyright (c) 2023 mazziechai
  */
 
-package cafe.ferret.kose
+package cafe.ferret.kosekata
 
 import com.kotlindiscord.kord.extensions.commands.Arguments
 import com.kotlindiscord.kord.extensions.commands.converters.impl.string

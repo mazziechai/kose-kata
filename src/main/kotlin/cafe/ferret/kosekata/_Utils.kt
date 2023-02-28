@@ -2,9 +2,9 @@
  * Copyright (c) 2023 mazziechai
  */
 
-package cafe.ferret.kose
+package cafe.ferret.kosekata
 
-import cafe.ferret.kose.database.entities.Note
+import cafe.ferret.kosekata.database.entities.Note
 import dev.kord.core.Kord
 import dev.kord.rest.builder.message.modify.MessageModifyBuilder
 import dev.kord.rest.builder.message.modify.embed

@@ -2,11 +2,11 @@
  * Copyright (c) 2023 mazziechai
  */
 
-package cafe.ferret.kose.database.collections
+package cafe.ferret.kosekata.database.collections
 
-import cafe.ferret.kose.database.Database
-import cafe.ferret.kose.database.DbCollection
-import cafe.ferret.kose.database.entities.Meta
+import cafe.ferret.kosekata.database.Database
+import cafe.ferret.kosekata.database.DbCollection
+import cafe.ferret.kosekata.database.entities.Meta
 import com.kotlindiscord.kord.extensions.koin.KordExKoinComponent
 import org.koin.core.component.inject
 

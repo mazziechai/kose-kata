@@ -2,9 +2,9 @@
  * Copyright (c) 2023 mazziechai
  */
 
-package cafe.ferret.kose.database.entities
+package cafe.ferret.kosekata.database.entities
 
-import cafe.ferret.kose.database.Entity
+import cafe.ferret.kosekata.database.Entity
 import kotlinx.serialization.Serializable
 
 @Serializable

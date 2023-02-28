@@ -2,10 +2,10 @@
  * Copyright (c) 2023 mazziechai
  */
 
-package cafe.ferret.kose
+package cafe.ferret.kosekata
 
-import cafe.ferret.kose.database.database
-import cafe.ferret.kose.extensions.*
+import cafe.ferret.kosekata.database.database
+import cafe.ferret.kosekata.extensions.*
 import com.kotlindiscord.kord.extensions.ExtensibleBot
 import com.kotlindiscord.kord.extensions.utils.env
 import dev.kord.common.entity.Snowflake

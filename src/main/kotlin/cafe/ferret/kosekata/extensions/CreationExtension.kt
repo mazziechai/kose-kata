@@ -2,9 +2,9 @@
  * Copyright (c) 2023 mazziechai
  */
 
-package cafe.ferret.kose.extensions
+package cafe.ferret.kosekata.extensions
 
-import cafe.ferret.kose.database.collections.NoteCollection
+import cafe.ferret.kosekata.database.collections.NoteCollection
 import com.kotlindiscord.kord.extensions.checks.anyGuild
 import com.kotlindiscord.kord.extensions.components.forms.ModalForm
 import com.kotlindiscord.kord.extensions.extensions.Extension

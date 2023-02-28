@@ -2,7 +2,7 @@
  * Copyright (c) 2023 mazziechai
  */
 
-package cafe.ferret.kose.database
+package cafe.ferret.kosekata.database
 
 /**
  * A KMongo entity.

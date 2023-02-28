@@ -2,7 +2,7 @@
  * Copyright (c) 2023 mazziechai
  */
 
-package cafe.ferret.kose.database
+package cafe.ferret.kosekata.database
 
 import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings

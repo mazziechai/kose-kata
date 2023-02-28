@@ -2,9 +2,9 @@
  * Copyright (c) 2023 mazziechai
  */
 
-package cafe.ferret.kose.database.migrations
+package cafe.ferret.kosekata.database.migrations
 
-import cafe.ferret.kose.database.entities.Note
+import cafe.ferret.kosekata.database.entities.Note
 import org.litote.kmongo.coroutine.CoroutineDatabase
 
 /**

@@ -2,12 +2,12 @@
  * Copyright (c) 2023 mazziechai
  */
 
-package cafe.ferret.kose.database.collections
+package cafe.ferret.kosekata.database.collections
 
-import cafe.ferret.kose.database.Database
-import cafe.ferret.kose.database.DbCollection
-import cafe.ferret.kose.database.entities.BotUser
-import cafe.ferret.kose.database.entities.Note
+import cafe.ferret.kosekata.database.Database
+import cafe.ferret.kosekata.database.DbCollection
+import cafe.ferret.kosekata.database.entities.BotUser
+import cafe.ferret.kosekata.database.entities.Note
 import com.kotlindiscord.kord.extensions.koin.KordExKoinComponent
 import dev.kord.common.entity.Snowflake
 import kotlinx.datetime.Clock

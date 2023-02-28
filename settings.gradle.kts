@@ -12,7 +12,7 @@ pluginManagement {
     }
 }
 
-rootProject.name = "kose"
+rootProject.name = "kosekata"
 
 enableFeaturePreview("VERSION_CATALOGS")
 
