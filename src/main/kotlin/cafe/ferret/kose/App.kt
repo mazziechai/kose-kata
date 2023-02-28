@@ -14,6 +14,8 @@ val TEST_SERVER_ID = Snowflake(
     env("TEST_SERVER").toLong()
 )
 
+val ENVIRONMENT = env("ENVIRONMENT")
+
 private val token = env("TOKEN")
 
 suspend fun main() {
@@ -21,7 +23,9 @@ suspend fun main() {
         database(true)
 
         applicationCommands {
-            defaultGuild(TEST_SERVER_ID)
+            if (ENVIRONMENT == "dev") {
+                defaultGuild(TEST_SERVER_ID)
+            }
         }
 
         extensions {
