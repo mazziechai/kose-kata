@@ -6,7 +6,7 @@ package cafe.ferret.kose.extensions
 
 import cafe.ferret.kose.ByIdArgs
 import cafe.ferret.kose.database.collections.NoteCollection
-import cafe.ferret.kose.formatTime
+import cafe.ferret.kose.noteEmbed
 import com.kotlindiscord.kord.extensions.checks.anyGuild
 import com.kotlindiscord.kord.extensions.components.components
 import com.kotlindiscord.kord.extensions.components.ephemeralButton
@@ -18,7 +18,6 @@ import com.kotlindiscord.kord.extensions.types.respond
 import com.kotlindiscord.kord.extensions.utils.hasPermission
 import dev.kord.common.entity.ButtonStyle
 import dev.kord.common.entity.Permission
-import dev.kord.rest.builder.message.create.embed
 import org.koin.core.component.inject
 import kotlin.time.Duration.Companion.seconds
 
@@ -47,10 +46,7 @@ class ManagementExtension : Extension() {
                     return@action
                 }
 
-                val authorUser = this@ephemeralSlashCommand.kord.getUser(note.author)
-                val authorMember = guild!!.getMemberOrNull(note.author)
-
-                if (authorMember?.id != member!!.id && !member!!.asMember(guild!!.id)
+                if (note.author != user.id && !member!!.asMember(guild!!.id)
                         .hasPermission(Permission.ManageMessages)
                 ) {
                     respond {
@@ -59,30 +55,10 @@ class ManagementExtension : Extension() {
                     return@action
                 }
 
-                respond {
+                edit {
                     content = "Are you sure you want to delete this note?"
 
-                    embed {
-                        author {
-                            name = if (authorMember?.nickname != null) {
-                                "${authorMember.nickname} (${authorMember.tag})"
-                            } else {
-                                authorUser?.tag ?: "Unknown user"
-                            }
-                            icon = authorMember?.avatar?.url
-                        }
-
-                        title = note.name
-
-                        description = note.content
-
-                        footer {
-                            text = buildString {
-                                append("#${note._id.toString(16)} ")
-                                append("| Created on ${formatTime(note.timeCreated)}")
-                            }
-                        }
-                    }
+                    noteEmbed(this@ephemeralSlashCommand.kord, note, guild!!.id)
 
                     components(15.seconds) {
                         ephemeralButton {
@@ -150,10 +126,7 @@ class ManagementExtension : Extension() {
                     return@action
                 }
 
-                val authorUser = this@ephemeralSlashCommand.kord.getUser(note.author)
-                val authorMember = guild!!.getMemberOrNull(note.author)
-
-                if (authorMember?.id != member!!.id && !member!!.asMember(guild!!.id)
+                if (note.author != user.id && !member!!.asMember(guild!!.id)
                         .hasPermission(Permission.ManageMessages)
                 ) {
                     respond {
@@ -166,30 +139,10 @@ class ManagementExtension : Extension() {
 
                 noteCollection.set(note)
 
-                respond {
+                edit {
                     content = "Updated note `${note.name}`!"
 
-                    embed {
-                        author {
-                            name = if (authorMember?.nickname != null) {
-                                "${authorMember.nickname} (${authorMember.tag})"
-                            } else {
-                                authorUser?.tag ?: "Unknown user"
-                            }
-                            icon = authorMember?.avatar?.url
-                        }
-
-                        title = note.name
-
-                        description = note.content
-
-                        footer {
-                            text = buildString {
-                                append("#${note._id.toString(16)} ")
-                                append("| Created on ${formatTime(note.timeCreated)}")
-                            }
-                        }
-                    }
+                    noteEmbed(this@ephemeralSlashCommand.kord, note, guild!!.id)
                 }
             }
         }

@@ -6,15 +6,25 @@ package cafe.ferret.kose.extensions
 
 import cafe.ferret.kose.ByIdArgs
 import cafe.ferret.kose.database.collections.NoteCollection
-import cafe.ferret.kose.formatTime
+import cafe.ferret.kose.database.entities.Note
+import cafe.ferret.kose.noteEmbed
 import com.kotlindiscord.kord.extensions.checks.anyGuild
 import com.kotlindiscord.kord.extensions.commands.Arguments
 import com.kotlindiscord.kord.extensions.commands.converters.impl.string
+import com.kotlindiscord.kord.extensions.components.ComponentContainer
+import com.kotlindiscord.kord.extensions.components.components
+import com.kotlindiscord.kord.extensions.components.ephemeralButton
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
 import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
+import com.kotlindiscord.kord.extensions.types.EphemeralInteractionContext
+import com.kotlindiscord.kord.extensions.types.PublicInteractionContext
+import com.kotlindiscord.kord.extensions.types.edit
 import com.kotlindiscord.kord.extensions.types.respond
-import dev.kord.rest.builder.message.create.embed
+import dev.kord.common.entity.Snowflake
+import dev.kord.core.entity.interaction.response.EphemeralMessageInteractionResponse
+import dev.kord.core.entity.interaction.response.PublicMessageInteractionResponse
+import dev.kord.rest.builder.message.modify.MessageModifyBuilder
 import org.koin.core.component.inject
 
 class ViewingExtension : Extension() {
@@ -44,32 +54,7 @@ class ViewingExtension : Extension() {
 
                 val note = guildNotes.random()
 
-                val user = this@ephemeralSlashCommand.kord.getUser(note.author)
-                val author = user?.asMemberOrNull(guild!!.id)
-
-                respond {
-                    embed {
-                        author {
-                            name = if (author?.nickname != null) {
-                                "${author.nickname} (${user.tag})"
-                            } else {
-                                user?.tag ?: "Unknown user"
-                            }
-                            icon = author?.avatar?.url
-                        }
-
-                        title = note.name
-
-                        description = note.content
-
-                        footer {
-                            text = buildString {
-                                append("#${note._id.toString(16)} ")
-                                append("| Created on ${formatTime(note.timeCreated)}")
-                            }
-                        }
-                    }
-                }
+                viewNoteResponse(note, guild!!.id)
             }
         }
 
@@ -78,7 +63,7 @@ class ViewingExtension : Extension() {
          */
         publicSlashCommand(::ViewByNameCommandArgs) {
             name = "post"
-            description = "Posts a note to chat"
+            description = "Post a note to chat"
 
             check { anyGuild() }
 
@@ -94,32 +79,7 @@ class ViewingExtension : Extension() {
 
                 val note = guildNotes.random()
 
-                val user = this@publicSlashCommand.kord.getUser(note.author)
-                val author = user?.asMemberOrNull(guild!!.id)
-
-                respond {
-                    embed {
-                        author {
-                            name = if (author?.nickname != null) {
-                                "${author.nickname} (${user.tag})"
-                            } else {
-                                user?.tag ?: "Unknown user"
-                            }
-                            icon = author?.avatar?.url
-                        }
-
-                        title = note.name
-
-                        description = note.content
-
-                        footer {
-                            text = buildString {
-                                append("#${note._id.toString(16)} ")
-                                append("| Created on ${formatTime(note.timeCreated)}")
-                            }
-                        }
-                    }
-                }
+                viewNoteResponse(note, guild!!.id)
             }
         }
 
@@ -128,7 +88,7 @@ class ViewingExtension : Extension() {
          */
         ephemeralSlashCommand(::ByIdArgs) {
             name = "viewid"
-            description = "Views a note by its ID"
+            description = "View a note by its ID"
 
             check { anyGuild() }
 
@@ -144,32 +104,7 @@ class ViewingExtension : Extension() {
                     return@action
                 }
 
-                val user = this@ephemeralSlashCommand.kord.getUser(note.author)
-                val author = user?.asMemberOrNull(guild!!.id)
-
-                respond {
-                    embed {
-                        author {
-                            name = if (author?.nickname != null) {
-                                "${author.nickname} (${user.tag})"
-                            } else {
-                                user?.tag ?: "Unknown user"
-                            }
-                            icon = author?.avatar?.url
-                        }
-
-                        title = note.name
-
-                        description = note.content
-
-                        footer {
-                            text = buildString {
-                                append("#${note._id.toString(16)} ")
-                                append("| Created on ${formatTime(note.timeCreated)}")
-                            }
-                        }
-                    }
-                }
+                viewNoteResponse(note, guild!!.id)
             }
         }
 
@@ -191,32 +126,7 @@ class ViewingExtension : Extension() {
                     return@action
                 }
 
-                val user = this@publicSlashCommand.kord.getUser(note.author)
-                val author = user?.asMemberOrNull(guild!!.id)
-
-                respond {
-                    embed {
-                        author {
-                            name = if (author?.nickname != null) {
-                                "${author.nickname} (${user.tag})"
-                            } else {
-                                user?.tag ?: "Unknown user"
-                            }
-                            icon = author?.avatar?.url
-                        }
-
-                        title = note.name
-
-                        description = note.content
-
-                        footer {
-                            text = buildString {
-                                append("#${note._id.toString(16)} ")
-                                append("| Created on ${formatTime(note.timeCreated)}")
-                            }
-                        }
-                    }
-                }
+                viewNoteResponse(note, guild!!.id)
             }
         }
     }
@@ -225,6 +135,54 @@ class ViewingExtension : Extension() {
         val noteName by string {
             name = "note"
             description = "The note you want to view"
+        }
+    }
+
+    private suspend fun PublicInteractionContext.viewNoteResponse(
+        note: Note,
+        guild: Snowflake,
+    ): PublicMessageInteractionResponse {
+        return edit {
+            noteEmbed(kord, note, guild)
+            viewNoteReferences(note, guild)
+        }
+    }
+
+    private suspend fun EphemeralInteractionContext.viewNoteResponse(
+        note: Note,
+        guild: Snowflake,
+    ): EphemeralMessageInteractionResponse {
+        return edit {
+            noteEmbed(kord, note, guild)
+            viewNoteReferences(note, guild)
+        }
+    }
+
+    private suspend fun MessageModifyBuilder.viewNoteReferences(note: Note, guild: Snowflake): ComponentContainer {
+        val referenceRegex = Regex("\\{\\{(.+?)}}")
+        val references = referenceRegex.findAll(note.content).distinctBy { it.groupValues[1] }
+
+        val referencedNotes = mutableSetOf<Note>()
+
+        for (reference in references) {
+            referencedNotes.addAll(noteCollection.getByGuildAndName(guild, reference.groupValues[1]))
+        }
+
+        return components {
+            if (referencedNotes.isNotEmpty()) {
+                references.forEach { result ->
+                    ephemeralButton {
+                        label = result.groupValues[1]
+
+                        val referencedNote =
+                            referencedNotes.filter { it.name == result.groupValues[1] }.random()
+
+                        action {
+                            viewNoteResponse(referencedNote, guild)
+                        }
+                    }
+                }
+            }
         }
     }
 }
