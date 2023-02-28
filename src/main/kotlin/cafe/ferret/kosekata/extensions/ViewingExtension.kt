@@ -58,11 +58,13 @@ class ViewingExtension : Extension() {
                 val regex = Regex("""(http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])""")
                 val urls = regex.findAll(note.content)
 
-                respond {
-                    content = buildString {
-                        appendLine("**URLs** (for embeds)")
-                        for (url in urls) {
-                            appendLine(url.value)
+                if (!urls.none()) {
+                    respond {
+                        content = buildString {
+                            appendLine("**URLs** (for embeds)")
+                            for (url in urls) {
+                                appendLine(url.value)
+                            }
                         }
                     }
                 }
@@ -95,11 +97,13 @@ class ViewingExtension : Extension() {
                 val regex = Regex("""(http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])""")
                 val urls = regex.findAll(note.content)
 
-                respond {
-                    content = buildString {
-                        appendLine("**URLs** (for embeds)")
-                        for (url in urls) {
-                            appendLine(url.value)
+                if (!urls.none()) {
+                    respond {
+                        content = buildString {
+                            appendLine("**URLs** (for embeds)")
+                            for (url in urls) {
+                                appendLine(url.value)
+                            }
                         }
                     }
                 }
@@ -132,11 +136,13 @@ class ViewingExtension : Extension() {
                 val regex = Regex("""(http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])""")
                 val urls = regex.findAll(note.content)
 
-                respond {
-                    content = buildString {
-                        appendLine("**URLs** (for embeds)")
-                        for (url in urls) {
-                            appendLine(url.value)
+                if (!urls.none()) {
+                    respond {
+                        content = buildString {
+                            appendLine("**URLs** (for embeds)")
+                            for (url in urls) {
+                                appendLine(url.value)
+                            }
                         }
                     }
                 }
@@ -169,11 +175,13 @@ class ViewingExtension : Extension() {
                 val regex = Regex("""(http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])""")
                 val urls = regex.findAll(note.content)
 
-                respond {
-                    content = buildString {
-                        appendLine("**URLs** (for embeds)")
-                        for (url in urls) {
-                            appendLine(url.value)
+                if (!urls.none()) {
+                    respond {
+                        content = buildString {
+                            appendLine("**URLs** (for embeds)")
+                            for (url in urls) {
+                                appendLine(url.value)
+                            }
                         }
                     }
                 }
