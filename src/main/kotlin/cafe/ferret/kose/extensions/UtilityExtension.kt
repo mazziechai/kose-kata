@@ -97,6 +97,10 @@ class UtilityExtension : Extension() {
                                         appendLine("at ${note.timeCreated.toDiscord(TimestampType.ShortTime)}")
                                     }
                                 }
+
+                                footer {
+                                    text = "${notes.count()} notes"
+                                }
                             }
                         }
                     }.send()
@@ -158,6 +162,10 @@ class UtilityExtension : Extension() {
                                         appendLine("at ${note.timeCreated.toDiscord(TimestampType.ShortTime)}")
                                     }
                                 }
+
+                                footer {
+                                    text = "${notes.count()} notes"
+                                }
                             }
                         }
                     }.send()
@@ -217,6 +225,10 @@ class UtilityExtension : Extension() {
                                     append("Created on ${note.timeCreated.toDiscord(TimestampType.ShortDate)} ")
                                     appendLine("at ${note.timeCreated.toDiscord(TimestampType.ShortTime)}")
                                 }
+                            }
+
+                            footer {
+                                text = "${notes.count()} notes"
                             }
                         }
                     }
