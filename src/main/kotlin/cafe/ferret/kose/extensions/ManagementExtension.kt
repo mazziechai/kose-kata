@@ -58,7 +58,7 @@ class ManagementExtension : Extension() {
                 edit {
                     content = "Are you sure you want to delete this note?"
 
-                    noteEmbed(this@ephemeralSlashCommand.kord, note, guild!!.id)
+                    noteEmbed(this@ephemeralSlashCommand.kord, note)
 
                     components(15.seconds) {
                         ephemeralButton {
@@ -142,7 +142,7 @@ class ManagementExtension : Extension() {
                 edit {
                     content = "Updated note `${note.name}`!"
 
-                    noteEmbed(this@ephemeralSlashCommand.kord, note, guild!!.id)
+                    noteEmbed(this@ephemeralSlashCommand.kord, note)
                 }
             }
         }

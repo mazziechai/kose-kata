@@ -21,7 +21,6 @@ import com.kotlindiscord.kord.extensions.types.EphemeralInteractionContext
 import com.kotlindiscord.kord.extensions.types.PublicInteractionContext
 import com.kotlindiscord.kord.extensions.types.edit
 import com.kotlindiscord.kord.extensions.types.respond
-import dev.kord.common.entity.Snowflake
 import dev.kord.core.entity.interaction.response.EphemeralMessageInteractionResponse
 import dev.kord.core.entity.interaction.response.PublicMessageInteractionResponse
 import dev.kord.rest.builder.message.modify.MessageModifyBuilder
@@ -54,7 +53,7 @@ class ViewingExtension : Extension() {
 
                 val note = guildNotes.random()
 
-                viewNoteResponse(note, guild!!.id)
+                viewNoteResponse(note)
             }
         }
 
@@ -79,7 +78,7 @@ class ViewingExtension : Extension() {
 
                 val note = guildNotes.random()
 
-                viewNoteResponse(note, guild!!.id)
+                viewNoteResponse(note)
             }
         }
 
@@ -104,10 +103,13 @@ class ViewingExtension : Extension() {
                     return@action
                 }
 
-                viewNoteResponse(note, guild!!.id)
+                viewNoteResponse(note)
             }
         }
 
+        /**
+         * Gets a note by ID and then sends its contents publicly.
+         */
         publicSlashCommand(::ByIdArgs) {
             name = "postid"
             description = "Post a note to chat by its ID"
@@ -126,7 +128,7 @@ class ViewingExtension : Extension() {
                     return@action
                 }
 
-                viewNoteResponse(note, guild!!.id)
+                viewNoteResponse(note)
             }
         }
     }
@@ -138,34 +140,47 @@ class ViewingExtension : Extension() {
         }
     }
 
+    /**
+     * Recursively calls [edit] to display a [Note].
+     *
+     * @param note The note to display.
+     */
     private suspend fun PublicInteractionContext.viewNoteResponse(
         note: Note,
-        guild: Snowflake,
     ): PublicMessageInteractionResponse {
         return edit {
-            noteEmbed(kord, note, guild)
-            viewNoteReferences(note, guild)
+            noteEmbed(kord, note)
+            viewNoteReferences(note)
         }
     }
 
+    /**
+     * Recursively calls [edit] to display a [Note].
+     *
+     * @param note The note to display.
+     */
     private suspend fun EphemeralInteractionContext.viewNoteResponse(
         note: Note,
-        guild: Snowflake,
     ): EphemeralMessageInteractionResponse {
         return edit {
-            noteEmbed(kord, note, guild)
-            viewNoteReferences(note, guild)
+            noteEmbed(kord, note)
+            viewNoteReferences(note)
         }
     }
 
-    private suspend fun MessageModifyBuilder.viewNoteReferences(note: Note, guild: Snowflake): ComponentContainer {
+    /**
+     * Creates reference components that allow for recursive movement between notes.
+     *
+     * @param note The [Note] to create reference components for.
+     */
+    private suspend fun MessageModifyBuilder.viewNoteReferences(note: Note): ComponentContainer {
         val referenceRegex = Regex("\\{\\{(.+?)}}")
         val references = referenceRegex.findAll(note.content).distinctBy { it.groupValues[1] }
 
         val referencedNotes = mutableSetOf<Note>()
 
         for (reference in references) {
-            referencedNotes.addAll(noteCollection.getByGuildAndName(guild, reference.groupValues[1]))
+            referencedNotes.addAll(noteCollection.getByGuildAndName(note.guild, reference.groupValues[1]))
         }
 
         return components {
@@ -178,7 +193,7 @@ class ViewingExtension : Extension() {
                             referencedNotes.filter { it.name == result.groupValues[1] }.random()
 
                         action {
-                            viewNoteResponse(referencedNote, guild)
+                            viewNoteResponse(referencedNote)
                         }
                     }
                 }
