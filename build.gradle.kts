@@ -43,6 +43,7 @@ dependencies {
     implementation(libs.logging)
 
     implementation(libs.kmongo)
+    implementation(libs.fuzzywuzzy)
 }
 
 application {

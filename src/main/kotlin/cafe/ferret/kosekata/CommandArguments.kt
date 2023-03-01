@@ -10,7 +10,7 @@ import com.kotlindiscord.kord.extensions.commands.converters.impl.string
 class ByIdArgs : Arguments() {
     val noteId by string {
         name = "note"
-        description = "The note you want to view"
+        description = "The note's ID"
 
         validate {
             failIf("That's not a valid ID!") {

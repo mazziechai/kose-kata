@@ -21,9 +21,11 @@ import com.kotlindiscord.kord.extensions.types.EphemeralInteractionContext
 import com.kotlindiscord.kord.extensions.types.PublicInteractionContext
 import com.kotlindiscord.kord.extensions.types.edit
 import com.kotlindiscord.kord.extensions.types.respond
+import com.kotlindiscord.kord.extensions.utils.suggestStringCollection
 import dev.kord.core.entity.interaction.response.EphemeralMessageInteractionResponse
 import dev.kord.core.entity.interaction.response.PublicMessageInteractionResponse
 import dev.kord.rest.builder.message.modify.MessageModifyBuilder
+import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.koin.core.component.inject
 
 class ViewingExtension : Extension() {
@@ -192,7 +194,29 @@ class ViewingExtension : Extension() {
     inner class ViewByNameCommandArgs : Arguments() {
         val noteName by string {
             name = "note"
-            description = "The note you want to view"
+            description = "The note's name"
+
+            var notes: List<Note>? = null
+
+            autoComplete {
+                if (data.guildId.value != null) {
+
+                    if (notes == null) {
+                        notes = noteCollection.getByGuild(data.guildId.value!!)
+                    }
+
+                    val noteNames = notes!!
+                        .asSequence()
+                        .map { it.name }
+                        .filter { FuzzySearch.partialRatio(focusedOption.value, it) > 80 }
+                        .distinct()
+                        .sorted()
+                        .take(25)
+                        .toList()
+
+                    suggestStringCollection(noteNames)
+                }
+            }
         }
     }
 
