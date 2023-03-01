@@ -18,6 +18,10 @@ A Discord bot for creating "notes", a message that is stored in the bot then can
 - [x] Getting a list of a user's notes in general
 - [x] Getting a list of a guild's notes
 - [x] Clearing notes in a guild
+- [ ] Note aliases
+- [ ] Command aliases (chat commands to ease transition from qbot)
+- [ ] Deleting multiple notes at once, with various options for that
+- [ ] Searching notes
 
 ## Technical to-do list
 
