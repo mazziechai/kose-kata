@@ -196,18 +196,18 @@ class ViewingExtension : Extension() {
             name = "note"
             description = "The note's name"
 
-            var notes: List<Note>? = null
+            var notes: Sequence<String>? = null
 
             autoComplete {
                 if (data.guildId.value != null) {
 
                     if (notes == null) {
                         notes = noteCollection.getByGuild(data.guildId.value!!)
+                            .asSequence()
+                            .map { it.name }
                     }
 
                     val noteNames = notes!!
-                        .asSequence()
-                        .map { it.name }
                         .filter { FuzzySearch.partialRatio(focusedOption.value, it) > 80 }
                         .distinct()
                         .sorted()
