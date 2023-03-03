@@ -15,8 +15,8 @@ import org.koin.core.component.inject
 object Migrations : KordExKoinComponent {
     private val logger = KotlinLogging.logger { }
 
-    val database: Database by inject()
-    val metaCollection: MetaCollection by inject()
+    private val database: Database by inject()
+    private val metaCollection: MetaCollection by inject()
 
     suspend fun migrate() {
         var meta = metaCollection.get()

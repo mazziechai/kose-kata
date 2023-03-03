@@ -29,6 +29,8 @@ A Discord bot for creating "notes", a message that is stored in the bot then can
 - [ ] Make all note related commands subcommands of a larger note command
 - [ ] Utilize MongoDB indexes for improved performance
 - [ ] MongoDB fuzzy searching
+- [ ] Markdown escape function
+- [ ] Dropdown menus for note references
 
 ## Setup
 
