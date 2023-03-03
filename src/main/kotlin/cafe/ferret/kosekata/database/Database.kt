@@ -25,7 +25,7 @@ class Database(connectionString: String) {
 
     private val client = KMongo.createClient(clientSettings).coroutine
 
-    val mongo = client.getDatabase("kose")
+    val mongo = client.getDatabase("kosekata")
 
     suspend fun migrate() {
         Migrations.migrate()

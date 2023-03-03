@@ -6,7 +6,6 @@ package cafe.ferret.kosekata.database.collections
 
 import cafe.ferret.kosekata.database.Database
 import cafe.ferret.kosekata.database.DbCollection
-import cafe.ferret.kosekata.database.entities.BotUser
 import cafe.ferret.kosekata.database.entities.Note
 import com.kotlindiscord.kord.extensions.koin.KordExKoinComponent
 import dev.kord.common.entity.Snowflake
@@ -24,11 +23,8 @@ class NoteCollection : KordExKoinComponent {
     private val database: Database by inject()
     private val col = database.mongo.getCollection<Note>(name)
 
-    private val userCollection: UserCollection by inject()
-    private val guildDataCollection: GuildDataCollection by inject()
-
     /**
-     * Creates a new [Note] and adds it to the collection, updating the other collections' data as well.
+     * Creates a new [Note] and adds it to the collection.
      * This method creates a randomly generated ID for the [Note].
      *
      * @param author The author's [Snowflake].
@@ -55,84 +51,23 @@ class NoteCollection : KordExKoinComponent {
 
         set(note)
 
-        val botUser = userCollection.get(author)
-
-        if (botUser == null) {
-            userCollection.new(author, mutableListOf(note._id))
-        } else {
-            botUser.notes.add(note._id)
-            userCollection.set(botUser)
-        }
-
-        val guildData = guildDataCollection.get(guild)
-
-        if (guildData == null) {
-            guildDataCollection.new(guild, mutableListOf(note._id))
-        } else {
-            guildData.notes.add(note._id)
-            guildDataCollection.set(guildData)
-        }
-
         return note
     }
 
     /**
-     * Deletes a [Note] from the collection, updating the other collections' data as well.
+     * Deletes a [Note] from the collection.
      *
      * @param note The [Note] to delete from the collection.
      */
-    suspend fun delete(note: Note) {
-        val guildData = guildDataCollection.get(note.guild)
+    suspend fun delete(note: Note) = col.deleteOne(Note::_id eq note._id)
 
-        if (guildData != null) {
-            guildData.notes.remove(note._id)
-            guildDataCollection.set(guildData)
-        }
-
-        val botUser = userCollection.get(note.author)
-
-        if (botUser != null) {
-            botUser.notes.remove(note._id)
-            userCollection.set(botUser)
-        }
-
-        col.deleteOne(Note::_id eq note._id)
-    }
 
     /**
-     * Deletes all notes from a guild, updating the other collections' data as well.
+     * Deletes all notes from a guild.
      *
      * @param guild The guild to delete all notes of.
      */
-    suspend fun deleteAllGuild(guild: Snowflake) {
-        val notes = getByGuild(guild)
-
-        val guildData = guildDataCollection.get(guild)
-
-        if (guildData != null) {
-            guildData.notes.clear()
-            guildDataCollection.set(guildData)
-        }
-
-        val users = mutableListOf<BotUser>()
-
-        for (note in notes) {
-            if (users.any { it._id == note.author }) {
-                val user = userCollection.get(note.author)
-
-                if (user != null) {
-                    users.add(user)
-                }
-            }
-        }
-
-        users.forEach { user ->
-            user.notes.clear()
-            userCollection.set(user)
-        }
-
-        col.deleteMany(Note::guild eq guild)
-    }
+    suspend fun deleteAllGuild(guild: Snowflake) = col.deleteMany(Note::guild eq guild)
 
     /**
      * Gets a [Note] from its ID.

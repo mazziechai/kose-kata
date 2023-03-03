@@ -7,7 +7,6 @@ package cafe.ferret.kosekata.database
 import cafe.ferret.kosekata.database.collections.MetaCollection
 import cafe.ferret.kosekata.database.entities.Meta
 import cafe.ferret.kosekata.database.migrations.v1
-import cafe.ferret.kosekata.database.migrations.v2
 import com.kotlindiscord.kord.extensions.koin.KordExKoinComponent
 import mu.KotlinLogging
 import org.koin.core.component.inject
@@ -37,7 +36,6 @@ object Migrations : KordExKoinComponent {
             try {
                 when (nextVersion) {
                     1 -> ::v1
-                    2 -> ::v2
 
                     else -> break
                 }(database.mongo)
