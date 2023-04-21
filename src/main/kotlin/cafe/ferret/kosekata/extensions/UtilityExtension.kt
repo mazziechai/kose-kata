@@ -85,7 +85,7 @@ class UtilityExtension : Extension() {
                                     } else {
                                         member.tag
                                     }
-                                    icon = member.avatar?.url
+                                    icon = member.avatar?.cdnUrl?.toUrl()
                                 }
 
                                 title = "Notes"
@@ -135,7 +135,7 @@ class UtilityExtension : Extension() {
                             page {
                                 author {
                                     name = thisGuild.name
-                                    icon = thisGuild.getIconUrl(Image.Format.PNG)
+                                    icon = thisGuild.icon?.cdnUrl?.toUrl { format = Image.Format.PNG }
                                 }
 
                                 title = "Notes"
@@ -199,7 +199,7 @@ class UtilityExtension : Extension() {
                         page {
                             author {
                                 name = user.tag
-                                icon = user.avatar?.url
+                                icon = user.avatar?.cdnUrl?.toUrl()
                             }
 
                             title = "Notes"

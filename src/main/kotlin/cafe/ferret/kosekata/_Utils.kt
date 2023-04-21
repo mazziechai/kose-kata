@@ -36,7 +36,7 @@ suspend fun MessageModifyBuilder.noteEmbed(kord: Kord, note: Note) {
             } else {
                 noteUser?.tag ?: "Unknown user"
             }
-            icon = noteMember?.avatar?.url
+            icon = noteMember?.avatar?.cdnUrl?.toUrl()
         }
 
         title = note.name
