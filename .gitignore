@@ -111,6 +111,4 @@ build/
 # Env vars - don't commit this!
 .env
 
-*.log
-
 .idea
