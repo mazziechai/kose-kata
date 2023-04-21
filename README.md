@@ -19,16 +19,17 @@ A Discord bot for creating "notes", a message that is stored in the bot then can
 - [x] Getting a list of a guild's notes
 - [x] Clearing notes in a guild
 - [ ] Note aliases
-- [ ] Chat command aliases for slash commands (specifically for qbot transition)
+- ~~Chat command aliases for slash commands (specifically for qbot transition)~~ Out of scope
 - [ ] Deleting multiple notes at once, with various options for that
 - [ ] Searching notes
 - [ ] "Reserving" note names: preventing name collision with a toggle
 
 ## Technical to-do list
 
-- [ ] Make all note related commands subcommands of a larger note command
+- [ ] Make all note related commands subcommands of a larger note command (later?)
 - [ ] Markdown escape function
 - [ ] Dropdown menus for note references
+- [ ] Deduplicate code
 
 ## Setup
 
@@ -44,6 +45,6 @@ DEVELOPER=your ID
 ```
 
 - Download the main JAR from the CI artifacts
-- Run `java -jar kose-X.Y-SNAPSHOT.jar`
+- Run `java -jar kosekata-X.Y-SNAPSHOT.jar`
 
-The bot is now set up.
+Congratulations, you now have an instance of kose kata!

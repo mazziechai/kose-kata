@@ -112,3 +112,5 @@ build/
 .env
 
 *.log
+
+.idea
