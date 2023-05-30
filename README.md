@@ -39,7 +39,7 @@ A Discord bot for creating "notes", a message that is stored in the bot then can
 ```
 TOKEN=your token
 TEST_SERVER=your server ID
-ENVIRONMENT=(production | dev)
+LOG_LEVEL=INFO
 DB_URI=mongodb://localhost
 DEVELOPER=your ID
 ```
