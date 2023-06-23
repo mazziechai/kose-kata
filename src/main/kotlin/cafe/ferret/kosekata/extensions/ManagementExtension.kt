@@ -5,9 +5,12 @@
 package cafe.ferret.kosekata.extensions
 
 import cafe.ferret.kosekata.ByIdArgs
+import cafe.ferret.kosekata.UserNotesArgs
 import cafe.ferret.kosekata.database.collections.NoteCollection
 import cafe.ferret.kosekata.noteEmbed
 import com.kotlindiscord.kord.extensions.checks.anyGuild
+import com.kotlindiscord.kord.extensions.checks.hasPermission
+import com.kotlindiscord.kord.extensions.commands.application.slash.ephemeralSubCommand
 import com.kotlindiscord.kord.extensions.components.components
 import com.kotlindiscord.kord.extensions.components.ephemeralButton
 import com.kotlindiscord.kord.extensions.components.forms.ModalForm
@@ -27,74 +30,125 @@ class ManagementExtension : Extension() {
     private val noteCollection: NoteCollection by inject()
 
     override suspend fun setup() {
-        ephemeralSlashCommand(::ByIdArgs) {
+        ephemeralSlashCommand {
             name = "delete"
-            description = "Delete a note by its ID. This is irreversible!"
+            description = "Note deletion"
 
             check { anyGuild() }
 
-            action {
-                val noteId = arguments.noteId.toInt(16)
+            ephemeralSubCommand(::ByIdArgs) {
+                name = "id"
+                description = "Delete a note by its ID. This is irreversible!"
 
-                val note = noteCollection.get(noteId)
+                action {
+                    val noteId = arguments.noteId.toInt(16)
 
-                if (note == null || note.guild != guild!!.id) {
-                    respond {
-                        content = "I couldn't find that note."
-                    }
+                    val note = noteCollection.get(noteId)
 
-                    return@action
-                }
-
-                if (note.author != user.id && !member!!.asMember(guild!!.id)
-                        .hasPermission(Permission.ManageMessages)
-                ) {
-                    respond {
-                        content = "You don't own that note."
-                    }
-                    return@action
-                }
-
-                edit {
-                    content = "Are you sure you want to delete this note?"
-
-                    noteEmbed(this@ephemeralSlashCommand.kord, note)
-
-                    components(15.seconds) {
-                        ephemeralButton {
-                            label = "Delete"
-                            style = ButtonStyle.Danger
-
-                            action {
-                                noteCollection.delete(note)
-
-                                edit {
-                                    content = "Note `${note.name}` deleted."
-
-                                    components = mutableListOf()
-                                }
-                            }
+                    if (note == null || note.guild != guild!!.id) {
+                        respond {
+                            content = "I couldn't find that note."
                         }
 
-                        ephemeralButton {
-                            label = "Cancel"
-                            style = ButtonStyle.Secondary
+                        return@action
+                    }
 
-                            action {
+                    if (note.author != user.id && !member!!.asMember(guild!!.id)
+                                    .hasPermission(Permission.ManageMessages)
+                    ) {
+                        respond {
+                            content = "You don't own that note."
+                        }
+                        return@action
+                    }
+
+                    edit {
+                        content = "Are you sure you want to delete this note?"
+
+                        noteEmbed(this@ephemeralSlashCommand.kord, note)
+
+                        components(15.seconds) {
+                            ephemeralButton {
+                                label = "Delete"
+                                style = ButtonStyle.Danger
+
+                                action {
+                                    noteCollection.delete(note)
+
+                                    edit {
+                                        content = "Note `${note.name}` deleted."
+
+                                        components = mutableListOf()
+                                    }
+                                }
+                            }
+
+                            ephemeralButton {
+                                label = "Cancel"
+                                style = ButtonStyle.Secondary
+
+                                action {
+                                    edit {
+                                        content = "Cancelled deletion."
+
+                                        components = mutableListOf()
+                                    }
+
+                                }
+                            }
+
+                            onTimeout {
                                 edit {
                                     content = "Cancelled deletion."
 
                                     components = mutableListOf()
                                 }
-
                             }
                         }
+                    }
+                }
+            }
 
-                        onTimeout {
-                            edit {
-                                content = "Cancelled deletion."
+            ephemeralSubCommand(::UserNotesArgs) {
+                name = "user"
+                description = "Delete all notes from a user. This is irreversible!"
 
-                                components = mutableListOf()
+                check {
+                    hasPermission(Permission.ManageMessages)
+                }
+
+                action {
+                    val member = arguments.user
+
+                    val notes = noteCollection
+                            .getByUser(member.id)
+                            .filter { it.guild == guild!!.id }
+
+                    if (notes.isEmpty()) {
+                        respond {
+                            content = "This user has no notes."
+                        }
+
+                        return@action
+                    }
+
+                    edit {
+                        content = "Are you sure you want to delete ALL of ${member.mention}'s notes?"
+
+                        components(15.seconds) {
+                            ephemeralButton {
+                                label = "Delete"
+                                style = ButtonStyle.Danger
+
+                                action {
+                                    noteCollection.deleteByUserInGuild(member.id, guild!!.id)
+
+                                    edit {
+                                        content = "All notes from ${member.mention} deleted."
+
+                                        components = mutableListOf()
+                                    }
+                                }
                             }
                         }
                     }

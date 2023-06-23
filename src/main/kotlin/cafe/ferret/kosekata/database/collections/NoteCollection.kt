@@ -61,6 +61,11 @@ class NoteCollection : KordExKoinComponent {
      */
     suspend fun delete(note: Note) = col.deleteOne(Note::_id eq note._id)
 
+    /**
+     * Deletes all notes from a user in a guild.
+     */
+    suspend fun deleteByUserInGuild(user: Snowflake, guild: Snowflake) =
+            col.deleteMany(and(Note::author eq user, Note::guild eq guild))
 
     /**
      * Deletes all notes from a guild.

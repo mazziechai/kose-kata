@@ -5,6 +5,7 @@
 package cafe.ferret.kosekata
 
 import com.kotlindiscord.kord.extensions.commands.Arguments
+import com.kotlindiscord.kord.extensions.commands.converters.impl.member
 import com.kotlindiscord.kord.extensions.commands.converters.impl.string
 
 class ByIdArgs : Arguments() {
@@ -17,5 +18,12 @@ class ByIdArgs : Arguments() {
                 value.toIntOrNull(16) == null
             }
         }
+    }
+}
+
+class UserNotesArgs : Arguments() {
+    val user by member {
+        name = "user"
+        description = "The user to get the notes from"
     }
 }

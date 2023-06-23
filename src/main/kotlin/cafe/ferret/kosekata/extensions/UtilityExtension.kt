@@ -4,13 +4,13 @@
 
 package cafe.ferret.kosekata.extensions
 
+import cafe.ferret.kosekata.UserNotesArgs
 import cafe.ferret.kosekata.database.collections.NoteCollection
 import cafe.ferret.kosekata.database.entities.Note
 import com.kotlindiscord.kord.extensions.checks.anyGuild
 import com.kotlindiscord.kord.extensions.commands.Arguments
 import com.kotlindiscord.kord.extensions.commands.application.slash.ephemeralSubCommand
 import com.kotlindiscord.kord.extensions.commands.converters.impl.attachment
-import com.kotlindiscord.kord.extensions.commands.converters.impl.member
 import com.kotlindiscord.kord.extensions.components.components
 import com.kotlindiscord.kord.extensions.components.ephemeralButton
 import com.kotlindiscord.kord.extensions.extensions.Extension
@@ -33,7 +33,6 @@ import io.ktor.client.request.forms.*
 import io.ktor.util.cio.*
 import kotlinx.datetime.toInstant
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.koin.core.component.inject
@@ -428,13 +427,6 @@ class UtilityExtension : Extension() {
                     }
                 }
             }
-        }
-    }
-
-    inner class UserNotesArgs : Arguments() {
-        val user by member {
-            name = "user"
-            description = "The user to get the notes from"
         }
     }
 
