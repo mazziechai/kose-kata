@@ -31,10 +31,10 @@ suspend fun MessageModifyBuilder.noteEmbed(kord: Kord, note: Note) {
 
     embed {
         author {
-            name = if (noteMember?.nickname != null) {
-                "${noteMember.nickname} (${noteUser.tag})"
+            name = if (noteMember?.effectiveName != null) {
+                "${noteMember.effectiveName} (${noteUser.username})"
             } else {
-                noteUser?.tag ?: "Unknown user"
+                noteUser?.username ?: "Unknown user"
             }
             icon = noteMember?.avatar?.cdnUrl?.toUrl()
         }

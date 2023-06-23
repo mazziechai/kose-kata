@@ -79,11 +79,7 @@ class UtilityExtension : Extension() {
                         notes.chunked(10).forEach { chunkedNotes ->
                             page {
                                 author {
-                                    name = if (member.nickname != null) {
-                                        "${member.nickname} (${member.tag})"
-                                    } else {
-                                        member.tag
-                                    }
+                                    name = "${member.effectiveName} (${member.username})"
                                     icon = member.avatar?.cdnUrl?.toUrl()
                                 }
 
@@ -155,7 +151,7 @@ class UtilityExtension : Extension() {
                                             cachedUsers.add(user)
                                         }
 
-                                        append("${user?.tag ?: "Unknown user"} → ")
+                                        append("${user?.username ?: "Unknown user"} → ")
                                         append("*${note.name}* | #${note._id.toString(16)} | ")
                                         append("Created on ${note.timeCreated.toDiscord(TimestampType.ShortDate)} ")
                                         appendLine("at ${note.timeCreated.toDiscord(TimestampType.ShortTime)}")
@@ -197,7 +193,7 @@ class UtilityExtension : Extension() {
                     notes.chunked(10).forEach { chunkedNotes ->
                         page {
                             author {
-                                name = user.tag
+                                name = user.username
                                 icon = user.avatar?.cdnUrl?.toUrl()
                             }
 
