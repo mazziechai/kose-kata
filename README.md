@@ -1,6 +1,7 @@
 # kose kata
 
 [Invite link](https://discord.com/api/oauth2/authorize?client_id=1079265734456250439&permissions=0&scope=bot%20applications.commands)
+[Discord server](https://discord.gg/2YWKMAJT4P)
 
 ## What is *kose kata*?
 
