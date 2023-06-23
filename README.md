@@ -1,6 +1,29 @@
 # kose kata
 
-A Discord bot for creating "notes", a message that is stored in the bot then can be retrieved later.
+[Invite link](https://discord.com/api/oauth2/authorize?client_id=1079265734456250439&permissions=0&scope=bot%20applications.commands)
+
+## What is *kose kata*?
+
+*kose kata* fills the niche of providing retrievable messages (aka notes, quotes, or tags) that can be viewed or posted.
+This is useful for creating reusable answers to common questions, creating resources, making fun quotes or jokes, and
+much more.
+
+## What does *kose kata* do differently?
+
+kose kata's only functionality is managing notes, but it does it very well.
+
+- Its main selling point is note references. Note references are a special syntax you can use to create traversal
+  between notes. They're created by putting `{{braces}}` around the note name. When a note is viewed and there are note
+  references in that note, it will create a button that you can press to view the other note. This works recursively!
+- All interactions with the bot are through slash commands (and a single context omcmand). This allows for greater
+  functionality (autocomplete, modals) and no permissions required.
+- Most interactions with the bot are ephemeral, meaning less clutter in chats. Viewing a note is ephemeral, posting a
+  note with the /post command will send the note to chat visibly.
+- There are many quality of life features, such as its ability to create notes from existing messages using a context
+  command.
+- Moderation features are extended beyond any other bots' capabilities.
+
+---
 
 ## Features
 
