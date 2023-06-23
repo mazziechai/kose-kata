@@ -154,6 +154,73 @@ class ManagementExtension : Extension() {
                     }
                 }
             }
+
+            ephemeralSubCommand(::DeleteMultipleModal) {
+                name = "multiple"
+                description = "Delete multiple notes by their IDs. This is irreversible!"
+
+                check {
+                    hasPermission(Permission.ManageMessages)
+                }
+
+                action { modal ->
+                    if (modal == null) {
+                        throw IllegalStateException("Could not find modal!")
+                    }
+
+                    val noteIdsSplit = modal.content.value!!.split(" ")
+
+                    val noteIds = noteIdsSplit.map {
+                        try {
+                            it.toInt(16)
+                        } catch (_: NumberFormatException) {
+                            respond {
+                                content = "$it is an invalid ID."
+                            }
+
+                            return@action
+                        }
+                    }
+
+
+                    val notes = noteCollection.getMultipleNotes(noteIds).filter { it.guild == guild!!.id }
+
+                    if (notes.isEmpty()) {
+                        respond {
+                            content = "I couldn't find any notes."
+                        }
+
+                        return@action
+                    }
+
+                    edit {
+                        // TODO: List more information about the notes being deleted
+                        content = "Are you sure you want to delete ${notes.count()} note(s)?"
+
+                        if (notes.count() != noteIds.count()) {
+                            content += "\n(${noteIds.count() - notes.count()} note(s) were not found)"
+                        }
+
+                        components(15.seconds) {
+                            ephemeralButton {
+                                label = "Delete all"
+                                style = ButtonStyle.Danger
+
+                                action {
+                                    noteCollection.deleteMany(notes)
+
+                                    edit {
+                                        content = "${notes.count()} notes deleted."
+
+                                        components = mutableListOf()
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
         }
 
         ephemeralSlashCommand(::ByIdArgs, ::EditModal) {
@@ -181,7 +248,7 @@ class ManagementExtension : Extension() {
                 }
 
                 if (note.author != user.id && !member!!.asMember(guild!!.id)
-                        .hasPermission(Permission.ManageMessages)
+                                .hasPermission(Permission.ManageMessages)
                 ) {
                     respond {
                         content = "You don't own that note."
@@ -207,6 +274,16 @@ class ManagementExtension : Extension() {
 
         val content = paragraphText {
             label = "Content of the note"
+            required = true
+            maxLength = 2000
+        }
+    }
+
+    inner class DeleteMultipleModal : ModalForm() {
+        override var title = "Delete multiple notes"
+
+        val content = paragraphText {
+            label = "Notes to delete, separated by spaces"
             required = true
             maxLength = 2000
         }

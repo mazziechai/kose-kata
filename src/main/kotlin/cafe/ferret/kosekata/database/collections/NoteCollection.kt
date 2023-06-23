@@ -14,6 +14,7 @@ import kotlinx.datetime.Instant
 import org.koin.core.component.inject
 import org.litote.kmongo.and
 import org.litote.kmongo.eq
+import org.litote.kmongo.`in`
 import kotlin.random.Random
 
 /**
@@ -60,6 +61,8 @@ class NoteCollection : KordExKoinComponent {
      * @param note The [Note] to delete from the collection.
      */
     suspend fun delete(note: Note) = col.deleteOne(Note::_id eq note._id)
+
+    suspend fun deleteMany(notes: List<Note>) = col.deleteMany(Note::_id `in` notes.map { it._id })
 
     /**
      * Deletes all notes from a user in a guild.
@@ -113,7 +116,12 @@ class NoteCollection : KordExKoinComponent {
      * @return The [Note]s, if any.
      */
     suspend fun getByGuildAndName(guild: Snowflake, name: String) =
-        col.find(and(Note::guild eq guild, Note::name eq name)).toList()
+            col.find(and(Note::guild eq guild, Note::name eq name)).toList()
+
+    /**
+     * Gets multiple Notes by ID.
+     */
+    suspend fun getMultipleNotes(ids: List<Int>) = col.find(Note::_id `in` ids).toList()
 
     companion object : DbCollection("notes")
 }
