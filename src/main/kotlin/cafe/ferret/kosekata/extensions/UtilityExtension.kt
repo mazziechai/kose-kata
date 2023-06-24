@@ -376,6 +376,9 @@ class UtilityExtension : Extension() {
                     content = buildString {
                         appendLine("# kose kata")
 
+                        append("Use `{{braces}}` to create note references, which are traversible to view new notes.")
+                        appendLine("For more information, see the wiki.")
+
                         appendLine("## Essential commands")
 
                         appendLine("`/new` Creates a modal to make a new note.")
