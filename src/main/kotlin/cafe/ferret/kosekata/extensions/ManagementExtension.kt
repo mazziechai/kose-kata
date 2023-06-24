@@ -62,7 +62,7 @@ class ManagementExtension : Extension() {
                         return@action
                     }
 
-                    edit {
+                    respond {
                         content = "Are you sure you want to delete this note?"
 
                         noteEmbed(this@ephemeralSlashCommand.kord, note)
@@ -132,7 +132,7 @@ class ManagementExtension : Extension() {
                         return@action
                     }
 
-                    edit {
+                    respond {
                         content = "Are you sure you want to delete ALL of ${member.mention}'s notes?"
 
                         components(15.seconds) {
@@ -193,7 +193,7 @@ class ManagementExtension : Extension() {
                         return@action
                     }
 
-                    edit {
+                    respond {
                         // TODO: List more information about the notes being deleted
                         content = "Are you sure you want to delete ${notes.count()} note(s)?"
 
@@ -260,7 +260,7 @@ class ManagementExtension : Extension() {
 
                 noteCollection.set(note)
 
-                edit {
+                respond {
                     content = "Updated note `${note.name}`!"
 
                     noteEmbed(this@ephemeralSlashCommand.kord, note)

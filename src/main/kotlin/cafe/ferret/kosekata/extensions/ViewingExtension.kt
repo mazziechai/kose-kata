@@ -14,7 +14,7 @@ import com.kotlindiscord.kord.extensions.commands.Arguments
 import com.kotlindiscord.kord.extensions.commands.converters.impl.string
 import com.kotlindiscord.kord.extensions.components.ComponentContainer
 import com.kotlindiscord.kord.extensions.components.components
-import com.kotlindiscord.kord.extensions.components.ephemeralButton
+import com.kotlindiscord.kord.extensions.components.ephemeralSelectMenu
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
 import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
@@ -23,9 +23,7 @@ import com.kotlindiscord.kord.extensions.types.PublicInteractionContext
 import com.kotlindiscord.kord.extensions.types.edit
 import com.kotlindiscord.kord.extensions.types.respond
 import com.kotlindiscord.kord.extensions.utils.suggestStringCollection
-import dev.kord.core.entity.interaction.response.EphemeralMessageInteractionResponse
-import dev.kord.core.entity.interaction.response.PublicMessageInteractionResponse
-import dev.kord.rest.builder.message.modify.MessageModifyBuilder
+import dev.kord.rest.builder.message.create.FollowupMessageCreateBuilder
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.koin.core.component.inject
 
@@ -57,20 +55,6 @@ class ViewingExtension : Extension() {
                 val note = guildNotes.random()
 
                 viewNoteResponse(note)
-
-                val regex = Regex("""(http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])""")
-                val urls = regex.findAll(note.content)
-
-                if (!urls.none()) {
-                    respond {
-                        content = buildString {
-                            appendLine("**URLs** (for embeds)")
-                            for (url in urls) {
-                                appendLine(url.value)
-                            }
-                        }
-                    }
-                }
             }
         }
 
@@ -96,20 +80,6 @@ class ViewingExtension : Extension() {
                 val note = guildNotes.random()
 
                 viewNoteResponse(note)
-
-                val regex = Regex("""(http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])""")
-                val urls = regex.findAll(note.content)
-
-                if (!urls.none()) {
-                    respond {
-                        content = buildString {
-                            appendLine("**URLs** (for embeds)")
-                            for (url in urls) {
-                                appendLine(url.value)
-                            }
-                        }
-                    }
-                }
             }
         }
 
@@ -135,20 +105,6 @@ class ViewingExtension : Extension() {
                 }
 
                 viewNoteResponse(note)
-
-                val regex = Regex("""(http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])""")
-                val urls = regex.findAll(note.content)
-
-                if (!urls.none()) {
-                    respond {
-                        content = buildString {
-                            appendLine("**URLs** (for embeds)")
-                            for (url in urls) {
-                                appendLine(url.value)
-                            }
-                        }
-                    }
-                }
             }
         }
 
@@ -174,20 +130,6 @@ class ViewingExtension : Extension() {
                 }
 
                 viewNoteResponse(note)
-
-                val regex = Regex("""(http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])""")
-                val urls = regex.findAll(note.content)
-
-                if (!urls.none()) {
-                    respond {
-                        content = buildString {
-                            appendLine("**URLs** (for embeds)")
-                            for (url in urls) {
-                                appendLine(url.value)
-                            }
-                        }
-                    }
-                }
             }
         }
 
@@ -253,10 +195,24 @@ class ViewingExtension : Extension() {
      */
     private suspend fun PublicInteractionContext.viewNoteResponse(
         note: Note,
-    ): PublicMessageInteractionResponse {
-        return edit {
+    ) {
+        respond {
             noteEmbed(kord, note)
-            viewNoteReferences(note)
+            noteReferencesComponents(note)
+        }
+
+        val regex = Regex("""(http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])""")
+        val urls = regex.findAll(note.content)
+
+        if (!urls.none()) {
+            respond {
+                this@respond.content = buildString {
+                    appendLine("**URLs** (for embeds)")
+                    for (url in urls) {
+                        appendLine(url.value)
+                    }
+                }
+            }
         }
     }
 
@@ -267,10 +223,24 @@ class ViewingExtension : Extension() {
      */
     private suspend fun EphemeralInteractionContext.viewNoteResponse(
         note: Note,
-    ): EphemeralMessageInteractionResponse {
-        return edit {
+    ) {
+        respond {
             noteEmbed(kord, note)
-            viewNoteReferences(note)
+            noteReferencesComponents(note)
+        }
+
+        val regex = Regex("""(http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])""")
+        val urls = regex.findAll(note.content)
+
+        if (!urls.none()) {
+            respond {
+                this@respond.content = buildString {
+                    appendLine("**URLs** (for embeds)")
+                    for (url in urls) {
+                        appendLine(url.value)
+                    }
+                }
+            }
         }
     }
 
@@ -279,7 +249,7 @@ class ViewingExtension : Extension() {
      *
      * @param note The [Note] to create reference components for.
      */
-    private suspend fun MessageModifyBuilder.viewNoteReferences(note: Note): ComponentContainer {
+    private suspend fun FollowupMessageCreateBuilder.noteReferencesComponents(note: Note): ComponentContainer {
         val referenceRegex = Regex("\\{\\{(.+?)}}")
         val references = referenceRegex.findAll(note.content).distinctBy { it.groupValues[1] }
 
@@ -290,16 +260,24 @@ class ViewingExtension : Extension() {
         }
 
         return components {
-            if (referencedNotes.isNotEmpty()) {
-                references.forEach { result ->
-                    ephemeralButton {
-                        label = result.groupValues[1]
+            if (references.any()) {
+                ephemeralSelectMenu {
+                    placeholder = "Referenced notes"
 
-                        val referencedNote =
-                            referencedNotes.filter { it.name == result.groupValues[1] }.random()
+                    if (referencedNotes.isNotEmpty()) {
+                        references.forEach { result ->
+                            val noteName = result.groupValues[1]
 
-                        action {
-                            viewNoteResponse(referencedNote)
+                            val referencedNote =
+                                referencedNotes.filter { it.name == noteName }.random()
+
+                            option(noteName, referencedNote._id.toString(16))
+                        }
+                    }
+
+                    action {
+                        edit {
+                            viewNoteResponse(referencedNotes.first { it._id.toString(16) == selected.first() })
                         }
                     }
                 }

@@ -14,8 +14,8 @@ import dev.kord.core.Kord
 import dev.kord.core.entity.Guild
 import dev.kord.core.entity.User
 import dev.kord.rest.Image
-import dev.kord.rest.builder.message.modify.MessageModifyBuilder
-import dev.kord.rest.builder.message.modify.embed
+import dev.kord.rest.builder.message.create.FollowupMessageCreateBuilder
+import dev.kord.rest.builder.message.create.embed
 import kotlinx.datetime.Instant
 import java.text.SimpleDateFormat
 
@@ -33,7 +33,7 @@ fun formatTime(instant: Instant): String {
  * @param kord The bot.
  * @param note The note to display.
  */
-suspend fun MessageModifyBuilder.noteEmbed(kord: Kord, note: Note) {
+suspend fun FollowupMessageCreateBuilder.noteEmbed(kord: Kord, note: Note) {
     val noteUser = kord.getUser(note.author)
     val noteMember = noteUser?.asMemberOrNull(note.guild)
 
