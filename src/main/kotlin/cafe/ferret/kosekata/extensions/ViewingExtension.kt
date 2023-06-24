@@ -260,19 +260,17 @@ class ViewingExtension : Extension() {
         }
 
         return components {
-            if (references.any()) {
+            if (references.any() && referencedNotes.isNotEmpty()) {
                 ephemeralSelectMenu {
                     placeholder = "Referenced notes"
 
-                    if (referencedNotes.isNotEmpty()) {
-                        references.forEach { result ->
-                            val noteName = result.groupValues[1]
+                    references.forEach { result ->
+                        val noteName = result.groupValues[1]
 
-                            val referencedNote =
-                                referencedNotes.filter { it.name == noteName }.random()
+                        val referencedNote =
+                            referencedNotes.filter { it.name == noteName }.random()
 
-                            option(noteName, referencedNote._id.toString(16))
-                        }
+                        option(noteName, referencedNote._id.toString(16))
                     }
 
                     action {
