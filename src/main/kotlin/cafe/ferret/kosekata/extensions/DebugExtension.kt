@@ -21,7 +21,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.koin.core.component.inject
 import java.text.SimpleDateFormat
-import java.time.Clock
+import java.util.*
 
 class DebugExtension : Extension() {
     override val name = "debug"
@@ -47,7 +47,7 @@ class DebugExtension : Extension() {
                     val timeFormat = SimpleDateFormat("yyyy-MM-dd")
                     respond {
                         addFile(
-                            "kose-${guild!!.id}-{${timeFormat.format(Clock.systemUTC())}.json",
+                            "kose-${guild!!.id}-{${timeFormat.format(Date())}.json",
                             ChannelProvider { json.byteInputStream().toByteReadChannel() })
                     }
                 }

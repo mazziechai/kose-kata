@@ -38,7 +38,7 @@ import kotlinx.serialization.json.*
 import org.koin.core.component.inject
 import java.nio.charset.Charset
 import java.text.SimpleDateFormat
-import java.time.Clock
+import java.util.*
 import kotlin.time.Duration.Companion.seconds
 
 class UtilityExtension : Extension() {
@@ -205,7 +205,7 @@ class UtilityExtension : Extension() {
 
                 respond {
                     addFile(
-                        "kose-${guild!!.id}-{${timeFormat.format(Clock.systemUTC())}.json",
+                        "kose-${guild!!.id}-{${timeFormat.format(Date())}.json",
                         ChannelProvider { json.byteInputStream().toByteReadChannel() })
                 }
             }
