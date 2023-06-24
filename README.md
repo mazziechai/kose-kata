@@ -47,7 +47,7 @@ kose kata's only functionality is managing notes, but it does it very well.
 - [x] Deleting multiple notes at once, with various options for that
 - [x] Searching notes
 - [ ] "Reserving" note names: preventing name collision with a toggle
-- [ ] Help command
+- [x] Help command
 
 ## Technical to-do list
 
