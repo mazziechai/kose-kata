@@ -7,6 +7,7 @@ package cafe.ferret.kosekata.extensions
 import cafe.ferret.kosekata.UserNotesArgs
 import cafe.ferret.kosekata.database.collections.NoteCollection
 import cafe.ferret.kosekata.database.entities.Note
+import cafe.ferret.kosekata.guildNotes
 import com.kotlindiscord.kord.extensions.checks.anyGuild
 import com.kotlindiscord.kord.extensions.commands.Arguments
 import com.kotlindiscord.kord.extensions.commands.application.slash.ephemeralSubCommand
@@ -27,8 +28,7 @@ import dev.kord.common.entity.Permission
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.entity.Guild
 import dev.kord.core.entity.Member
-import dev.kord.core.entity.User
-import dev.kord.rest.Image
+import dev.kord.core.entity.effectiveName
 import io.ktor.client.request.forms.*
 import io.ktor.util.cio.*
 import kotlinx.datetime.toInstant
@@ -119,51 +119,7 @@ class UtilityExtension : Extension() {
                         return@action
                     }
 
-                    val thisGuild = guild!!.asGuild()
-                    val cachedUsers = mutableListOf<User>()
-                    val unknownUsers = mutableListOf<Snowflake>()
-
-                    editingPaginator {
-                        timeoutSeconds = 60
-
-                        notes.chunked(10).forEach { chunkedNotes ->
-                            page {
-                                author {
-                                    name = thisGuild.name
-                                    icon = thisGuild.icon?.cdnUrl?.toUrl { format = Image.Format.PNG }
-                                }
-
-                                title = "Notes"
-
-                                description = buildString {
-                                    chunkedNotes.forEach { note ->
-                                        var user = cachedUsers.find { it.id == note.author }
-
-                                        if (user == null) {
-                                            if (note.author !in unknownUsers) {
-                                                user = this@ephemeralSlashCommand.kord.getUser(note.author)
-                                            }
-                                        }
-
-                                        if (user == null) {
-                                            unknownUsers.add(note.author)
-                                        } else {
-                                            cachedUsers.add(user)
-                                        }
-
-                                        append("${user?.username ?: "Unknown user"} → ")
-                                        append("*${note.name}* | #${note._id.toString(16)} | ")
-                                        append("Created on ${note.timeCreated.toDiscord(TimestampType.ShortDate)} ")
-                                        appendLine("at ${note.timeCreated.toDiscord(TimestampType.ShortTime)}")
-                                    }
-                                }
-
-                                footer {
-                                    text = "${notes.count()} notes"
-                                }
-                            }
-                        }
-                    }.send()
+                    guildNotes(this@ephemeralSlashCommand.kord, guild!!.asGuild(), notes)
                 }
             }
         }
@@ -193,7 +149,7 @@ class UtilityExtension : Extension() {
                     notes.chunked(10).forEach { chunkedNotes ->
                         page {
                             author {
-                                name = user.username
+                                name = user.effectiveName
                                 icon = user.avatar?.cdnUrl?.toUrl()
                             }
 

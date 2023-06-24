@@ -7,6 +7,7 @@ package cafe.ferret.kosekata.extensions
 import cafe.ferret.kosekata.ByIdArgs
 import cafe.ferret.kosekata.database.collections.NoteCollection
 import cafe.ferret.kosekata.database.entities.Note
+import cafe.ferret.kosekata.guildNotes
 import cafe.ferret.kosekata.noteEmbed
 import com.kotlindiscord.kord.extensions.checks.anyGuild
 import com.kotlindiscord.kord.extensions.commands.Arguments
@@ -189,6 +190,31 @@ class ViewingExtension : Extension() {
                 }
             }
         }
+
+        ephemeralSlashCommand(::SearchCommandArgs) {
+            name = "search"
+            description = "Search for a note"
+
+            check { anyGuild() }
+
+            action {
+                val guildNotes = noteCollection.getByGuild(guild!!.id)
+
+                if (guildNotes.isEmpty()) {
+                    respond {
+                        content = "This server has no notes."
+                    }
+                    return@action
+                }
+
+                val noteNames = guildNotes.map { it.name }
+                val searchResults = FuzzySearch.extractSorted(arguments.searchParam, noteNames, 66).map { it.string }
+
+                val notes = guildNotes.filter { it.name in searchResults }
+
+                guildNotes(this@ephemeralSlashCommand.kord, guild!!.asGuild(), notes, arguments.searchParam)
+            }
+        }
     }
 
     inner class ViewByNameCommandArgs : Arguments() {
@@ -200,7 +226,6 @@ class ViewingExtension : Extension() {
 
             autoComplete {
                 if (data.guildId.value != null) {
-
                     if (notes == null) {
                         notes = noteCollection.getByGuild(data.guildId.value!!)
                             .map { it.name }
@@ -211,6 +236,13 @@ class ViewingExtension : Extension() {
                     suggestStringCollection(noteNames)
                 }
             }
+        }
+    }
+
+    inner class SearchCommandArgs : Arguments() {
+        val searchParam by string {
+            name = "name"
+            description = "The name to search for"
         }
     }
 

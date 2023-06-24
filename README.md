@@ -44,9 +44,10 @@ kose kata's only functionality is managing notes, but it does it very well.
 - [x] Clearing notes in a guild
 - [ ] Note aliases
 - ~~Chat command aliases for slash commands (specifically for qbot transition)~~ Out of scope
-- [ ] Deleting multiple notes at once, with various options for that
-- [ ] Searching notes
+- [x] Deleting multiple notes at once, with various options for that
+- [x] Searching notes
 - [ ] "Reserving" note names: preventing name collision with a toggle
+- [ ] Help command
 
 ## Technical to-do list
 
