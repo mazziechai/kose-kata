@@ -225,7 +225,7 @@ class ManagementExtension : Extension() {
 
         ephemeralSlashCommand(::ByIdArgs, ::EditModal) {
             name = "edit"
-            description = "Edit a note by its ID."
+            description = "Edit a note by its ID. Opens a text box."
 
             check { anyGuild() }
 

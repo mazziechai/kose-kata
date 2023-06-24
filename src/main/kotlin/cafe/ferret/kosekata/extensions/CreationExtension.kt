@@ -50,7 +50,7 @@ class CreationExtension : Extension() {
          */
         ephemeralSlashCommand(::CreateNoteFromCommandModal) {
             name = "new"
-            description = "Create a new note"
+            description = "Create a new note. Opens a text box."
 
             check {
                 anyGuild()
