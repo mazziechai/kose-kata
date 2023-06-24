@@ -51,9 +51,9 @@ kose kata's only functionality is managing notes, but it does it very well.
 
 ## Technical to-do list
 
-- [ ] Make all note related commands subcommands of a larger note command (later?)
+- [ ] ~~Make all note related commands subcommands of a larger note command (later?)~~
 - [ ] Markdown escape function
-- [ ] Dropdown menus for note references
+- [x] Dropdown menus for note references
 - [ ] Deduplicate code
 
 ## Setup
