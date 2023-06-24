@@ -17,7 +17,8 @@ data class Note(
     override val _id: Int,
     val author: Snowflake,
     val guild: Snowflake,
-    val name: String,
+    val name: String, // This is the original name
+    val aliases: MutableList<String>, // while this is all the valid names
     var content: String,
     val originalAuthor: Snowflake?,
     val timeCreated: Instant

@@ -42,7 +42,7 @@ kose kata's only functionality is managing notes, but it does it very well.
 - [x] Getting a list of a user's notes in general
 - [x] Getting a list of a guild's notes
 - [x] Clearing notes in a guild
-- [ ] Note aliases
+- [x] Note aliases
 - ~~Chat command aliases for slash commands (specifically for qbot transition)~~ Out of scope
 - [x] Deleting multiple notes at once, with various options for that
 - [x] Searching notes
@@ -55,6 +55,7 @@ kose kata's only functionality is managing notes, but it does it very well.
 - [ ] Markdown escape function
 - [x] Dropdown menus for note references
 - [ ] Deduplicate code
+- [ ] Case normalization
 
 ## Setup
 

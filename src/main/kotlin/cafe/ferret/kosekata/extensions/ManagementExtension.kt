@@ -76,7 +76,7 @@ class ManagementExtension : Extension() {
                                     noteCollection.delete(note)
 
                                     edit {
-                                        content = "Note `${note.name}` deleted."
+                                        content = "Note `#%06x` deleted.".format(noteId)
 
                                         components = mutableListOf()
                                     }
@@ -261,7 +261,7 @@ class ManagementExtension : Extension() {
                 noteCollection.set(note)
 
                 respond {
-                    content = "Updated note `${note.name}`!"
+                    content = "Updated note `#%06x`!".format(noteId)
 
                     noteEmbed(this@ephemeralSlashCommand.kord, note)
                 }

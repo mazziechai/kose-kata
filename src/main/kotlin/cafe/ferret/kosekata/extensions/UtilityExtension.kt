@@ -6,7 +6,6 @@ package cafe.ferret.kosekata.extensions
 
 import cafe.ferret.kosekata.UserNotesArgs
 import cafe.ferret.kosekata.database.collections.NoteCollection
-import cafe.ferret.kosekata.database.entities.Note
 import cafe.ferret.kosekata.guildNotes
 import com.kotlindiscord.kord.extensions.checks.anyGuild
 import com.kotlindiscord.kord.extensions.commands.Arguments
@@ -87,7 +86,7 @@ class UtilityExtension : Extension() {
 
                                 description = buildString {
                                     chunkedNotes.forEach { note ->
-                                        append("*${note.name}* | #${note._id.toString(16)} | ")
+                                        append("*${note.name}* | #%06x | ".format(note._id))
                                         append("Created on ${note.timeCreated.toDiscord(TimestampType.ShortDate)} ")
                                         appendLine("at ${note.timeCreated.toDiscord(TimestampType.ShortTime)}")
                                     }
@@ -172,7 +171,7 @@ class UtilityExtension : Extension() {
                                     }
 
                                     append("${guild?.name ?: "Unknown server"} → ")
-                                    append("*${note.name}* | #${note._id.toString(16)} | ")
+                                    append("*${note.name}* | #%06x | ".format(note._id))
                                     append("Created on ${note.timeCreated.toDiscord(TimestampType.ShortDate)} ")
                                     appendLine("at ${note.timeCreated.toDiscord(TimestampType.ShortTime)}")
                                 }
@@ -226,14 +225,14 @@ class UtilityExtension : Extension() {
                 description = "Import notes from a kose kata notes file"
 
                 action {
-                    val notes: List<Note>
+                    val koseJson: JsonElement
 
                     try {
-                        notes = Json.decodeFromString(arguments.file.download().toString(Charset.forName("UTF-8")))
+                        koseJson = Json.parseToJsonElement(arguments.file.download().toString(Charset.forName("UTF-8")))
                     } catch (t: SerializationException) {
                         respond {
                             content = buildString {
-                                appendLine("Malformed JSON See the following for more information:")
+                                appendLine("Malformed JSON. See the following for more information:")
                                 appendLine("```\n${t}\n```")
                             }
                         }
@@ -241,19 +240,35 @@ class UtilityExtension : Extension() {
                         return@action
                     }
 
-                    for (note in notes) {
-                        noteCollection.new(
-                            note.author,
-                            guild!!.id,
-                            note.name,
-                            note.content,
-                            note.originalAuthor,
-                            note.timeCreated
-                        )
+                    for (element in koseJson.jsonArray) {
+                        val jsonObject = element.jsonObject
+
+                        try {
+                            noteCollection.new(
+                                Snowflake(jsonObject["author"]!!.jsonPrimitive.long),
+                                guild!!.id,
+                                jsonObject["name"]!!.jsonPrimitive.content,
+                                jsonObject["names"]?.jsonArray?.map { it.jsonPrimitive.content }?.toMutableList()
+                                    ?: mutableListOf(jsonObject["name"]!!.jsonPrimitive.content),
+                                jsonObject["content"]!!.jsonPrimitive.content,
+                                originalAuthor = Snowflake(jsonObject["originalAuthor"]!!.jsonPrimitive.long),
+                                timeCreated = jsonObject["timeCreated"]!!.jsonPrimitive.content.toInstant()
+                            )
+                        } catch (t: Throwable) {
+                            respond {
+                                content = buildString {
+                                    appendLine("Malformed JSON; import halted. Notes were partially imported.")
+                                    appendLine("See the following for more information:")
+                                    appendLine("```\n${t}\n```")
+                                }
+                            }
+
+                            return@action
+                        }
                     }
 
                     respond {
-                        content = "Successfully imported ${notes.count()} notes!"
+                        content = "Successfully imported ${koseJson.jsonArray.count()} notes!"
                     }
                 }
             }
@@ -285,6 +300,7 @@ class UtilityExtension : Extension() {
                                 Snowflake(jsonObject["user_id"]!!.jsonPrimitive.long),
                                 guild!!.id,
                                 jsonObject["name"]!!.jsonPrimitive.content,
+                                mutableListOf(jsonObject["name"]!!.jsonPrimitive.content),
                                 jsonObject["text"]!!.jsonPrimitive.content,
                                 timeCreated = jsonObject["created_at"]!!.jsonPrimitive.content.toInstant()
                             )

@@ -34,6 +34,7 @@ suspend fun main() {
             add(::ViewingExtension)
             add(::UtilityExtension)
             add(::DebugExtension)
+            add(::AliasExtension)
         }
     }
 

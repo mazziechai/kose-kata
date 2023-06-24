@@ -38,6 +38,7 @@ class NoteCollection : KordExKoinComponent {
         author: Snowflake,
         guild: Snowflake,
         name: String,
+        aliases: MutableList<String>,
         content: String,
         originalAuthor: Snowflake? = null,
         timeCreated: Instant = Clock.System.now()
@@ -48,7 +49,7 @@ class NoteCollection : KordExKoinComponent {
             id = Random.nextInt(0x0, 0xFFFFFF)
         } while (col.countDocuments(Note::_id eq id) != 0L)
 
-        val note = Note(id, author, guild, name, content, originalAuthor, timeCreated)
+        val note = Note(id, author, guild, name, aliases, content, originalAuthor, timeCreated)
 
         set(note)
 
@@ -68,7 +69,7 @@ class NoteCollection : KordExKoinComponent {
      * Deletes all notes from a user in a guild.
      */
     suspend fun deleteByUserInGuild(user: Snowflake, guild: Snowflake) =
-            col.deleteMany(and(Note::author eq user, Note::guild eq guild))
+        col.deleteMany(and(Note::author eq user, Note::guild eq guild))
 
     /**
      * Deletes all notes from a guild.
@@ -116,7 +117,7 @@ class NoteCollection : KordExKoinComponent {
      * @return The [Note]s, if any.
      */
     suspend fun getByGuildAndName(guild: Snowflake, name: String) =
-            col.find(and(Note::guild eq guild, Note::name eq name)).toList()
+        col.find(and(Note::guild eq guild, Note::aliases `in` name)).toList()
 
     /**
      * Gets multiple Notes by ID.

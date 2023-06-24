@@ -53,8 +53,11 @@ suspend fun FollowupMessageCreateBuilder.noteEmbed(kord: Kord, note: Note) {
 
         footer {
             text = buildString {
-                append("#${note._id.toString(16)} ")
+                append("#%06x ".format(note._id))
                 append("| Created on ${formatTime(note.timeCreated)}")
+                if (note.aliases.count() > 1) {
+                    append("| Aliases: ${note.aliases.drop(1)}")
+                }
             }
         }
     }
@@ -102,7 +105,7 @@ suspend fun EphemeralInteractionContext.guildNotes(
                         }
 
                         append("${user?.username ?: "Unknown user"} → ")
-                        append("*${note.name}* | #${note._id.toString(16)} | ")
+                        append("*${note.name}* | #%06x | ".format(note._id))
                         append("Created on ${note.timeCreated.toDiscord(TimestampType.ShortDate)} ")
                         appendLine("at ${note.timeCreated.toDiscord(TimestampType.ShortTime)}")
                     }

@@ -8,7 +8,7 @@ kx-ser = "1.3.3"
 logging = "2.1.23"
 logback = "1.4.7"
 
-kmongo = "4.8.0"
+kmongo = "4.9.0"
 fuzzywuzzy = "1.4.0"
 
 [libraries]

@@ -149,10 +149,10 @@ class ViewingExtension : Extension() {
                     return@action
                 }
 
-                val noteNames = guildNotes.map { it.name }
+                val noteNames = guildNotes.flatMap { it.aliases }
                 val searchResults = FuzzySearch.extractSorted(arguments.searchParam, noteNames, 66).map { it.string }
 
-                val notes = guildNotes.filter { it.name in searchResults }
+                val notes = guildNotes.filter { searchResults.any { it in noteNames } }
 
                 guildNotes(this@ephemeralSlashCommand.kord, guild!!.asGuild(), notes, arguments.searchParam)
             }
@@ -169,8 +169,7 @@ class ViewingExtension : Extension() {
             autoComplete {
                 if (data.guildId.value != null) {
                     if (notes == null) {
-                        notes = noteCollection.getByGuild(data.guildId.value!!)
-                            .map { it.name }
+                        notes = noteCollection.getByGuild(data.guildId.value!!).flatMap { it.aliases }.distinct()
                     }
 
                     val noteNames = FuzzySearch.extractTop(focusedOption.value, notes!!, 10).map { it.string }
@@ -268,7 +267,7 @@ class ViewingExtension : Extension() {
                         val noteName = result.groupValues[1]
 
                         val referencedNote =
-                            referencedNotes.filter { it.name == noteName }.random()
+                            referencedNotes.filter { it.aliases.contains(noteName) }.random()
 
                         option(noteName, referencedNote._id.toString(16))
                     }
