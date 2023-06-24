@@ -374,8 +374,27 @@ class UtilityExtension : Extension() {
             action {
                 respond {
                     content = buildString {
-                        appendLine("The help page for kose kata can be found here: ")
-                        appendLine("https://github.com/mazziechai/kose-kata/wiki")
+                        appendLine("# kose kata")
+
+                        appendLine("## Essential commands")
+
+                        appendLine("`/new` Creates a modal to make a new note.")
+
+                        append("`New note` Accessed through the apps menu when clicking on a message.")
+                        appendLine("Creates a note from this message, and creates a modal to set a name for the note.")
+
+                        append("`/view (name)` Views a note ephemerally by name.")
+                        append("If multiple notes exist under the same name, it chooses a random one.")
+                        appendLine("This command has autocomplete based on notes available in the guild!")
+
+                        append("`/post (name)` Posts a note to chat by name.")
+                        appendLine("If multiple notes exist under the same name, it chooses a random one.")
+
+                        appendLine("`/edit (ID)` Creates a modal where you can edit a note you own by ID.")
+
+                        appendLine("`/delete (ID)` Deletes a note by ID you own after asking for confirmation.")
+
+                        appendLine("\nSee the wiki for more help and commands: https://github.com/mazziechai/kose-kata/wiki")
                     }
                 }
             }
