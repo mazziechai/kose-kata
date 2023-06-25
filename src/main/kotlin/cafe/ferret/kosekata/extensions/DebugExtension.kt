@@ -71,7 +71,7 @@ suspend fun <T : Event> CheckContext<T>.isDeveloper(arg: suspend () -> Snowflake
     val id = arg()
 
     if (id != Snowflake(env("DEVELOPER").toLong())) {
-        fail()
+        fail("Wait a minute, who are you?")
     } else {
         pass()
     }
