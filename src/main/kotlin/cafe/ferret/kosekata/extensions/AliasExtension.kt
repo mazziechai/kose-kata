@@ -42,7 +42,6 @@ class AliasExtension : Extension() {
                         respond {
                             content = "I couldn't find that note."
                         }
-
                         return@action
                     }
 
@@ -77,7 +76,6 @@ class AliasExtension : Extension() {
                         respond {
                             content = "I couldn't find that note."
                         }
-
                         return@action
                     }
 
@@ -86,6 +84,13 @@ class AliasExtension : Extension() {
                     ) {
                         respond {
                             content = "You don't own that note."
+                        }
+                        return@action
+                    }
+
+                    if (note.aliases.count() <= 1) {
+                        respond {
+                            content = "You can't remove the last remaining alias for this note."
                         }
                         return@action
                     }
@@ -112,7 +117,6 @@ class AliasExtension : Extension() {
                         respond {
                             content = "I couldn't find that note."
                         }
-
                         return@action
                     }
 
