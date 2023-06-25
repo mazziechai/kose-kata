@@ -42,7 +42,7 @@ class CreationExtension : Extension() {
                     message.author?.id
                 )
 
-                respond { content = "Successfully created note `$noteName` with ID `#06x`!".format(note._id) }
+                respond { content = "Successfully created note `$noteName` with ID `#%06x`!".format(note._id) }
             }
         }
 
@@ -63,7 +63,7 @@ class CreationExtension : Extension() {
 
                 val note = noteCollection.new(user.id, guild!!.id, noteName, mutableListOf(noteName), noteContent)
 
-                respond { content = "Successfully created note `$noteName` with ID `#06x`!".format(note._id) }
+                respond { content = "Successfully created note `$noteName` with ID `#%06x`!".format(note._id) }
             }
         }
     }
