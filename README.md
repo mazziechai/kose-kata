@@ -37,7 +37,7 @@ kose kata's only functionality is managing notes, but it does it very well.
 - [x] Referencing other notes with buttons to view those quotes as well
 - [x] Exporting notes to a JSON file
 - [x] Importing notes from a JSON file
-  - [x] Other bot formats
+  - [x] qbot format
 - [x] Getting a list of a user's notes in a guild
 - [x] Getting a list of a user's notes in general
 - [x] Getting a list of a guild's notes
@@ -50,7 +50,7 @@ kose kata's only functionality is managing notes, but it does it very well.
 
 ## Technical to-do list
 
-- [ ] Markdown escape function
+- [ ] Markdown escaping for notes
 - [x] Dropdown menus for note references
 - [ ] Deduplicate code
 - [ ] Case normalization for note names
