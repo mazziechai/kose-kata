@@ -154,6 +154,14 @@ class ViewingExtension : Extension() {
 
                 val notes = guildNotes.filter { searchResults.any { it in noteNames } }
 
+                if (notes.isEmpty()) {
+                    respond {
+                        content = "I couldn't find any notes matching the query."
+                    }
+
+                    return@action
+                }
+
                 guildNotes(this@ephemeralSlashCommand.kord, guild!!.asGuild(), notes, arguments.searchParam)
             }
         }
