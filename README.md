@@ -43,7 +43,6 @@ kose kata's only functionality is managing notes, but it does it very well.
 - [x] Getting a list of a guild's notes
 - [x] Clearing notes in a guild
 - [x] Note aliases
-- ~~Chat command aliases for slash commands (specifically for qbot transition)~~ Out of scope
 - [x] Deleting multiple notes at once, with various options for that
 - [x] Searching notes
 - [ ] "Reserving" note names: preventing name collision with a toggle
@@ -51,11 +50,11 @@ kose kata's only functionality is managing notes, but it does it very well.
 
 ## Technical to-do list
 
-- [ ] ~~Make all note related commands subcommands of a larger note command (later?)~~
 - [ ] Markdown escape function
 - [x] Dropdown menus for note references
 - [ ] Deduplicate code
-- [ ] Case normalization
+- [ ] Case normalization for note names
+- [ ] PostgreSQL support (in the far future)
 
 ## Setup
 
@@ -66,7 +65,6 @@ kose kata's only functionality is managing notes, but it does it very well.
 TOKEN=your token
 TEST_SERVER=your server ID
 ENVIRONMENT=production
-LOG_LEVEL=INFO
 DB_URI=mongodb://localhost
 DEVELOPER=your ID
 ```
