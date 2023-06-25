@@ -271,7 +271,7 @@ class ViewingExtension : Extension() {
                 ephemeralSelectMenu {
                     placeholder = "Referenced notes"
 
-                    references.forEach { result ->
+                    references.take(25).forEach { result ->
                         val noteName = result.groupValues[1]
 
                         val referencedNote =
