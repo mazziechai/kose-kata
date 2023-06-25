@@ -8,6 +8,7 @@ import cafe.ferret.kosekata.UserNotesArgs
 import cafe.ferret.kosekata.database.collections.NoteCollection
 import cafe.ferret.kosekata.guildNotes
 import com.kotlindiscord.kord.extensions.checks.anyGuild
+import com.kotlindiscord.kord.extensions.checks.hasPermission
 import com.kotlindiscord.kord.extensions.commands.Arguments
 import com.kotlindiscord.kord.extensions.commands.application.slash.ephemeralSubCommand
 import com.kotlindiscord.kord.extensions.commands.converters.impl.attachment
@@ -21,12 +22,10 @@ import com.kotlindiscord.kord.extensions.types.edit
 import com.kotlindiscord.kord.extensions.types.editingPaginator
 import com.kotlindiscord.kord.extensions.types.respond
 import com.kotlindiscord.kord.extensions.utils.download
-import com.kotlindiscord.kord.extensions.utils.hasPermission
 import dev.kord.common.entity.ButtonStyle
 import dev.kord.common.entity.Permission
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.entity.Guild
-import dev.kord.core.entity.Member
 import dev.kord.core.entity.effectiveName
 import io.ktor.client.request.forms.*
 import io.ktor.util.cio.*
@@ -192,8 +191,7 @@ class UtilityExtension : Extension() {
 
             check {
                 anyGuild()
-                val member = event.interaction.user as Member
-                failIfNot(member.hasPermission(Permission.ManageGuild))
+                hasPermission(Permission.ManageGuild)
             }
 
             action {
@@ -216,8 +214,7 @@ class UtilityExtension : Extension() {
 
             check {
                 anyGuild()
-                val member = event.interaction.user as Member
-                failIfNot(member.hasPermission(Permission.ManageGuild))
+                hasPermission(Permission.ManageGuild)
             }
 
             ephemeralSubCommand(::ImportArgs) {
@@ -330,8 +327,7 @@ class UtilityExtension : Extension() {
 
             check {
                 anyGuild()
-                val member = event.interaction.user as Member
-                failIfNot(member.hasPermission(Permission.ManageGuild))
+                hasPermission(Permission.ManageGuild)
             }
 
             action {
