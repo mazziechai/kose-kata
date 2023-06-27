@@ -126,23 +126,34 @@ class ViewingExtension : Extension() {
          */
         publicSlashCommand(::ViewByIdCommandArgs) {
             name = "postid"
-            description = "Post a note to chat by its ID"
+            description = "Send a note to chat by its ID"
 
             check { anyGuild() }
 
             action {
-                val noteId = arguments.noteId.toInt(16)
+                publicNoteByIdAction(guild!!, arguments)
+            }
+        }
 
-                val note = noteCollection.get(noteId)
+        publicSlashCommand(::ViewByIdCommandArgs) {
+            name = "sendid"
+            description = "Send a note to chat by its ID"
 
-                if (note == null || note.guild != guild!!.id) {
-                    respond {
-                        content = "I couldn't find that note."
-                    }
-                    return@action
-                }
+            check { anyGuild() }
 
-                viewNoteResponse(note, arguments.verbose == true)
+            action {
+                publicNoteByIdAction(guild!!, arguments)
+            }
+        }
+
+        publicSlashCommand(::ViewByIdCommandArgs) {
+            name = "showid"
+            description = "Send a note to chat by its ID"
+
+            check { anyGuild() }
+
+            action {
+                publicNoteByIdAction(guild!!, arguments)
             }
         }
 
@@ -319,5 +330,23 @@ class ViewingExtension : Extension() {
         val note = guildNotes.random()
 
         viewNoteResponse(note, false)
+    }
+
+    private suspend fun PublicInteractionContext.publicNoteByIdAction(
+        guild: GuildBehavior,
+        arguments: ViewByIdCommandArgs
+    ) {
+        val noteId = arguments.noteId.toInt(16)
+
+        val note = noteCollection.get(noteId)
+
+        if (note == null || note.guild != guild.id) {
+            respond {
+                content = "I couldn't find that note."
+            }
+            return
+        }
+
+        viewNoteResponse(note, arguments.verbose == true)
     }
 }
