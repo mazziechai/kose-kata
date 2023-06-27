@@ -9,6 +9,7 @@ import com.kotlindiscord.kord.extensions.time.TimestampType
 import com.kotlindiscord.kord.extensions.time.toDiscord
 import com.kotlindiscord.kord.extensions.types.EphemeralInteractionContext
 import com.kotlindiscord.kord.extensions.types.editingPaginator
+import dev.kord.common.Color
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
 import dev.kord.core.entity.Guild
@@ -50,6 +51,8 @@ suspend fun FollowupMessageCreateBuilder.noteEmbed(kord: Kord, note: Note) {
         title = note.name
 
         description = note.content
+
+        color = Color(note._id)
 
         footer {
             text = buildString {
