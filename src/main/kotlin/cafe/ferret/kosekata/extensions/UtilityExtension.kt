@@ -402,7 +402,7 @@ class UtilityExtension : Extension() {
                         append("If multiple notes exist under the same name, it chooses a random one.")
                         appendLine("This command has autocomplete based on notes available in the guild!")
 
-                        append("`/post (name)` Posts a note to chat by name.")
+                        append("`/send (name)` sends a note to chat by name.")
                         appendLine("If multiple notes exist under the same name, it chooses a random one.")
 
                         appendLine("`/edit (ID)` Creates a modal where you can edit a note you own by ID.")
