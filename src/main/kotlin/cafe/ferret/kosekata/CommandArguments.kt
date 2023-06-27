@@ -8,7 +8,7 @@ import com.kotlindiscord.kord.extensions.commands.Arguments
 import com.kotlindiscord.kord.extensions.commands.converters.impl.member
 import com.kotlindiscord.kord.extensions.commands.converters.impl.string
 
-class ByIdArgs : Arguments() {
+open class ByIdArgs : Arguments() {
     val noteId by string {
         name = "note"
         description = "The note's ID"

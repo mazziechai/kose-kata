@@ -11,6 +11,7 @@ import cafe.ferret.kosekata.guildNotes
 import cafe.ferret.kosekata.noteEmbed
 import com.kotlindiscord.kord.extensions.checks.anyGuild
 import com.kotlindiscord.kord.extensions.commands.Arguments
+import com.kotlindiscord.kord.extensions.commands.converters.impl.optionalBoolean
 import com.kotlindiscord.kord.extensions.commands.converters.impl.string
 import com.kotlindiscord.kord.extensions.components.ComponentContainer
 import com.kotlindiscord.kord.extensions.components.components
@@ -55,7 +56,7 @@ class ViewingExtension : Extension() {
 
                 val note = guildNotes.random()
 
-                viewNoteResponse(note)
+                viewNoteResponse(note, arguments.verbose == true)
             }
         }
 
@@ -98,7 +99,7 @@ class ViewingExtension : Extension() {
         /**
          * Gets a note by ID and then sends its contents ephemerally.
          */
-        ephemeralSlashCommand(::ByIdArgs) {
+        ephemeralSlashCommand(::ViewByIdCommandArgs) {
             name = "viewid"
             description = "View a note by its ID"
 
@@ -116,14 +117,14 @@ class ViewingExtension : Extension() {
                     return@action
                 }
 
-                viewNoteResponse(note)
+                viewNoteResponse(note, arguments.verbose == true)
             }
         }
 
         /**
          * Gets a note by ID and then sends its contents publicly.
          */
-        publicSlashCommand(::ByIdArgs) {
+        publicSlashCommand(::ViewByIdCommandArgs) {
             name = "postid"
             description = "Post a note to chat by its ID"
 
@@ -141,7 +142,7 @@ class ViewingExtension : Extension() {
                     return@action
                 }
 
-                viewNoteResponse(note)
+                viewNoteResponse(note, arguments.verbose == true)
             }
         }
 
@@ -198,6 +199,18 @@ class ViewingExtension : Extension() {
                 }
             }
         }
+
+        val verbose by optionalBoolean {
+            name = "verbose"
+            description = "Toggles verbosity"
+        }
+    }
+
+    inner class ViewByIdCommandArgs : ByIdArgs() {
+        val verbose by optionalBoolean {
+            name = "verbose"
+            description = "Toggles verbosity"
+        }
     }
 
     inner class SearchCommandArgs : Arguments() {
@@ -211,27 +224,19 @@ class ViewingExtension : Extension() {
      * Recursively calls [edit] to display a [Note].
      *
      * @param note The note to display.
+     * @param verbose If there should be an embed instead of just a message.
      */
     private suspend fun PublicInteractionContext.viewNoteResponse(
         note: Note,
+        verbose: Boolean
     ) {
         respond {
-            noteEmbed(kord, note)
-            noteReferencesComponents(note)
-        }
-
-        val regex = Regex("""(http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])""")
-        val urls = regex.findAll(note.content)
-
-        if (!urls.none()) {
-            respond {
-                this@respond.content = buildString {
-                    appendLine("**URLs** (for embeds)")
-                    for (url in urls) {
-                        appendLine(url.value)
-                    }
-                }
+            if (verbose) {
+                noteEmbed(kord, note)
+            } else {
+                content = "`#%06x` \uD83D\uDCE3 ${note.content}".format(note._id)
             }
+            noteReferencesComponents(note, verbose)
         }
     }
 
@@ -239,27 +244,19 @@ class ViewingExtension : Extension() {
      * Recursively calls [edit] to display a [Note].
      *
      * @param note The note to display.
+     * @param verbose If there should be an embed instead of just a message.
      */
     private suspend fun EphemeralInteractionContext.viewNoteResponse(
         note: Note,
+        verbose: Boolean
     ) {
         respond {
-            noteEmbed(kord, note)
-            noteReferencesComponents(note)
-        }
-
-        val regex = Regex("""(http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])""")
-        val urls = regex.findAll(note.content)
-
-        if (!urls.none()) {
-            respond {
-                this@respond.content = buildString {
-                    appendLine("**URLs** (for embeds)")
-                    for (url in urls) {
-                        appendLine(url.value)
-                    }
-                }
+            if (verbose) {
+                noteEmbed(kord, note)
+            } else {
+                content = "`#%06x` \uD83D\uDCE3 ${note.content}".format(note._id)
             }
+            noteReferencesComponents(note, verbose)
         }
     }
 
@@ -267,8 +264,12 @@ class ViewingExtension : Extension() {
      * Creates reference components that allow for recursive movement between notes.
      *
      * @param note The [Note] to create reference components for.
+     * @param verbose The verbose parameter from the viewNoteResponse.
      */
-    private suspend fun FollowupMessageCreateBuilder.noteReferencesComponents(note: Note): ComponentContainer {
+    private suspend fun FollowupMessageCreateBuilder.noteReferencesComponents(
+        note: Note,
+        verbose: Boolean
+    ): ComponentContainer {
         val referenceRegex = Regex("\\{\\{(.+?)}}")
         val references = referenceRegex.findAll(note.content).distinctBy { it.groupValues[1] }
 
@@ -294,7 +295,7 @@ class ViewingExtension : Extension() {
 
                     action {
                         edit {
-                            viewNoteResponse(referencedNotes.first { it._id.toString(16) == selected.first() })
+                            viewNoteResponse(referencedNotes.first { it._id.toString(16) == selected.first() }, verbose)
                         }
                     }
                 }
@@ -317,6 +318,6 @@ class ViewingExtension : Extension() {
 
         val note = guildNotes.random()
 
-        viewNoteResponse(note)
+        viewNoteResponse(note, false)
     }
 }

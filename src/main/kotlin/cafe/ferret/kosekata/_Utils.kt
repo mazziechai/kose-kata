@@ -28,12 +28,6 @@ fun formatTime(instant: Instant): String {
     return format.format(instant.epochSeconds * 1000L) + " UTC"
 }
 
-/**
- * An extension to create note embeds easily and consistently.
- *
- * @param kord The bot.
- * @param note The note to display.
- */
 suspend fun FollowupMessageCreateBuilder.noteEmbed(kord: Kord, note: Note) {
     val noteUser = kord.getUser(note.author)
     val noteMember = noteUser?.asMemberOrNull(note.guild)
