@@ -47,6 +47,8 @@ kose kata's only functionality is managing notes, but it does it very well.
 - [x] Searching notes
 - [ ] "Reserving" note names: preventing name collision with a toggle
 - [x] Help command
+- [ ] Audit logs for notes
+- [ ] i18n and settings
 
 ## Technical to-do list
 
