@@ -23,6 +23,7 @@ import com.kotlindiscord.kord.extensions.types.PublicInteractionContext
 import com.kotlindiscord.kord.extensions.types.edit
 import com.kotlindiscord.kord.extensions.types.respond
 import com.kotlindiscord.kord.extensions.utils.suggestStringCollection
+import dev.kord.core.behavior.GuildBehavior
 import dev.kord.rest.builder.message.create.FollowupMessageCreateBuilder
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.koin.core.component.inject
@@ -63,23 +64,34 @@ class ViewingExtension : Extension() {
          */
         publicSlashCommand(::ViewByNameCommandArgs) {
             name = "post"
-            description = "Post a note to chat"
+            description = "Send a note to chat"
 
             check { anyGuild() }
 
             action {
-                val guildNotes = noteCollection.getByGuildAndName(guild!!.id, arguments.noteName)
+                publicNoteByNameAction(guild!!.asGuild(), arguments)
+            }
+        }
 
-                if (guildNotes.isEmpty()) {
-                    respond {
-                        content = "I couldn't find that note."
-                    }
-                    return@action
-                }
+        publicSlashCommand(::ViewByNameCommandArgs) {
+            name = "send"
+            description = "Send a note to chat"
 
-                val note = guildNotes.random()
+            check { anyGuild() }
 
-                viewNoteResponse(note)
+            action {
+                publicNoteByNameAction(guild!!.asGuild(), arguments)
+            }
+        }
+
+        publicSlashCommand(::ViewByNameCommandArgs) {
+            name = "show"
+            description = "Send a note to chat"
+
+            check { anyGuild() }
+
+            action {
+                publicNoteByNameAction(guild!!, arguments)
             }
         }
 
@@ -288,5 +300,23 @@ class ViewingExtension : Extension() {
                 }
             }
         }
+    }
+
+    private suspend fun PublicInteractionContext.publicNoteByNameAction(
+        guild: GuildBehavior,
+        arguments: ViewByNameCommandArgs
+    ) {
+        val guildNotes = noteCollection.getByGuildAndName(guild.id, arguments.noteName)
+
+        if (guildNotes.isEmpty()) {
+            respond {
+                content = "I couldn't find that note."
+            }
+            return
+        }
+
+        val note = guildNotes.random()
+
+        viewNoteResponse(note)
     }
 }

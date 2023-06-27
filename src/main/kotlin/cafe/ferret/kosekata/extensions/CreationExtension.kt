@@ -10,7 +10,10 @@ import com.kotlindiscord.kord.extensions.components.forms.ModalForm
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.ephemeralMessageCommand
 import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
+import com.kotlindiscord.kord.extensions.types.EphemeralInteractionContext
 import com.kotlindiscord.kord.extensions.types.respond
+import dev.kord.core.behavior.GuildBehavior
+import dev.kord.core.behavior.UserBehavior
 import org.koin.core.component.inject
 
 class CreationExtension : Extension() {
@@ -25,9 +28,7 @@ class CreationExtension : Extension() {
         ephemeralMessageCommand(::CreateNoteFromMessageModal) {
             name = "New note"
 
-            check {
-                anyGuild()
-            }
+            check { anyGuild() }
 
             action { modal ->
                 val noteName = modal?.name!!.value!!
@@ -53,17 +54,21 @@ class CreationExtension : Extension() {
             name = "new"
             description = "Create a new note. Opens a text box."
 
-            check {
-                anyGuild()
-            }
+            check { anyGuild() }
 
             action { modal ->
-                val noteName = modal?.name!!.value!!
-                val noteContent = modal.content.value!!
+                newNote(modal!!, user, guild!!)
+            }
+        }
 
-                val note = noteCollection.new(user.id, guild!!.id, noteName, mutableListOf(noteName), noteContent)
+        ephemeralSlashCommand(::CreateNoteFromCommandModal) {
+            name = "note"
+            description = "Create a new note. Opens a text box."
 
-                respond { content = "Successfully created note `$noteName` with ID `#%06x`!".format(note._id) }
+            check { anyGuild() }
+
+            action { modal ->
+                newNote(modal!!, user, guild!!)
             }
         }
     }
@@ -92,5 +97,18 @@ class CreationExtension : Extension() {
             required = true
             maxLength = 2000
         }
+    }
+
+    private suspend fun EphemeralInteractionContext.newNote(
+        modal: CreateNoteFromCommandModal,
+        user: UserBehavior,
+        guild: GuildBehavior
+    ) {
+        val noteName = modal.name.value!!
+        val noteContent = modal.content.value!!
+
+        val note = noteCollection.new(user.id, guild.id, noteName, mutableListOf(noteName), noteContent)
+
+        respond { content = "Successfully created note `$noteName` with ID `#%06x`!".format(note._id) }
     }
 }
