@@ -7,6 +7,7 @@ package cafe.ferret.kosekata.extensions
 import cafe.ferret.kosekata.ByIdArgs
 import cafe.ferret.kosekata.database.collections.NoteCollection
 import cafe.ferret.kosekata.database.entities.Note
+import cafe.ferret.kosekata.formatTime
 import cafe.ferret.kosekata.guildNotes
 import cafe.ferret.kosekata.noteEmbed
 import com.kotlindiscord.kord.extensions.checks.anyGuild
@@ -23,8 +24,10 @@ import com.kotlindiscord.kord.extensions.types.EphemeralInteractionContext
 import com.kotlindiscord.kord.extensions.types.PublicInteractionContext
 import com.kotlindiscord.kord.extensions.types.edit
 import com.kotlindiscord.kord.extensions.types.respond
+import dev.kord.common.Color
 import dev.kord.core.behavior.GuildBehavior
 import dev.kord.rest.builder.message.create.FollowupMessageCreateBuilder
+import dev.kord.rest.builder.message.create.embed
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.koin.core.component.inject
 
@@ -186,6 +189,57 @@ class ViewingExtension : Extension() {
                 }
 
                 guildNotes(this@ephemeralSlashCommand.kord, guild!!.asGuild(), notes, arguments.searchParam)
+            }
+        }
+
+        ephemeralSlashCommand(::ByIdArgs) {
+            name = "info"
+            description = "Gets information about a note. Does not display contents."
+
+            check { anyGuild() }
+
+            action {
+                val noteId = arguments.noteId.toInt(16)
+
+                val note = noteCollection.get(noteId)
+
+                if (note == null || note.guild != guild!!.id) {
+                    respond {
+                        content = "I couldn't find that note."
+                    }
+                    return@action
+                }
+
+                val noteUser = this@ephemeralSlashCommand.kord.getUser(note.author)
+                val noteMember = noteUser?.asMemberOrNull(note.guild)
+
+                respond {
+                    embed {
+                        author {
+                            name = if (noteMember?.effectiveName != null) {
+                                "${noteMember.effectiveName} (${noteUser.username})"
+                            } else {
+                                noteUser?.username ?: "Unknown user"
+                            }
+                            icon = noteMember?.avatar?.cdnUrl?.toUrl()
+                        }
+
+                        title = note.name
+
+                        description = buildString {
+                            appendLine("Created on ${formatTime(note.timeCreated)}")
+                            if (note.aliases.count() > 1) {
+                                appendLine("Aliases: ${note.aliases.drop(1)}")
+                            }
+                        }
+
+                        color = Color(note._id)
+
+                        footer {
+                            text = "%06x".format(note._id)
+                        }
+                    }
+                }
             }
         }
     }
