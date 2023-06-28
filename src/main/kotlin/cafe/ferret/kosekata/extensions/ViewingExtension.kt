@@ -302,6 +302,20 @@ class ViewingExtension : Extension() {
             }
             noteReferencesComponents(note, text)
         }
+
+        val regex = Regex("""(http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])""")
+        val urls = regex.findAll(note.content)
+
+        if (!urls.none() && !text) {
+            respond {
+                this@respond.content = buildString {
+                    appendLine("**URLs** (for embeds)")
+                    for (url in urls) {
+                        appendLine(url.value)
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -321,6 +335,20 @@ class ViewingExtension : Extension() {
                 content = "${note.content}\n\n`#%06x`".format(note._id)
             }
             noteReferencesComponents(note, text)
+        }
+
+        val regex = Regex("""(http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])""")
+        val urls = regex.findAll(note.content)
+
+        if (!urls.none() && !text) {
+            respond {
+                this@respond.content = buildString {
+                    appendLine("**URLs** (for embeds)")
+                    for (url in urls) {
+                        appendLine(url.value)
+                    }
+                }
+            }
         }
     }
 
