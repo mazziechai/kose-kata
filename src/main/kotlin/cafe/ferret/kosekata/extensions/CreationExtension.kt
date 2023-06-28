@@ -5,6 +5,7 @@
 package cafe.ferret.kosekata.extensions
 
 import cafe.ferret.kosekata.database.collections.NoteCollection
+import cafe.ferret.kosekata.noteEmbed
 import com.kotlindiscord.kord.extensions.checks.anyGuild
 import com.kotlindiscord.kord.extensions.components.forms.ModalForm
 import com.kotlindiscord.kord.extensions.extensions.Extension
@@ -109,6 +110,9 @@ class CreationExtension : Extension() {
 
         val note = noteCollection.new(user.id, guild.id, noteName, mutableListOf(noteName), noteContent)
 
-        respond { content = "Successfully created note `$noteName` with ID `#%06x`!".format(note._id) }
+        respond {
+            content = "Successfully created note `$noteName` with ID `#%06x`!".format(note._id)
+            noteEmbed(kord, note, false)
+        }
     }
 }
