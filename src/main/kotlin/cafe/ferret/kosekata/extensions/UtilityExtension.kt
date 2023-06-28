@@ -16,6 +16,7 @@ import com.kotlindiscord.kord.extensions.components.components
 import com.kotlindiscord.kord.extensions.components.ephemeralButton
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
+import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
 import com.kotlindiscord.kord.extensions.time.TimestampType
 import com.kotlindiscord.kord.extensions.time.toDiscord
 import com.kotlindiscord.kord.extensions.types.edit
@@ -185,7 +186,7 @@ class UtilityExtension : Extension() {
             }
         }
 
-        ephemeralSlashCommand {
+        publicSlashCommand {
             name = "export"
             description = "Exports all notes to a file"
 
@@ -208,7 +209,7 @@ class UtilityExtension : Extension() {
             }
         }
 
-        ephemeralSlashCommand {
+        publicSlashCommand {
             name = "import"
             description = "Imports all notes from a file"
 
@@ -321,7 +322,7 @@ class UtilityExtension : Extension() {
             }
         }
 
-        ephemeralSlashCommand {
+        publicSlashCommand {
             name = "clear"
             description = "Deletes ALL notes. This is IRREVERSIBLE!"
 

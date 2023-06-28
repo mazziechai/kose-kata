@@ -9,9 +9,10 @@ import cafe.ferret.kosekata.database.collections.NoteCollection
 import com.kotlindiscord.kord.extensions.checks.anyGuild
 import com.kotlindiscord.kord.extensions.commands.Arguments
 import com.kotlindiscord.kord.extensions.commands.application.slash.ephemeralSubCommand
+import com.kotlindiscord.kord.extensions.commands.application.slash.publicSubCommand
 import com.kotlindiscord.kord.extensions.commands.converters.impl.string
 import com.kotlindiscord.kord.extensions.extensions.Extension
-import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
+import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
 import com.kotlindiscord.kord.extensions.types.respond
 import com.kotlindiscord.kord.extensions.utils.hasPermission
 import dev.kord.common.entity.Permission
@@ -23,13 +24,13 @@ class AliasExtension : Extension() {
     private val noteCollection: NoteCollection by inject()
 
     override suspend fun setup() {
-        ephemeralSlashCommand {
+        publicSlashCommand {
             name = "alias"
             description = "Manage note aliases"
 
             check { anyGuild() }
 
-            ephemeralSubCommand(::UpdateAliasArgs) {
+            publicSubCommand(::UpdateAliasArgs) {
                 name = "new"
                 description = "Create a new alias for a note."
 
@@ -63,7 +64,7 @@ class AliasExtension : Extension() {
                 }
             }
 
-            ephemeralSubCommand(::UpdateAliasArgs) {
+            publicSubCommand(::UpdateAliasArgs) {
                 name = "remove"
                 description = "Remove an alias for a note."
 

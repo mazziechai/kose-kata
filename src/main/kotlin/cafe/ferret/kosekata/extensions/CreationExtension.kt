@@ -9,9 +9,9 @@ import cafe.ferret.kosekata.noteEmbed
 import com.kotlindiscord.kord.extensions.checks.anyGuild
 import com.kotlindiscord.kord.extensions.components.forms.ModalForm
 import com.kotlindiscord.kord.extensions.extensions.Extension
-import com.kotlindiscord.kord.extensions.extensions.ephemeralMessageCommand
-import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
-import com.kotlindiscord.kord.extensions.types.EphemeralInteractionContext
+import com.kotlindiscord.kord.extensions.extensions.publicMessageCommand
+import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
+import com.kotlindiscord.kord.extensions.types.PublicInteractionContext
 import com.kotlindiscord.kord.extensions.types.respond
 import dev.kord.core.behavior.GuildBehavior
 import dev.kord.core.behavior.UserBehavior
@@ -26,7 +26,7 @@ class CreationExtension : Extension() {
         /**
          * Context command to create a note from an existing message.
          */
-        ephemeralMessageCommand(::CreateNoteFromMessageModal) {
+        publicMessageCommand(::CreateNoteFromMessageModal) {
             name = "New note"
 
             check { anyGuild() }
@@ -51,7 +51,7 @@ class CreationExtension : Extension() {
         /**
          * Slash command to create a note.
          */
-        ephemeralSlashCommand(::CreateNoteFromCommandModal) {
+        publicSlashCommand(::CreateNoteFromCommandModal) {
             name = "new"
             description = "Create a new note. Opens a text box."
 
@@ -62,7 +62,7 @@ class CreationExtension : Extension() {
             }
         }
 
-        ephemeralSlashCommand(::CreateNoteFromCommandModal) {
+        publicSlashCommand(::CreateNoteFromCommandModal) {
             name = "note"
             description = "Create a new note. Opens a text box."
 
@@ -100,7 +100,7 @@ class CreationExtension : Extension() {
         }
     }
 
-    private suspend fun EphemeralInteractionContext.newNote(
+    private suspend fun PublicInteractionContext.newNote(
         modal: CreateNoteFromCommandModal,
         user: UserBehavior,
         guild: GuildBehavior

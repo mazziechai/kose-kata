@@ -10,12 +10,12 @@ import cafe.ferret.kosekata.database.collections.NoteCollection
 import cafe.ferret.kosekata.noteEmbed
 import com.kotlindiscord.kord.extensions.checks.anyGuild
 import com.kotlindiscord.kord.extensions.checks.hasPermission
-import com.kotlindiscord.kord.extensions.commands.application.slash.ephemeralSubCommand
+import com.kotlindiscord.kord.extensions.commands.application.slash.publicSubCommand
 import com.kotlindiscord.kord.extensions.components.components
 import com.kotlindiscord.kord.extensions.components.ephemeralButton
 import com.kotlindiscord.kord.extensions.components.forms.ModalForm
 import com.kotlindiscord.kord.extensions.extensions.Extension
-import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
+import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
 import com.kotlindiscord.kord.extensions.types.edit
 import com.kotlindiscord.kord.extensions.types.respond
 import com.kotlindiscord.kord.extensions.utils.hasPermission
@@ -30,13 +30,13 @@ class ManagementExtension : Extension() {
     private val noteCollection: NoteCollection by inject()
 
     override suspend fun setup() {
-        ephemeralSlashCommand {
+        publicSlashCommand {
             name = "delete"
             description = "Note deletion"
 
             check { anyGuild() }
 
-            ephemeralSubCommand(::ByIdArgs) {
+            publicSubCommand(::ByIdArgs) {
                 name = "id"
                 description = "Delete a note by its ID. This is irreversible!"
 
@@ -65,7 +65,7 @@ class ManagementExtension : Extension() {
                     respond {
                         content = "Are you sure you want to delete this note?"
 
-                        noteEmbed(this@ephemeralSlashCommand.kord, note, true)
+                        noteEmbed(this@publicSlashCommand.kord, note, true)
 
                         components(15.seconds) {
                             ephemeralButton {
@@ -109,7 +109,7 @@ class ManagementExtension : Extension() {
                 }
             }
 
-            ephemeralSubCommand(::UserNotesArgs) {
+            publicSubCommand(::UserNotesArgs) {
                 name = "user"
                 description = "Delete all notes from a user. This is irreversible!"
 
@@ -155,7 +155,7 @@ class ManagementExtension : Extension() {
                 }
             }
 
-            ephemeralSubCommand(::DeleteMultipleModal) {
+            publicSubCommand(::DeleteMultipleModal) {
                 name = "multiple"
                 description = "Delete multiple notes by their IDs. This is irreversible!"
 
@@ -223,7 +223,7 @@ class ManagementExtension : Extension() {
             }
         }
 
-        ephemeralSlashCommand(::ByIdArgs, ::EditModal) {
+        publicSlashCommand(::ByIdArgs, ::EditModal) {
             name = "edit"
             description = "Edit a note by its ID. Opens a text box."
 
@@ -263,7 +263,7 @@ class ManagementExtension : Extension() {
                 respond {
                     content = "Updated note `#%06x`!".format(noteId)
 
-                    noteEmbed(this@ephemeralSlashCommand.kord, note, true)
+                    noteEmbed(this@publicSlashCommand.kord, note, true)
                 }
             }
         }
