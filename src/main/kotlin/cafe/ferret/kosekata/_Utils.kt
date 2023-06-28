@@ -28,18 +28,20 @@ fun formatTime(instant: Instant): String {
     return format.format(instant.epochSeconds * 1000L) + " UTC"
 }
 
-suspend fun FollowupMessageCreateBuilder.noteEmbed(kord: Kord, note: Note) {
+suspend fun FollowupMessageCreateBuilder.noteEmbed(kord: Kord, note: Note, verbose: Boolean) {
     val noteUser = kord.getUser(note.author)
     val noteMember = noteUser?.asMemberOrNull(note.guild)
 
     embed {
-        author {
-            name = if (noteMember?.effectiveName != null) {
-                "${noteMember.effectiveName} (${noteUser.username})"
-            } else {
-                noteUser?.username ?: "Unknown user"
+        if (verbose) {
+            author {
+                name = if (noteMember?.effectiveName != null) {
+                    "${noteMember.effectiveName} (${noteUser.username})"
+                } else {
+                    noteUser?.username ?: "Unknown user"
+                }
+                icon = noteMember?.avatar?.cdnUrl?.toUrl()
             }
-            icon = noteMember?.avatar?.cdnUrl?.toUrl()
         }
 
         title = note.name
@@ -51,9 +53,12 @@ suspend fun FollowupMessageCreateBuilder.noteEmbed(kord: Kord, note: Note) {
         footer {
             text = buildString {
                 append("#%06x ".format(note._id))
-                append("| Created on ${formatTime(note.timeCreated)}")
-                if (note.aliases.count() > 1) {
-                    append("| Aliases: ${note.aliases.drop(1)}")
+
+                if (verbose) {
+                    append("| Created on ${formatTime(note.timeCreated)}")
+                    if (note.aliases.count() > 1) {
+                        append("| Aliases: ${note.aliases.drop(1)}")
+                    }
                 }
             }
         }

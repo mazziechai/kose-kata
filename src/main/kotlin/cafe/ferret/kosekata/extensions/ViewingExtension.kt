@@ -56,7 +56,7 @@ class ViewingExtension : Extension() {
 
                 val note = guildNotes.random()
 
-                viewNoteResponse(note, arguments.verbose == true)
+                viewNoteResponse(note, arguments.text == true)
             }
         }
 
@@ -117,7 +117,7 @@ class ViewingExtension : Extension() {
                     return@action
                 }
 
-                viewNoteResponse(note, arguments.verbose == true)
+                viewNoteResponse(note, arguments.text == true)
             }
         }
 
@@ -211,16 +211,16 @@ class ViewingExtension : Extension() {
             }
         }
 
-        val verbose by optionalBoolean {
-            name = "verbose"
-            description = "Toggles verbosity"
+        val text by optionalBoolean {
+            name = "text"
+            description = "Toggles a text-only note view. Defaults to false."
         }
     }
 
     inner class ViewByIdCommandArgs : ByIdArgs() {
-        val verbose by optionalBoolean {
-            name = "verbose"
-            description = "Toggles verbosity"
+        val text by optionalBoolean {
+            name = "text"
+            description = "Toggles a text-only note view. Defaults to false."
         }
     }
 
@@ -235,19 +235,19 @@ class ViewingExtension : Extension() {
      * Recursively calls [edit] to display a [Note].
      *
      * @param note The note to display.
-     * @param verbose If there should be an embed instead of just a message.
+     * @param text If there should be just text instead of an embed.
      */
     private suspend fun PublicInteractionContext.viewNoteResponse(
         note: Note,
-        verbose: Boolean
+        text: Boolean
     ) {
         respond {
-            if (verbose) {
-                noteEmbed(kord, note)
+            if (!text) {
+                noteEmbed(kord, note, false)
             } else {
-                content = "`#%06x` \uD83D\uDCE3 ${note.content}".format(note._id)
+                content = "${note.content}\n\n`#%06x`".format(note._id)
             }
-            noteReferencesComponents(note, verbose)
+            noteReferencesComponents(note, text)
         }
     }
 
@@ -255,19 +255,19 @@ class ViewingExtension : Extension() {
      * Recursively calls [edit] to display a [Note].
      *
      * @param note The note to display.
-     * @param verbose If there should be an embed instead of just a message.
+     * @param text If there should be just text instead of an embed.
      */
     private suspend fun EphemeralInteractionContext.viewNoteResponse(
         note: Note,
-        verbose: Boolean
+        text: Boolean
     ) {
         respond {
-            if (verbose) {
-                noteEmbed(kord, note)
+            if (!text) {
+                noteEmbed(kord, note, false)
             } else {
-                content = "`#%06x` \uD83D\uDCE3 ${note.content}".format(note._id)
+                content = "${note.content}\n\n`#%06x`".format(note._id)
             }
-            noteReferencesComponents(note, verbose)
+            noteReferencesComponents(note, text)
         }
     }
 
@@ -275,11 +275,11 @@ class ViewingExtension : Extension() {
      * Creates reference components that allow for recursive movement between notes.
      *
      * @param note The [Note] to create reference components for.
-     * @param verbose The verbose parameter from the viewNoteResponse.
+     * @param text The text parameter from the viewNoteResponse.
      */
     private suspend fun FollowupMessageCreateBuilder.noteReferencesComponents(
         note: Note,
-        verbose: Boolean
+        text: Boolean
     ): ComponentContainer {
         val referenceRegex = Regex("\\{\\{(.+?)}}")
         val references = referenceRegex.findAll(note.content).distinctBy { it.groupValues[1] }
@@ -306,7 +306,7 @@ class ViewingExtension : Extension() {
 
                     action {
                         edit {
-                            viewNoteResponse(referencedNotes.first { it._id.toString(16) == selected.first() }, verbose)
+                            viewNoteResponse(referencedNotes.first { it._id.toString(16) == selected.first() }, text)
                         }
                     }
                 }
@@ -329,7 +329,7 @@ class ViewingExtension : Extension() {
 
         val note = guildNotes.random()
 
-        viewNoteResponse(note, false)
+        viewNoteResponse(note, arguments.text == true)
     }
 
     private suspend fun PublicInteractionContext.publicNoteByIdAction(
@@ -347,6 +347,6 @@ class ViewingExtension : Extension() {
             return
         }
 
-        viewNoteResponse(note, arguments.verbose == true)
+        viewNoteResponse(note, arguments.text == true)
     }
 }
