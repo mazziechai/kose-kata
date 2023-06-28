@@ -23,7 +23,6 @@ import com.kotlindiscord.kord.extensions.types.EphemeralInteractionContext
 import com.kotlindiscord.kord.extensions.types.PublicInteractionContext
 import com.kotlindiscord.kord.extensions.types.edit
 import com.kotlindiscord.kord.extensions.types.respond
-import com.kotlindiscord.kord.extensions.utils.suggestStringCollection
 import dev.kord.core.behavior.GuildBehavior
 import dev.kord.rest.builder.message.create.FollowupMessageCreateBuilder
 import me.xdrop.fuzzywuzzy.FuzzySearch
@@ -196,19 +195,19 @@ class ViewingExtension : Extension() {
             name = "note"
             description = "The note's name"
 
-            var notes: List<String>? = null
-
-            autoComplete {
-                if (data.guildId.value != null) {
-                    if (notes == null) {
-                        notes = noteCollection.getByGuild(data.guildId.value!!).flatMap { it.aliases }.distinct()
-                    }
-
-                    val noteNames = FuzzySearch.extractTop(focusedOption.value, notes!!, 10).map { it.string }
-
-                    suggestStringCollection(noteNames)
-                }
-            }
+//            var notes: List<String>? = null
+//
+//            autoComplete {
+//                if (data.guildId.value != null) {
+//                    if (notes == null) {
+//                        notes = noteCollection.getByGuild(data.guildId.value!!).flatMap { it.aliases }.distinct()
+//                    }
+//
+//                    val noteNames = FuzzySearch.extractTop(focusedOption.value, notes!!, 10).map { it.string }
+//
+//                    suggestStringCollection(noteNames)
+//                }
+//            }
         }
 
         val text by optionalBoolean {
