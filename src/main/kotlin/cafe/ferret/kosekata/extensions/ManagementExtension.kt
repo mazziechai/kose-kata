@@ -150,6 +150,28 @@ class ManagementExtension : Extension() {
                                     }
                                 }
                             }
+
+                            ephemeralButton {
+                                label = "Cancel"
+                                style = ButtonStyle.Secondary
+
+                                action {
+                                    edit {
+                                        content = "Cancelled deletion."
+
+                                        components = mutableListOf()
+                                    }
+
+                                }
+                            }
+
+                            onTimeout {
+                                edit {
+                                    content = "Cancelled deletion."
+
+                                    components = mutableListOf()
+                                }
+                            }
                         }
                     }
                 }
@@ -214,6 +236,28 @@ class ManagementExtension : Extension() {
 
                                         components = mutableListOf()
                                     }
+                                }
+                            }
+
+                            ephemeralButton {
+                                label = "Cancel"
+                                style = ButtonStyle.Secondary
+
+                                action {
+                                    edit {
+                                        content = "Cancelled deletion."
+
+                                        components = mutableListOf()
+                                    }
+
+                                }
+                            }
+
+                            onTimeout {
+                                edit {
+                                    content = "Cancelled deletion."
+
+                                    components = mutableListOf()
                                 }
                             }
                         }
