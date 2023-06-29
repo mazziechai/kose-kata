@@ -190,7 +190,7 @@ class ManagementExtension : Extension() {
                         throw IllegalStateException("Could not find modal!")
                     }
 
-                    val noteIdsSplit = modal.content.value!!.split(" ")
+                    val noteIdsSplit = modal.notes.value!!.split(" ")
 
                     val noteIds = noteIdsSplit.map {
                         try {
@@ -326,7 +326,7 @@ class ManagementExtension : Extension() {
     inner class DeleteMultipleModal : ModalForm() {
         override var title = "Delete multiple notes"
 
-        val content = paragraphText {
+        val notes = paragraphText {
             label = "Notes to delete, separated by spaces"
             required = true
             maxLength = 2000
