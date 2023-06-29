@@ -58,6 +58,7 @@ kose kata's only functionality is managing notes, but it does it very well.
 - [ ] Case normalization for note names
 - [ ] PostgreSQL support (in the far future)
 - [ ] More logging
+- [ ] Lazy pagination to improve performance
 
 ## Setup
 
