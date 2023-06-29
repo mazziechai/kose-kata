@@ -61,17 +61,6 @@ class CreationExtension : Extension() {
                 newNote(modal!!, user, guild!!)
             }
         }
-
-        publicSlashCommand(::CreateNoteFromCommandModal) {
-            name = "note"
-            description = "Create a new note. Opens a text box."
-
-            check { anyGuild() }
-
-            action { modal ->
-                newNote(modal!!, user, guild!!)
-            }
-        }
     }
 
     inner class CreateNoteFromMessageModal : ModalForm() {

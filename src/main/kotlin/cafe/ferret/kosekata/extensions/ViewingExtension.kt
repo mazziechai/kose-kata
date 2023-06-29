@@ -41,8 +41,8 @@ class ViewingExtension : Extension() {
          * Gets a note by name and then sends its contents ephemerally.
          */
         ephemeralSlashCommand(::ViewByNameCommandArgs) {
-            name = "view"
-            description = "View a note"
+            name = "peek"
+            description = "View a note ephemerally"
 
             check { anyGuild() }
 
@@ -77,17 +77,6 @@ class ViewingExtension : Extension() {
         }
 
         publicSlashCommand(::ViewByNameCommandArgs) {
-            name = "send"
-            description = "Send a note to chat"
-
-            check { anyGuild() }
-
-            action {
-                publicNoteByNameAction(guild!!.asGuild(), arguments)
-            }
-        }
-
-        publicSlashCommand(::ViewByNameCommandArgs) {
             name = "show"
             description = "Send a note to chat"
 
@@ -102,8 +91,8 @@ class ViewingExtension : Extension() {
          * Gets a note by ID and then sends its contents ephemerally.
          */
         ephemeralSlashCommand(::ViewByIdCommandArgs) {
-            name = "viewid"
-            description = "View a note by its ID"
+            name = "peekid"
+            description = "View a note ephemerally by its ID"
 
             check { anyGuild() }
 
@@ -128,17 +117,6 @@ class ViewingExtension : Extension() {
          */
         publicSlashCommand(::ViewByIdCommandArgs) {
             name = "postid"
-            description = "Send a note to chat by its ID"
-
-            check { anyGuild() }
-
-            action {
-                publicNoteByIdAction(guild!!, arguments)
-            }
-        }
-
-        publicSlashCommand(::ViewByIdCommandArgs) {
-            name = "sendid"
             description = "Send a note to chat by its ID"
 
             check { anyGuild() }
