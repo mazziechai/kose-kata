@@ -49,7 +49,6 @@ kose kata's only functionality is managing notes, but it does it very well.
 - [x] Help command
 - [ ] Audit logs and usage counts for notes
 - [ ] i18n and settings
-- [ ] More logging
 
 ## Technical to-do list
 
@@ -58,6 +57,7 @@ kose kata's only functionality is managing notes, but it does it very well.
 - [ ] Deduplicate code
 - [ ] Case normalization for note names
 - [ ] PostgreSQL support (in the far future)
+- [ ] More logging
 
 ## Setup
 
