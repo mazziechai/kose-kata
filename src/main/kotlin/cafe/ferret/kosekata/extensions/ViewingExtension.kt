@@ -76,17 +76,6 @@ class ViewingExtension : Extension() {
             }
         }
 
-        publicSlashCommand(::ViewByNameCommandArgs) {
-            name = "show"
-            description = "Send a note to chat"
-
-            check { anyGuild() }
-
-            action {
-                publicNoteByNameAction(guild!!, arguments)
-            }
-        }
-
         /**
          * Gets a note by ID and then sends its contents ephemerally.
          */
@@ -117,17 +106,6 @@ class ViewingExtension : Extension() {
          */
         publicSlashCommand(::ViewByIdCommandArgs) {
             name = "postid"
-            description = "Send a note to chat by its ID"
-
-            check { anyGuild() }
-
-            action {
-                publicNoteByIdAction(guild!!, arguments)
-            }
-        }
-
-        publicSlashCommand(::ViewByIdCommandArgs) {
-            name = "showid"
             description = "Send a note to chat by its ID"
 
             check { anyGuild() }
