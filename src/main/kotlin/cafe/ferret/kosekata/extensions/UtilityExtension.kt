@@ -399,11 +399,11 @@ class UtilityExtension : Extension() {
                         append("`New note` Accessed through the apps menu when clicking on a message.")
                         appendLine("Creates a note from this message, and creates a modal to set a name for the note.")
 
-                        append("`/view (name)` Views a note ephemerally by name.")
+                        append("`/peek (name)` Views a note ephemerally by name.")
                         append("If multiple notes exist under the same name, it chooses a random one.")
                         appendLine("This command has autocomplete based on notes available in the guild!")
 
-                        append("`/send (name)` sends a note to chat by name.")
+                        append("`/post (name)` sends a note to chat by name.")
                         appendLine("If multiple notes exist under the same name, it chooses a random one.")
 
                         appendLine("`/edit (ID)` Creates a modal where you can edit a note you own by ID.")
