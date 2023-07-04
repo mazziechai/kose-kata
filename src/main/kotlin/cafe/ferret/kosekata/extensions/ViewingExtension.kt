@@ -4,12 +4,9 @@
 
 package cafe.ferret.kosekata.extensions
 
-import cafe.ferret.kosekata.ByIdArgs
+import cafe.ferret.kosekata.*
 import cafe.ferret.kosekata.database.collections.NoteCollection
 import cafe.ferret.kosekata.database.entities.Note
-import cafe.ferret.kosekata.formatTime
-import cafe.ferret.kosekata.guildNotes
-import cafe.ferret.kosekata.noteEmbed
 import com.kotlindiscord.kord.extensions.checks.anyGuild
 import com.kotlindiscord.kord.extensions.commands.Arguments
 import com.kotlindiscord.kord.extensions.commands.converters.impl.optionalBoolean
@@ -20,6 +17,7 @@ import com.kotlindiscord.kord.extensions.components.ephemeralSelectMenu
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
 import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
+import com.kotlindiscord.kord.extensions.i18n.TranslationsProvider
 import com.kotlindiscord.kord.extensions.types.EphemeralInteractionContext
 import com.kotlindiscord.kord.extensions.types.PublicInteractionContext
 import com.kotlindiscord.kord.extensions.types.edit
@@ -36,6 +34,8 @@ class ViewingExtension : Extension() {
 
     private val noteCollection: NoteCollection by inject()
 
+    override val bundle = BUNDLE
+
     override suspend fun setup() {
         /**
          * Gets a note by name and then sends its contents ephemerally.
@@ -51,7 +51,7 @@ class ViewingExtension : Extension() {
 
                 if (guildNotes.isEmpty()) {
                     respond {
-                        content = "I couldn't find that note."
+                        content = translate("error.notfound")
                     }
                     return@action
                 }
@@ -72,7 +72,7 @@ class ViewingExtension : Extension() {
             check { anyGuild() }
 
             action {
-                publicNoteByNameAction(guild!!.asGuild(), arguments)
+                publicNoteByNameAction(guild!!.asGuild(), arguments, translationsProvider)
             }
         }
 
@@ -92,7 +92,7 @@ class ViewingExtension : Extension() {
 
                 if (note == null || note.guild != guild!!.id) {
                     respond {
-                        content = "I couldn't find that note."
+                        content = translate("error.notfound")
                     }
                     return@action
                 }
@@ -111,7 +111,7 @@ class ViewingExtension : Extension() {
             check { anyGuild() }
 
             action {
-                publicNoteByIdAction(guild!!, arguments)
+                publicNoteByIdAction(guild!!, arguments, translationsProvider)
             }
         }
 
@@ -126,7 +126,7 @@ class ViewingExtension : Extension() {
 
                 if (guildNotes.isEmpty()) {
                     respond {
-                        content = "This server has no notes."
+                        content = translate("error.servernonotes")
                     }
                     return@action
                 }
@@ -138,7 +138,7 @@ class ViewingExtension : Extension() {
 
                 if (notes.isEmpty()) {
                     respond {
-                        content = "I couldn't find any notes matching the query."
+                        content = translate("extensions.viewing.search.nonotes")
                     }
 
                     return@action
@@ -161,7 +161,7 @@ class ViewingExtension : Extension() {
 
                 if (note == null || note.guild != guild!!.id) {
                     respond {
-                        content = "I couldn't find that note."
+                        content = translate("error.notfound")
                     }
                     return@action
                 }
@@ -353,13 +353,14 @@ class ViewingExtension : Extension() {
 
     private suspend fun PublicInteractionContext.publicNoteByNameAction(
         guild: GuildBehavior,
-        arguments: ViewByNameCommandArgs
+        arguments: ViewByNameCommandArgs,
+        translationsProvider: TranslationsProvider
     ) {
         val guildNotes = noteCollection.getByGuildAndName(guild.id, arguments.noteName)
 
         if (guildNotes.isEmpty()) {
             respond {
-                content = "I couldn't find that note."
+                content = translationsProvider.translate("error.notfound")
             }
             return
         }
@@ -371,7 +372,8 @@ class ViewingExtension : Extension() {
 
     private suspend fun PublicInteractionContext.publicNoteByIdAction(
         guild: GuildBehavior,
-        arguments: ViewByIdCommandArgs
+        arguments: ViewByIdCommandArgs,
+        translationsProvider: TranslationsProvider
     ) {
         val noteId = arguments.noteId.toInt(16)
 
@@ -379,7 +381,7 @@ class ViewingExtension : Extension() {
 
         if (note == null || note.guild != guild.id) {
             respond {
-                content = "I couldn't find that note."
+                content = translationsProvider.translate("error.notfound")
             }
             return
         }

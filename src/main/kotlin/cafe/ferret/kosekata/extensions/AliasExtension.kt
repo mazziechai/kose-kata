@@ -4,6 +4,7 @@
 
 package cafe.ferret.kosekata.extensions
 
+import cafe.ferret.kosekata.BUNDLE
 import cafe.ferret.kosekata.ByIdArgs
 import cafe.ferret.kosekata.database.collections.NoteCollection
 import com.kotlindiscord.kord.extensions.checks.anyGuild
@@ -23,6 +24,8 @@ class AliasExtension : Extension() {
 
     private val noteCollection: NoteCollection by inject()
 
+    override val bundle = BUNDLE
+
     override suspend fun setup() {
         publicSlashCommand {
             name = "alias"
@@ -41,7 +44,7 @@ class AliasExtension : Extension() {
 
                     if (note == null || note.guild != guild!!.id) {
                         respond {
-                            content = "I couldn't find that note."
+                            content = translate("error.notfound")
                         }
                         return@action
                     }
@@ -50,7 +53,7 @@ class AliasExtension : Extension() {
                             .hasPermission(Permission.ManageMessages)
                     ) {
                         respond {
-                            content = "You don't own that note."
+                            content = translate("error.notowned")
                         }
                         return@action
                     }
@@ -59,7 +62,8 @@ class AliasExtension : Extension() {
                     noteCollection.set(note)
 
                     respond {
-                        content = "Successfully added alias `${arguments.alias}` to note `#%06x`!".format(noteId)
+                        content =
+                            translate("extensions.alias.new.success", arrayOf(arguments.alias, "%06x".format(noteId)))
                     }
                 }
             }
@@ -75,7 +79,7 @@ class AliasExtension : Extension() {
 
                     if (note == null || note.guild != guild!!.id) {
                         respond {
-                            content = "I couldn't find that note."
+                            content = translate("error.notfound")
                         }
                         return@action
                     }
@@ -84,14 +88,14 @@ class AliasExtension : Extension() {
                             .hasPermission(Permission.ManageMessages)
                     ) {
                         respond {
-                            content = "You don't own that note."
+                            content = translate("error.notowned")
                         }
                         return@action
                     }
 
                     if (note.aliases.count() <= 1) {
                         respond {
-                            content = "You can't remove the last remaining alias for this note."
+                            content = translate("extensions.alias.remove.error")
                         }
                         return@action
                     }
@@ -100,7 +104,10 @@ class AliasExtension : Extension() {
                     noteCollection.set(note)
 
                     respond {
-                        content = "Successfully removed alias `${arguments.alias}` for note `#%06x`!".format(noteId)
+                        content = translate(
+                            "extensions.alias.remove.success",
+                            arrayOf(arguments.alias, "%06x".format(noteId))
+                        )
                     }
                 }
             }
@@ -116,18 +123,14 @@ class AliasExtension : Extension() {
 
                     if (note == null || note.guild != guild!!.id) {
                         respond {
-                            content = "I couldn't find that note."
+                            content = translate("error.notfound")
                         }
                         return@action
                     }
 
                     respond {
-                        content = buildString {
-                            appendLine("Aliases for note `#%06x`:".format(noteId))
-                            for (alias in note.aliases) {
-                                appendLine("`$alias`")
-                            }
-                        }
+                        content =
+                            translate("extensions.alias.list.success", arrayOf("%06x".format(noteId), note.aliases))
                     }
                 }
             }
@@ -140,7 +143,7 @@ class AliasExtension : Extension() {
             description = "The note's ID"
 
             validate {
-                failIf("That's not a valid ID!") {
+                failIf(translate("arguments.noteid.fail")) {
                     value.toIntOrNull(16) == null
                 }
             }

@@ -4,6 +4,7 @@
 
 package cafe.ferret.kosekata.extensions
 
+import cafe.ferret.kosekata.BUNDLE
 import cafe.ferret.kosekata.database.collections.NoteCollection
 import cafe.ferret.kosekata.noteEmbed
 import com.kotlindiscord.kord.extensions.checks.anyGuild
@@ -11,16 +12,15 @@ import com.kotlindiscord.kord.extensions.components.forms.ModalForm
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.publicMessageCommand
 import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
-import com.kotlindiscord.kord.extensions.types.PublicInteractionContext
 import com.kotlindiscord.kord.extensions.types.respond
-import dev.kord.core.behavior.GuildBehavior
-import dev.kord.core.behavior.UserBehavior
 import org.koin.core.component.inject
 
 class CreationExtension : Extension() {
     override val name = "creation"
 
     private val noteCollection: NoteCollection by inject()
+
+    override val bundle = BUNDLE
 
     override suspend fun setup() {
         /**
@@ -44,7 +44,9 @@ class CreationExtension : Extension() {
                     message.author?.id
                 )
 
-                respond { content = "Successfully created note `$noteName` with ID `#%06x`!".format(note._id) }
+                respond {
+                    content = translate("extensions.creation.success", arrayOf(noteName, "%06x".format(note._id)))
+                }
             }
         }
 
@@ -58,7 +60,15 @@ class CreationExtension : Extension() {
             check { anyGuild() }
 
             action { modal ->
-                newNote(modal!!, user, guild!!)
+                val noteName = modal!!.name.value!!
+                val noteContent = modal.content.value!!
+
+                val note = noteCollection.new(user.id, guild!!.id, noteName, mutableListOf(noteName), noteContent)
+
+                respond {
+                    content = translate("extensions.creation.success", arrayOf(noteName, "%06x".format(note._id)))
+                    noteEmbed(this@publicSlashCommand.kord, note, false)
+                }
             }
         }
     }
@@ -86,22 +96,6 @@ class CreationExtension : Extension() {
             label = "Content of the note"
             required = true
             maxLength = 2000
-        }
-    }
-
-    private suspend fun PublicInteractionContext.newNote(
-        modal: CreateNoteFromCommandModal,
-        user: UserBehavior,
-        guild: GuildBehavior
-    ) {
-        val noteName = modal.name.value!!
-        val noteContent = modal.content.value!!
-
-        val note = noteCollection.new(user.id, guild.id, noteName, mutableListOf(noteName), noteContent)
-
-        respond {
-            content = "Successfully created note `$noteName` with ID `#%06x`!".format(note._id)
-            noteEmbed(kord, note, false)
         }
     }
 }

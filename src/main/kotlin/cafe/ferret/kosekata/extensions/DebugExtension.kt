@@ -4,6 +4,7 @@
 
 package cafe.ferret.kosekata.extensions
 
+import cafe.ferret.kosekata.BUNDLE
 import cafe.ferret.kosekata.database.collections.NoteCollection
 import com.kotlindiscord.kord.extensions.checks.types.CheckContext
 import com.kotlindiscord.kord.extensions.commands.Arguments
@@ -27,6 +28,8 @@ class DebugExtension : Extension() {
     override val name = "debug"
 
     private val noteCollection: NoteCollection by inject()
+
+    override val bundle = BUNDLE
 
     override suspend fun setup() {
         ephemeralSlashCommand {

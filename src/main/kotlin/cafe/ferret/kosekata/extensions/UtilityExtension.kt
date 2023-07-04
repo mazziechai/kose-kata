@@ -4,6 +4,7 @@
 
 package cafe.ferret.kosekata.extensions
 
+import cafe.ferret.kosekata.BUNDLE
 import cafe.ferret.kosekata.UserNotesArgs
 import cafe.ferret.kosekata.database.collections.NoteCollection
 import cafe.ferret.kosekata.guildNotes
@@ -43,6 +44,8 @@ import kotlin.time.Duration.Companion.seconds
 class UtilityExtension : Extension() {
     override val name = "utility"
 
+    override val bundle = BUNDLE
+
     private val noteCollection: NoteCollection by inject()
 
     override suspend fun setup() {
@@ -66,7 +69,7 @@ class UtilityExtension : Extension() {
 
                     if (notes.isEmpty()) {
                         respond {
-                            content = "This user has no notes."
+                            content = translate("error.usernonotes")
                         }
 
                         return@action
@@ -112,7 +115,7 @@ class UtilityExtension : Extension() {
 
                     if (notes.isEmpty()) {
                         respond {
-                            content = "This server has no notes."
+                            content = translate("error.servernonotes")
                         }
 
                         return@action
@@ -132,7 +135,7 @@ class UtilityExtension : Extension() {
 
                 if (notes.isEmpty()) {
                     respond {
-                        content = "You don't have any notes."
+                        content = translate("extensions.utility.mynotes.error")
                     }
 
                     return@action
@@ -229,10 +232,7 @@ class UtilityExtension : Extension() {
                         koseJson = Json.parseToJsonElement(arguments.file.download().toString(Charset.forName("UTF-8")))
                     } catch (t: SerializationException) {
                         respond {
-                            content = buildString {
-                                appendLine("Malformed JSON. See the following for more information:")
-                                appendLine("```\n${t}\n```")
-                            }
+                            content = translate("error.invalidjson", arrayOf("```\n$t\n```"))
                         }
 
                         return@action
@@ -254,11 +254,7 @@ class UtilityExtension : Extension() {
                             )
                         } catch (t: Throwable) {
                             respond {
-                                content = buildString {
-                                    appendLine("Malformed JSON; import halted. Notes were partially imported.")
-                                    appendLine("See the following for more information:")
-                                    appendLine("```\n${t}\n```")
-                                }
+                                content = translate("error.partialimport", arrayOf("```\n$t\n```"))
                             }
 
                             return@action
@@ -266,7 +262,7 @@ class UtilityExtension : Extension() {
                     }
 
                     respond {
-                        content = "Successfully imported ${koseJson.jsonArray.count()} notes!"
+                        content = translate("extensions.utility.import.success", arrayOf(koseJson.jsonArray.count()))
                     }
                 }
             }
@@ -282,10 +278,7 @@ class UtilityExtension : Extension() {
                         qbotJson = Json.parseToJsonElement(arguments.file.download().toString(Charset.forName("UTF-8")))
                     } catch (t: SerializationException) {
                         respond {
-                            content = buildString {
-                                appendLine("Malformed JSON. See the following for more information:")
-                                appendLine("```\n${t}\n```")
-                            }
+                            content = translate("error.invalidjson", arrayOf("```\n$t\n```"))
                         }
 
                         return@action
@@ -304,11 +297,7 @@ class UtilityExtension : Extension() {
                             )
                         } catch (t: Throwable) {
                             respond {
-                                content = buildString {
-                                    appendLine("Malformed JSON; import halted. Notes were partially imported.")
-                                    appendLine("See the following for more information:")
-                                    appendLine("```\n${t}\n```")
-                                }
+                                content = translate("error.partialimport", arrayOf("```\n$t\n```"))
                             }
 
                             return@action
@@ -333,21 +322,18 @@ class UtilityExtension : Extension() {
 
             action {
                 respond {
-                    content = buildString {
-                        appendLine("Are you sure you want to delete **all** notes? This is **irreversible**.")
-                        appendLine("Please backup all notes before doing this action using the `/export` command.")
-                    }
+                    content = translate("extensions.utility.clear.confirmation")
 
                     components(15.seconds) {
                         ephemeralButton {
-                            label = "Delete"
+                            label = translate("button.deleteall.label")
                             style = ButtonStyle.Danger
 
                             action {
                                 noteCollection.deleteAllGuild(guild!!.id)
 
                                 edit {
-                                    content = "All notes deleted."
+                                    content = translate("extensions.utility.clear.success")
 
                                     components = mutableListOf()
                                 }
@@ -360,7 +346,7 @@ class UtilityExtension : Extension() {
 
                             action {
                                 edit {
-                                    content = "Cancelled deletion."
+                                    content = translate("extensions.management.delete.cancel")
 
                                     components = mutableListOf()
                                 }
@@ -370,7 +356,7 @@ class UtilityExtension : Extension() {
 
                         onTimeout {
                             edit {
-                                content = "Cancelled deletion."
+                                content = translate("extensions.management.delete.cancel")
 
                                 components = mutableListOf()
                             }
@@ -386,32 +372,7 @@ class UtilityExtension : Extension() {
 
             action {
                 respond {
-                    content = buildString {
-                        appendLine("# kose kata")
-
-                        append("Use `{{braces}}` to create note references, which are traversible to view new notes.")
-                        appendLine("For more information, see the wiki.")
-
-                        appendLine("## Essential commands")
-
-                        appendLine("`/new` Creates a modal to make a new note.")
-
-                        append("`New note` Accessed through the apps menu when clicking on a message.")
-                        appendLine("Creates a note from this message, and creates a modal to set a name for the note.")
-
-                        append("`/peek (name)` Views a note ephemerally by name.")
-                        append("If multiple notes exist under the same name, it chooses a random one.")
-                        appendLine("This command has autocomplete based on notes available in the guild!")
-
-                        append("`/post (name)` sends a note to chat by name.")
-                        appendLine("If multiple notes exist under the same name, it chooses a random one.")
-
-                        appendLine("`/edit (ID)` Creates a modal where you can edit a note you own by ID.")
-
-                        appendLine("`/delete (ID)` Deletes a note by ID you own after asking for confirmation.")
-
-                        appendLine("\nSee the wiki for more help and commands: https://github.com/mazziechai/kose-kata/wiki")
-                    }
+                    content = translate("extensions.utility.help.message")
                 }
             }
         }
@@ -423,7 +384,7 @@ class UtilityExtension : Extension() {
             description = "The notes you want to import"
 
             validate {
-                failIf("File is too large!") {
+                failIf(translate("error.filetoobig")) {
                     value.size > 52428800 // 50 MiB
                 }
             }

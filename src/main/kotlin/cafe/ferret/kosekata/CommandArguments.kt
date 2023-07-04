@@ -14,7 +14,7 @@ open class ByIdArgs : Arguments() {
         description = "The note's ID"
 
         validate {
-            failIf("That's not a valid ID!") {
+            failIf(translate("arguments.noteid.fail")) {
                 value.toIntOrNull(16) == null
             }
         }

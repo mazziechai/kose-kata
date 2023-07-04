@@ -4,6 +4,7 @@
 
 package cafe.ferret.kosekata.extensions
 
+import cafe.ferret.kosekata.BUNDLE
 import cafe.ferret.kosekata.ByIdArgs
 import cafe.ferret.kosekata.UserNotesArgs
 import cafe.ferret.kosekata.database.collections.NoteCollection
@@ -29,6 +30,8 @@ class ManagementExtension : Extension() {
 
     private val noteCollection: NoteCollection by inject()
 
+    override val bundle = BUNDLE
+
     override suspend fun setup() {
         publicSlashCommand {
             name = "delete"
@@ -47,36 +50,39 @@ class ManagementExtension : Extension() {
 
                     if (note == null || note.guild != guild!!.id) {
                         respond {
-                            content = "I couldn't find that note."
+                            content = translate("error.notfound")
                         }
 
                         return@action
                     }
 
                     if (note.author != user.id && !member!!.asMember(guild!!.id)
-                                    .hasPermission(Permission.ManageMessages)
+                            .hasPermission(Permission.ManageMessages)
                     ) {
                         respond {
-                            content = "You don't own that note."
+                            content = translate("error.notowned")
                         }
                         return@action
                     }
 
                     respond {
-                        content = "Are you sure you want to delete this note?"
+                        content = translate("extensions.management.delete.confirmation")
 
                         noteEmbed(this@publicSlashCommand.kord, note, true)
 
                         components(15.seconds) {
                             ephemeralButton {
-                                label = "Delete"
+                                label = translate("button.delete.label")
                                 style = ButtonStyle.Danger
 
                                 action {
                                     noteCollection.delete(note)
 
                                     edit {
-                                        content = "Note `#%06x` deleted.".format(noteId)
+                                        content = translate(
+                                            "extensions.management.delete.success",
+                                            arrayOf("%06x".format(noteId))
+                                        )
 
                                         components = mutableListOf()
                                     }
@@ -84,12 +90,12 @@ class ManagementExtension : Extension() {
                             }
 
                             ephemeralButton {
-                                label = "Cancel"
+                                label = translate("button.cancel.label")
                                 style = ButtonStyle.Secondary
 
                                 action {
                                     edit {
-                                        content = "Cancelled deletion."
+                                        content = translate("extensions.management.delete.cancel")
 
                                         components = mutableListOf()
                                     }
@@ -99,7 +105,7 @@ class ManagementExtension : Extension() {
 
                             onTimeout {
                                 edit {
-                                    content = "Cancelled deletion."
+                                    content = translate("extensions.management.delete.cancel")
 
                                     components = mutableListOf()
                                 }
@@ -121,30 +127,33 @@ class ManagementExtension : Extension() {
                     val member = arguments.user
 
                     val notes = noteCollection
-                            .getByUser(member.id)
-                            .filter { it.guild == guild!!.id }
+                        .getByUser(member.id)
+                        .filter { it.guild == guild!!.id }
 
                     if (notes.isEmpty()) {
                         respond {
-                            content = "This user has no notes."
+                            content = translate("error.usernonotes")
                         }
 
                         return@action
                     }
 
                     respond {
-                        content = "Are you sure you want to delete ALL of ${member.mention}'s notes?"
+                        content = translate("extensions.management.deleteuser.confirmation", arrayOf(member.mention))
 
                         components(15.seconds) {
                             ephemeralButton {
-                                label = "Delete"
+                                label = translate("button.delete.label")
                                 style = ButtonStyle.Danger
 
                                 action {
                                     noteCollection.deleteByUserInGuild(member.id, guild!!.id)
 
                                     edit {
-                                        content = "All notes from ${member.mention} deleted."
+                                        content = translate(
+                                            "extensions.management.deleteuser.success",
+                                            arrayOf(member.mention)
+                                        )
 
                                         components = mutableListOf()
                                     }
@@ -152,12 +161,12 @@ class ManagementExtension : Extension() {
                             }
 
                             ephemeralButton {
-                                label = "Cancel"
+                                label = translate("button.cancel.label")
                                 style = ButtonStyle.Secondary
 
                                 action {
                                     edit {
-                                        content = "Cancelled deletion."
+                                        content = translate("extensions.management.delete.cancel")
 
                                         components = mutableListOf()
                                     }
@@ -167,7 +176,7 @@ class ManagementExtension : Extension() {
 
                             onTimeout {
                                 edit {
-                                    content = "Cancelled deletion."
+                                    content = translate("extensions.management.delete.cancel")
 
                                     components = mutableListOf()
                                 }
@@ -197,7 +206,7 @@ class ManagementExtension : Extension() {
                             it.toInt(16)
                         } catch (_: NumberFormatException) {
                             respond {
-                                content = "$it is an invalid ID."
+                                content = translate("extensions.management.deletemultiple.invalidid", arrayOf(it))
                             }
 
                             return@action
@@ -209,7 +218,7 @@ class ManagementExtension : Extension() {
 
                     if (notes.isEmpty()) {
                         respond {
-                            content = "I couldn't find any notes."
+                            content = translate("extensions.management.deletemultiple.nonotes")
                         }
 
                         return@action
@@ -217,22 +226,28 @@ class ManagementExtension : Extension() {
 
                     respond {
                         // TODO: List more information about the notes being deleted
-                        content = "Are you sure you want to delete ${notes.count()} note(s)?"
+                        content = translate("extensions.management.deletemultiple.confirmation", arrayOf(notes.count()))
 
                         if (notes.count() != noteIds.count()) {
-                            content += "\n(${noteIds.count() - notes.count()} note(s) were not found)"
+                            content += translate(
+                                "extensions.management.deletemultiple.notfound",
+                                arrayOf(noteIds.count() - notes.count())
+                            )
                         }
 
                         components(15.seconds) {
                             ephemeralButton {
-                                label = "Delete all"
+                                label = translate("button.deleteall.label")
                                 style = ButtonStyle.Danger
 
                                 action {
                                     noteCollection.deleteMany(notes)
 
                                     edit {
-                                        content = "${notes.count()} notes deleted."
+                                        content = translate(
+                                            "extensions.management.deletemultiple.success",
+                                            arrayOf(notes.count())
+                                        )
 
                                         components = mutableListOf()
                                     }
@@ -245,7 +260,7 @@ class ManagementExtension : Extension() {
 
                                 action {
                                     edit {
-                                        content = "Cancelled deletion."
+                                        content = translate("extensions.management.delete.cancel")
 
                                         components = mutableListOf()
                                     }
@@ -255,7 +270,7 @@ class ManagementExtension : Extension() {
 
                             onTimeout {
                                 edit {
-                                    content = "Cancelled deletion."
+                                    content = translate("extensions.management.delete.cancel")
 
                                     components = mutableListOf()
                                 }
@@ -285,17 +300,17 @@ class ManagementExtension : Extension() {
 
                 if (note == null || note.guild != guild!!.id) {
                     respond {
-                        content = "I couldn't find that note."
+                        content = translate("error.notfound")
                     }
 
                     return@action
                 }
 
                 if (note.author != user.id && !member!!.asMember(guild!!.id)
-                                .hasPermission(Permission.ManageMessages)
+                        .hasPermission(Permission.ManageMessages)
                 ) {
                     respond {
-                        content = "You don't own that note."
+                        content = translate("error.notowned")
                     }
                     return@action
                 }
@@ -305,7 +320,7 @@ class ManagementExtension : Extension() {
                 noteCollection.set(note)
 
                 respond {
-                    content = "Updated note `#%06x`!".format(noteId)
+                    content = translate("extensions.management.edit.success", arrayOf("%06x".format(noteId)))
 
                     noteEmbed(this@publicSlashCommand.kord, note, true)
                 }
