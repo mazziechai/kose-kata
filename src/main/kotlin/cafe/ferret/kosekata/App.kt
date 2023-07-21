@@ -18,7 +18,7 @@ val ENVIRONMENT = env("ENVIRONMENT")
 
 private val token = env("TOKEN")
 
-val BUNDLE = "kose.strings"
+const val BUNDLE = "kose.strings"
 
 suspend fun main() {
     val bot = ExtensibleBot(token) {

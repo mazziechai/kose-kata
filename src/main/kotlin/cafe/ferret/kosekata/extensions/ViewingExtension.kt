@@ -360,7 +360,7 @@ class ViewingExtension : Extension() {
 
         if (guildNotes.isEmpty()) {
             respond {
-                content = translationsProvider.translate("error.notfound")
+                content = translationsProvider.translate("error.notfound", BUNDLE)
             }
             return
         }
@@ -381,7 +381,7 @@ class ViewingExtension : Extension() {
 
         if (note == null || note.guild != guild.id) {
             respond {
-                content = translationsProvider.translate("error.notfound")
+                content = translationsProvider.translate("error.notfound", BUNDLE)
             }
             return
         }
