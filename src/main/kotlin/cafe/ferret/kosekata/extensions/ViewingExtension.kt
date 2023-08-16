@@ -261,7 +261,7 @@ class ViewingExtension : Extension() {
             noteReferencesComponents(note, text)
         }
 
-        val regex = Regex("""(http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])""")
+        val regex = Regex("""<?(http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])>?""")
         val urls = regex.findAll(note.content)
 
         if (!urls.none() && !text) {
