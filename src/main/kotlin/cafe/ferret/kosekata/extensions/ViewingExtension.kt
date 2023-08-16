@@ -4,9 +4,12 @@
 
 package cafe.ferret.kosekata.extensions
 
-import cafe.ferret.kosekata.*
+import cafe.ferret.kosekata.BUNDLE
+import cafe.ferret.kosekata.ByIdArgs
 import cafe.ferret.kosekata.database.collections.NoteCollection
 import cafe.ferret.kosekata.database.entities.Note
+import cafe.ferret.kosekata.formatTime
+import cafe.ferret.kosekata.noteEmbed
 import com.kotlindiscord.kord.extensions.checks.anyGuild
 import com.kotlindiscord.kord.extensions.commands.Arguments
 import com.kotlindiscord.kord.extensions.commands.converters.impl.optionalBoolean
@@ -26,7 +29,6 @@ import dev.kord.common.Color
 import dev.kord.core.behavior.GuildBehavior
 import dev.kord.rest.builder.message.create.FollowupMessageCreateBuilder
 import dev.kord.rest.builder.message.create.embed
-import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.koin.core.component.inject
 
 class ViewingExtension : Extension() {
@@ -115,38 +117,38 @@ class ViewingExtension : Extension() {
             }
         }
 
-        ephemeralSlashCommand(::SearchCommandArgs) {
-            name = "search"
-            description = "Search for a note"
-
-            check { anyGuild() }
-
-            action {
-                val guildNotes = noteCollection.getByGuild(guild!!.id)
-
-                if (guildNotes.isEmpty()) {
-                    respond {
-                        content = translate("error.servernonotes")
-                    }
-                    return@action
-                }
-
-                val noteNames = guildNotes.flatMap { it.aliases }
-                val searchResults = FuzzySearch.extractSorted(arguments.searchParam, noteNames, 66).map { it.string }
-
-                val notes = guildNotes.filter { searchResults.any { it in noteNames } }
-
-                if (notes.isEmpty()) {
-                    respond {
-                        content = translate("extensions.viewing.search.nonotes")
-                    }
-
-                    return@action
-                }
-
-                guildNotes(this@ephemeralSlashCommand.kord, guild!!.asGuild(), notes, arguments.searchParam)
-            }
-        }
+//        ephemeralSlashCommand(::SearchCommandArgs) {
+//            name = "search"
+//            description = "Search for a note"
+//
+//            check { anyGuild() }
+//
+//            action {
+//                val guildNotes = noteCollection.getByGuild(guild!!.id)
+//
+//                if (guildNotes.isEmpty()) {
+//                    respond {
+//                        content = translate("error.servernonotes")
+//                    }
+//                    return@action
+//                }
+//
+//                val noteNames = guildNotes.flatMap { it.aliases }
+//                val searchResults = FuzzySearch.extractSorted(arguments.searchParam, noteNames, 66).map { it.string }
+//
+//                val notes = guildNotes.filter { searchResults.any { it in noteNames } }
+//
+//                if (notes.isEmpty()) {
+//                    respond {
+//                        content = translate("extensions.viewing.search.nonotes")
+//                    }
+//
+//                    return@action
+//                }
+//
+//                guildNotes(this@ephemeralSlashCommand.kord, guild!!.asGuild(), notes, arguments.searchParam)
+//            }
+//        }
 
         ephemeralSlashCommand(::ByIdArgs) {
             name = "info"
@@ -233,12 +235,12 @@ class ViewingExtension : Extension() {
         }
     }
 
-    inner class SearchCommandArgs : Arguments() {
-        val searchParam by string {
-            name = "name"
-            description = "The name to search for"
-        }
-    }
+//    inner class SearchCommandArgs : Arguments() {
+//        val searchParam by string {
+//            name = "name"
+//            description = "The name to search for"
+//        }
+//    }
 
     /**
      * Recursively calls [edit] to display a [Note].
