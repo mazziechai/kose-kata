@@ -60,7 +60,7 @@ class ViewingExtension : Extension() {
 
                 val note = guildNotes.random()
 
-                viewNoteResponse(note, arguments.text == true)
+                viewNoteResponse(note, arguments.text ?: true)
             }
         }
 
@@ -99,7 +99,7 @@ class ViewingExtension : Extension() {
                     return@action
                 }
 
-                viewNoteResponse(note, arguments.text == true)
+                viewNoteResponse(note, arguments.text ?: true)
             }
         }
 
@@ -224,14 +224,14 @@ class ViewingExtension : Extension() {
 
         val text by optionalBoolean {
             name = "text"
-            description = "Toggles a text-only note view. Defaults to false."
+            description = "Toggles a text-only note view. Defaults to true."
         }
     }
 
     inner class ViewByIdCommandArgs : ByIdArgs() {
         val text by optionalBoolean {
             name = "text"
-            description = "Toggles a text-only note view. Defaults to false."
+            description = "Toggles a text-only note view. Defaults to true."
         }
     }
 
@@ -369,7 +369,7 @@ class ViewingExtension : Extension() {
 
         val note = guildNotes.random()
 
-        viewNoteResponse(note, arguments.text == true)
+        viewNoteResponse(note, arguments.text ?: true)
     }
 
     private suspend fun PublicInteractionContext.publicNoteByIdAction(
@@ -388,6 +388,6 @@ class ViewingExtension : Extension() {
             return
         }
 
-        viewNoteResponse(note, arguments.text == true)
+        viewNoteResponse(note, arguments.text ?: true)
     }
 }
