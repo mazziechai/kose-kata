@@ -15,12 +15,31 @@ services:
     deploy:
       restart_policy:
         condition: "unless-stopped"
+        delay: 5s
+        window: 30s
     depends_on:
-      - database
-  database:
-    image: "postgres:latest"
-    restart: always
+      - db
+  db:
+    image: "postgresql:15"
+    container_name: "db"
+    build:
+      context: .
+      dockerfile: "Dockerfile"
     environment:
-      POSTGRES_USER: "${POSTGRES_USER}"
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
-      POSTGRES_DB: "${POSTGRES_DB}"
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      # these are the vars docker expects
+      # NOTE: You can deliver these variables via `.env`
+    healthcheck:
+      test: "pg_isready -d ${POSTGRES_DB} -U ${POSTGRES_USER}"
+      interval: 60s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    deploy:
+      restart_policy:
+        condition: "unless-stopped"
+        delay: 5s
+        window: 30s
+# NOTE: the postgres docker image has a built in volume which persists independently of the container
