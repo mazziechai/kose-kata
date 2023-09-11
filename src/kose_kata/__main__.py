@@ -9,6 +9,7 @@ TEST_SERVER = int(os.environ["TEST_SERVER"])
 POSTGRES_USER = os.environ["POSTGRES_USER"]
 POSTGRES_PASSWORD = os.environ["POSTGRES_PASSWORD"]
 POSTGRES_DB = os.environ["POSTGRES_DB"]
+DEVELOPER = int(os.environ["DEVELOPER"])
 
 LOG = logging.getLogger()
 
@@ -30,6 +31,9 @@ def main() -> None:
     init_logger()
 
     bot = lightbulb.BotApp(token=TOKEN, default_enabled_guilds=TEST_SERVER, logs="INFO")
+
+    # Absolute path in Docker
+    bot.load_extensions_from("/project/pkgs/kose_kata/extensions")
 
     bot.run()
 
