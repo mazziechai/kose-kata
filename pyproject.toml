@@ -1,7 +1,7 @@
 [project]
-name = ""
-version = ""
-description = ""
+name = "kose-kata"
+version = "0.1.0"
+description = "Powerful note Discord bot"
 authors = [
     {name = "Mazzie", email = "mazziechai@gmail.com"},
 ]

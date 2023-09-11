@@ -56,5 +56,4 @@ This branch is a rewrite. Most features aren't implemented yet compared to the v
 
 - [ ] Markdown escaping for notes
 - [ ] Case normalization for note names
-- [ ] More logging
 - [ ] Lazy pagination to improve performance
