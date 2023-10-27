@@ -241,7 +241,7 @@ class ViewingExtension : Extension() {
 //    }
 
     /**
-     * Recursively calls [edit] to display a [Note].
+     * Recursively calls edit to display a [Note].
      *
      * @param note The note to display.
      * @param text If there should be just text instead of an embed.
@@ -275,7 +275,7 @@ class ViewingExtension : Extension() {
     }
 
     /**
-     * Recursively calls [edit] to display a [Note].
+     * Recursively calls edit to display a [Note].
      *
      * @param note The note to display.
      * @param text If there should be just text instead of an embed.
