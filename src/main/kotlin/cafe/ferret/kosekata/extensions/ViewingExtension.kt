@@ -171,20 +171,6 @@ class ViewingExtension : Extension() {
         val noteName by string {
             name = "note"
             description = "The note's name"
-
-//            var notes: List<String>? = null
-//
-//            autoComplete {
-//                if (data.guildId.value != null) {
-//                    if (notes == null) {
-//                        notes = noteCollection.getByGuild(data.guildId.value!!).flatMap { it.aliases }.distinct()
-//                    }
-//
-//                    val noteNames = FuzzySearch.extractTop(focusedOption.value, notes!!, 10).map { it.string }
-//
-//                    suggestStringCollection(noteNames)
-//                }
-//            }
         }
 
         val text by optionalBoolean {
@@ -199,13 +185,6 @@ class ViewingExtension : Extension() {
             description = "Toggles a text-only note view. Defaults to true."
         }
     }
-
-//    inner class SearchCommandArgs : Arguments() {
-//        val searchParam by string {
-//            name = "name"
-//            description = "The name to search for"
-//        }
-//    }
 
     /**
      * Recursively calls edit to display a [Note].
