@@ -254,7 +254,7 @@ class ViewingExtension : Extension() {
             if (!text) {
                 noteEmbed(kord, note, false)
             } else {
-                content = "${note.content}\n\n`#%06x`".format(note._id)
+                content = "${note.content}\n\n`#%06x` `%s`".format(note._id, note.name)
             }
             noteReferencesComponents(note, text)
         }
@@ -288,7 +288,7 @@ class ViewingExtension : Extension() {
             if (!text) {
                 noteEmbed(kord, note, false)
             } else {
-                content = "${note.content}\n\n`#%06x`".format(note._id)
+                content = "${note.content}\n\n`#%06x` `%s`".format(note._id, note.name)
             }
             noteReferencesComponents(note, text)
         }
