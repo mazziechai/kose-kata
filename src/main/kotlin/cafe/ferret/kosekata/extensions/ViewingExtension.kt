@@ -16,7 +16,7 @@ import com.kotlindiscord.kord.extensions.commands.converters.impl.optionalBoolea
 import com.kotlindiscord.kord.extensions.commands.converters.impl.string
 import com.kotlindiscord.kord.extensions.components.ComponentContainer
 import com.kotlindiscord.kord.extensions.components.components
-import com.kotlindiscord.kord.extensions.components.ephemeralSelectMenu
+import com.kotlindiscord.kord.extensions.components.ephemeralStringSelectMenu
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
 import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
@@ -329,7 +329,7 @@ class ViewingExtension : Extension() {
 
         return components {
             if (references.any() && referencedNotes.isNotEmpty()) {
-                ephemeralSelectMenu {
+                ephemeralStringSelectMenu {
                     placeholder = "Referenced notes"
 
                     references.take(25).forEach { result ->
