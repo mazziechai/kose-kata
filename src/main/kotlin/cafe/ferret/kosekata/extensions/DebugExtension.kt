@@ -12,7 +12,6 @@ import com.kotlindiscord.kord.extensions.commands.application.slash.ephemeralSub
 import com.kotlindiscord.kord.extensions.commands.converters.impl.guild
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
-import com.kotlindiscord.kord.extensions.types.respond
 import com.kotlindiscord.kord.extensions.utils.env
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.event.Event

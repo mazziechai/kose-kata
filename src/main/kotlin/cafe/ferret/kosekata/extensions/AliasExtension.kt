@@ -14,7 +14,6 @@ import com.kotlindiscord.kord.extensions.commands.application.slash.publicSubCom
 import com.kotlindiscord.kord.extensions.commands.converters.impl.string
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
-import com.kotlindiscord.kord.extensions.types.respond
 import com.kotlindiscord.kord.extensions.utils.hasPermission
 import dev.kord.common.entity.Permission
 import org.koin.core.component.inject

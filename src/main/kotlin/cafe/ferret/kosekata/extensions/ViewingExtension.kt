@@ -23,8 +23,6 @@ import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
 import com.kotlindiscord.kord.extensions.i18n.TranslationsProvider
 import com.kotlindiscord.kord.extensions.types.EphemeralInteractionContext
 import com.kotlindiscord.kord.extensions.types.PublicInteractionContext
-import com.kotlindiscord.kord.extensions.types.edit
-import com.kotlindiscord.kord.extensions.types.respond
 import dev.kord.common.Color
 import dev.kord.core.behavior.GuildBehavior
 import dev.kord.rest.builder.message.create.FollowupMessageCreateBuilder

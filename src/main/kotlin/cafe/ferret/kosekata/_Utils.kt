@@ -8,7 +8,6 @@ import cafe.ferret.kosekata.database.entities.Note
 import com.kotlindiscord.kord.extensions.time.TimestampType
 import com.kotlindiscord.kord.extensions.time.toDiscord
 import com.kotlindiscord.kord.extensions.types.EphemeralInteractionContext
-import com.kotlindiscord.kord.extensions.types.editingPaginator
 import dev.kord.common.Color
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
