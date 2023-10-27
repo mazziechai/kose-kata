@@ -115,39 +115,6 @@ class ViewingExtension : Extension() {
             }
         }
 
-//        ephemeralSlashCommand(::SearchCommandArgs) {
-//            name = "search"
-//            description = "Search for a note"
-//
-//            check { anyGuild() }
-//
-//            action {
-//                val guildNotes = noteCollection.getByGuild(guild!!.id)
-//
-//                if (guildNotes.isEmpty()) {
-//                    respond {
-//                        content = translate("error.servernonotes")
-//                    }
-//                    return@action
-//                }
-//
-//                val noteNames = guildNotes.flatMap { it.aliases }
-//                val searchResults = FuzzySearch.extractSorted(arguments.searchParam, noteNames, 66).map { it.string }
-//
-//                val notes = guildNotes.filter { searchResults.any { it in noteNames } }
-//
-//                if (notes.isEmpty()) {
-//                    respond {
-//                        content = translate("extensions.viewing.search.nonotes")
-//                    }
-//
-//                    return@action
-//                }
-//
-//                guildNotes(this@ephemeralSlashCommand.kord, guild!!.asGuild(), notes, arguments.searchParam)
-//            }
-//        }
-
         ephemeralSlashCommand(::ByIdArgs) {
             name = "info"
             description = "Gets information about a note. Does not display contents."
