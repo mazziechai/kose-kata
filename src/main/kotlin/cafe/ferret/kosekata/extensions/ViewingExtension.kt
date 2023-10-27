@@ -21,7 +21,7 @@ import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
 import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
 import com.kotlindiscord.kord.extensions.i18n.TranslationsProvider
-import com.kotlindiscord.kord.extensions.types.EphemeralInteractionContext
+import com.kotlindiscord.kord.extensions.types.InteractionContext
 import com.kotlindiscord.kord.extensions.types.PublicInteractionContext
 import dev.kord.common.Color
 import dev.kord.core.behavior.GuildBehavior
@@ -192,7 +192,7 @@ class ViewingExtension : Extension() {
      * @param note The note to display.
      * @param text If there should be just text instead of an embed.
      */
-    private suspend fun PublicInteractionContext.viewNoteResponse(
+    private suspend fun InteractionContext<*, *, *, *>.viewNoteResponse(
         note: Note,
         text: Boolean
     ) {
@@ -206,40 +206,6 @@ class ViewingExtension : Extension() {
         }
 
         val regex = Regex("""<?(http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])>?""")
-        val urls = regex.findAll(note.content)
-
-        if (!urls.none() && !text) {
-            respond {
-                this@respond.content = buildString {
-                    appendLine("**URLs** (for embeds)")
-                    for (url in urls) {
-                        appendLine(url.value)
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Recursively calls edit to display a [Note].
-     *
-     * @param note The note to display.
-     * @param text If there should be just text instead of an embed.
-     */
-    private suspend fun EphemeralInteractionContext.viewNoteResponse(
-        note: Note,
-        text: Boolean
-    ) {
-        respond {
-            if (!text) {
-                noteEmbed(kord, note, false)
-            } else {
-                content = "${note.content}\n\n`#%06x` `%s`".format(note._id, note.name)
-            }
-            noteReferencesComponents(note, text)
-        }
-
-        val regex = Regex("""(http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])""")
         val urls = regex.findAll(note.content)
 
         if (!urls.none() && !text) {
@@ -306,7 +272,7 @@ class ViewingExtension : Extension() {
 
         if (guildNotes.isEmpty()) {
             respond {
-                content = translationsProvider.translate("error.notfound", BUNDLE)
+                content = translationsProvider.translate("error.notfound", bundleName = BUNDLE)
             }
             return
         }
@@ -327,7 +293,7 @@ class ViewingExtension : Extension() {
 
         if (note == null || note.guild != guild.id) {
             respond {
-                content = translationsProvider.translate("error.notfound", BUNDLE)
+                content = translationsProvider.translate("error.notfound", bundleName = BUNDLE)
             }
             return
         }
