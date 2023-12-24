@@ -25,8 +25,9 @@ import com.kotlindiscord.kord.extensions.types.InteractionContext
 import com.kotlindiscord.kord.extensions.types.PublicInteractionContext
 import dev.kord.common.Color
 import dev.kord.core.behavior.GuildBehavior
+import dev.kord.rest.builder.message.EmbedBuilder
 import dev.kord.rest.builder.message.create.FollowupMessageCreateBuilder
-import dev.kord.rest.builder.message.create.embed
+import dev.kord.rest.builder.message.embed
 import org.koin.core.component.inject
 
 class ViewingExtension : Extension() {
@@ -137,7 +138,7 @@ class ViewingExtension : Extension() {
                 val noteMember = noteUser?.asMemberOrNull(note.guild)
 
                 respond {
-                    embed {
+                    embed(fun EmbedBuilder.() {
                         author {
                             name = if (noteMember?.effectiveName != null) {
                                 "${noteMember.effectiveName} (${noteUser.username})"
@@ -161,7 +162,7 @@ class ViewingExtension : Extension() {
                         footer {
                             text = "%06x".format(note._id)
                         }
-                    }
+                    })
                 }
             }
         }

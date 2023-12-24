@@ -14,8 +14,9 @@ import dev.kord.core.Kord
 import dev.kord.core.entity.Guild
 import dev.kord.core.entity.User
 import dev.kord.rest.Image
+import dev.kord.rest.builder.message.EmbedBuilder
 import dev.kord.rest.builder.message.create.FollowupMessageCreateBuilder
-import dev.kord.rest.builder.message.create.embed
+import dev.kord.rest.builder.message.embed
 import kotlinx.datetime.Instant
 import java.text.SimpleDateFormat
 
@@ -31,7 +32,7 @@ suspend fun FollowupMessageCreateBuilder.noteEmbed(kord: Kord, note: Note, verbo
     val noteUser = kord.getUser(note.author)
     val noteMember = noteUser?.asMemberOrNull(note.guild)
 
-    embed {
+    embed(fun EmbedBuilder.() {
         if (verbose) {
             author {
                 name = if (noteMember?.effectiveName != null) {
@@ -61,7 +62,7 @@ suspend fun FollowupMessageCreateBuilder.noteEmbed(kord: Kord, note: Note, verbo
                 }
             }
         }
-    }
+    })
 }
 
 suspend fun EphemeralInteractionContext.guildNotes(
