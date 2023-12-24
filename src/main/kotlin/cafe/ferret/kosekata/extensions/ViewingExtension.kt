@@ -48,16 +48,14 @@ class ViewingExtension : Extension() {
             check { anyGuild() }
 
             action {
-                val guildNotes = noteCollection.getByGuildAndName(guild!!.id, arguments.noteName)
+                val note = noteCollection.getRandomNote(guild!!.id, arguments.noteName)
 
-                if (guildNotes.isEmpty()) {
+                if (note == null) {
                     respond {
                         content = translate("error.notfound")
                     }
                     return@action
                 }
-
-                val note = guildNotes.random()
 
                 viewNoteResponse(note, arguments.text ?: true)
             }
@@ -269,16 +267,14 @@ class ViewingExtension : Extension() {
         arguments: ViewByNameCommandArgs,
         translationsProvider: TranslationsProvider
     ) {
-        val guildNotes = noteCollection.getByGuildAndName(guild.id, arguments.noteName)
+        val note = noteCollection.getRandomNote(guild.id, arguments.noteName)
 
-        if (guildNotes.isEmpty()) {
+        if (note == null) {
             respond {
                 content = translationsProvider.translate("error.notfound", bundleName = BUNDLE)
             }
             return
         }
-
-        val note = guildNotes.random()
 
         viewNoteResponse(note, arguments.text ?: true)
     }

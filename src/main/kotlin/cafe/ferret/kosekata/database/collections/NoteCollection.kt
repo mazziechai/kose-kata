@@ -12,9 +12,8 @@ import dev.kord.common.entity.Snowflake
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.core.component.inject
-import org.litote.kmongo.and
-import org.litote.kmongo.eq
-import org.litote.kmongo.`in`
+import org.litote.kmongo.*
+import org.litote.kmongo.coroutine.aggregate
 import kotlin.random.Random
 
 /**
@@ -118,6 +117,15 @@ class NoteCollection : KordExKoinComponent {
      */
     suspend fun getByGuildAndName(guild: Snowflake, name: String) =
         col.find(and(Note::guild eq guild, Note::aliases `in` name)).toList()
+
+    suspend fun getRandomNote(guild: Snowflake, name: String) =
+        col.aggregate<Note>(
+            match(
+                Note::guild eq guild,
+                Note::name eq name
+            ),
+            sample(1)
+        ).first()
 
     /**
      * Gets multiple Notes by ID.
