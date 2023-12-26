@@ -122,7 +122,7 @@ class NoteCollection : KordExKoinComponent {
         col.aggregate<Note>(
             match(
                 Note::guild eq guild,
-                Note::name eq name
+                Note::aliases `in` name
             ),
             sample(1)
         ).first()
