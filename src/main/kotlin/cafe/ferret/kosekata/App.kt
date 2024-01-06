@@ -30,6 +30,11 @@ suspend fun main() {
             }
         }
 
+        chatCommands {
+            enabled = true
+            prefix { "." }
+        }
+
         extensions {
             add(::CreationExtension)
             add(::ManagementExtension)
@@ -37,6 +42,7 @@ suspend fun main() {
             add(::UtilityExtension)
             add(::DebugExtension)
             add(::AliasExtension)
+            add(::ChatCommandsExtension)
         }
     }
 
