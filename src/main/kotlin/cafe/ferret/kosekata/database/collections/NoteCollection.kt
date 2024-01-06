@@ -132,5 +132,7 @@ class NoteCollection : KordExKoinComponent {
      */
     suspend fun getMultipleNotes(ids: List<Int>) = col.find(Note::_id `in` ids).toList()
 
+    fun rawCollectionAccess() = col
+
     companion object : DbCollection("notes")
 }

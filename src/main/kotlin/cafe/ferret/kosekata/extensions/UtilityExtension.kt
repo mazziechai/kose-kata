@@ -6,6 +6,7 @@ package cafe.ferret.kosekata.extensions
 
 import cafe.ferret.kosekata.BUNDLE
 import cafe.ferret.kosekata.database.collections.NoteCollection
+import cafe.ferret.kosekata.database.entities.Note
 import com.kotlindiscord.kord.extensions.checks.anyGuild
 import com.kotlindiscord.kord.extensions.checks.hasPermission
 import com.kotlindiscord.kord.extensions.commands.Arguments
@@ -27,6 +28,8 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.koin.core.component.inject
+import org.litote.kmongo.bson
+import org.litote.kmongo.eq
 import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.*
@@ -123,6 +126,7 @@ class UtilityExtension : Extension() {
                 description = "Import notes from a qbot notes file"
 
                 action {
+                    val rawCollection = noteCollection.rawCollectionAccess()
                     val qbotJson: JsonElement
 
                     try {
@@ -135,17 +139,32 @@ class UtilityExtension : Extension() {
                         return@action
                     }
 
+                    var notesSkipped = 0
+
                     for (element in qbotJson.jsonArray) {
                         val jsonObject = element.jsonObject
                         try {
-                            noteCollection.new(
-                                Snowflake(jsonObject["user_id"]!!.jsonPrimitive.long),
-                                guild!!.id,
-                                jsonObject["name"]!!.jsonPrimitive.content,
-                                mutableListOf(jsonObject["name"]!!.jsonPrimitive.content),
-                                jsonObject["text"]!!.jsonPrimitive.content,
-                                timeCreated = jsonObject["created_at"]!!.jsonPrimitive.content.toInstant()
-                            )
+                            if (rawCollection.find(
+                                    Note::author eq Snowflake(jsonObject["user_id"]!!.jsonPrimitive.long),
+                                    Note::guild eq guild!!.id,
+                                    Note::name eq jsonObject["name"]!!.jsonPrimitive.content,
+                                    Note::content eq jsonObject["text"]!!.jsonPrimitive.content,
+                                    // HACK: kmongo keeps changing the type safe query to not match the actual content
+                                    // of the database so this is what we have to do
+                                    "{ timeCreated: '${jsonObject["created_at"]!!.jsonPrimitive.content}' }".bson
+                                ).first() == null
+                            ) {
+                                noteCollection.new(
+                                    Snowflake(jsonObject["user_id"]!!.jsonPrimitive.long),
+                                    guild!!.id,
+                                    jsonObject["name"]!!.jsonPrimitive.content,
+                                    mutableListOf(jsonObject["name"]!!.jsonPrimitive.content),
+                                    jsonObject["text"]!!.jsonPrimitive.content,
+                                    timeCreated = jsonObject["created_at"]!!.jsonPrimitive.content.toInstant()
+                                )
+                            } else {
+                                notesSkipped++
+                            }
                         } catch (t: Throwable) {
                             respond {
                                 content = translate("error.partialimport", arrayOf("```\n$t\n```"))
@@ -156,7 +175,10 @@ class UtilityExtension : Extension() {
                     }
 
                     respond {
-                        content = "Successfully imported ${qbotJson.jsonArray.count()} notes!"
+                        content = "Successfully imported ${qbotJson.jsonArray.count() - notesSkipped} notes!"
+                        if (notesSkipped > 0) {
+                            content += "\n(Skipped $notesSkipped notes due to conflicts)"
+                        }
                     }
                 }
             }
@@ -207,8 +229,6 @@ class UtilityExtension : Extension() {
 
                         onTimeout {
                             edit {
-                                content = translate("extensions.management.delete.cancel")
-
                                 components = mutableListOf()
                             }
                         }

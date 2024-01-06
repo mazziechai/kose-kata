@@ -103,8 +103,6 @@ class ManagementExtension : Extension() {
 
                             onTimeout {
                                 edit {
-                                    content = translate("extensions.management.delete.cancel")
-
                                     components = mutableListOf()
                                 }
                             }
@@ -174,8 +172,6 @@ class ManagementExtension : Extension() {
 
                             onTimeout {
                                 edit {
-                                    content = translate("extensions.management.delete.cancel")
-
                                     components = mutableListOf()
                                 }
                             }
@@ -268,8 +264,6 @@ class ManagementExtension : Extension() {
 
                             onTimeout {
                                 edit {
-                                    content = translate("extensions.management.delete.cancel")
-
                                     components = mutableListOf()
                                 }
                             }
