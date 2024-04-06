@@ -27,6 +27,7 @@ class ChatCommandsExtension : Extension() {
          */
         chatCommand(::PostCommandArgs) {
             name = "post"
+            aliases = arrayOf("n", "note")
             description = "Sends to note as a chat (chat command shortcut)"
 
             check { anyGuild() }
