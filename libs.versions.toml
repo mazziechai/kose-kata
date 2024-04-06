@@ -6,7 +6,7 @@ jansi = "2.4.1"
 kord-extensions = "1.8.0-SNAPSHOT"
 kx-ser = "1.6.2"
 logging = "2.1.23"
-logback = "1.4.7"
+logback = "1.5.3"
 
 kmongo = "4.11.0"
 fuzzywuzzy = "1.4.0"
@@ -14,7 +14,8 @@ fuzzywuzzy = "1.4.0"
 [libraries]
 groovy = { module = "org.codehaus.groovy:groovy", version.ref = "groovy" }
 jansi = { module = "org.fusesource.jansi:jansi", version.ref = "jansi" }
-kord-extensions = { module = "com.kotlindiscord.kord.extensions:kord-extensions", version.ref = "kord-extensions" }
+kord-extensions-base = { module = "com.kotlindiscord.kord.extensions:kord-extensions", version.ref = "kord-extensions" }
+kord-extensions-unsafe = { module = "com.kotlindiscord.kord.extensions:unsafe", version.ref = "kord-extensions" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 logging = { module = "io.github.microutils:kotlin-logging", version.ref = "logging" }

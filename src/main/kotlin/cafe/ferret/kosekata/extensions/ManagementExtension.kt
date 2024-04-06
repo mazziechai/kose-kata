@@ -17,9 +17,15 @@ import com.kotlindiscord.kord.extensions.components.ephemeralButton
 import com.kotlindiscord.kord.extensions.components.forms.ModalForm
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
+import com.kotlindiscord.kord.extensions.modules.unsafe.annotations.UnsafeAPI
+import com.kotlindiscord.kord.extensions.modules.unsafe.extensions.unsafeSlashCommand
+import com.kotlindiscord.kord.extensions.modules.unsafe.types.InitialSlashCommandResponse
+import com.kotlindiscord.kord.extensions.modules.unsafe.types.edit
+import com.kotlindiscord.kord.extensions.modules.unsafe.types.respondEphemeral
 import com.kotlindiscord.kord.extensions.utils.hasPermission
 import dev.kord.common.entity.ButtonStyle
 import dev.kord.common.entity.Permission
+import dev.kord.core.behavior.interaction.response.createEphemeralFollowup
 import org.koin.core.component.inject
 import kotlin.time.Duration.Companion.seconds
 
@@ -30,6 +36,7 @@ class ManagementExtension : Extension() {
 
     override val bundle = BUNDLE
 
+    @OptIn(UnsafeAPI::class)
     override suspend fun setup() {
         publicSlashCommand {
             name = "delete"
@@ -274,24 +281,21 @@ class ManagementExtension : Extension() {
             }
         }
 
-        publicSlashCommand(::ByIdArgs, ::EditModal) {
+        unsafeSlashCommand(::ByIdArgs) {
             name = "edit"
             description = "Edit a note by its ID. Opens a text box."
 
+            initialResponse = InitialSlashCommandResponse.None
+
             check { anyGuild() }
 
-            action { modal ->
-
-                if (modal == null) {
-                    throw IllegalStateException("Could not find modal!")
-                }
-
+            action {
                 val noteId = arguments.noteId.toInt(16)
 
                 val note = noteCollection.get(noteId)
 
                 if (note == null || note.guild != guild!!.id) {
-                    respond {
+                    respondEphemeral {
                         content = translate("error.notfound")
                     }
 
@@ -301,8 +305,23 @@ class ManagementExtension : Extension() {
                 if (note.author != user.id && !member!!.asMember(guild!!.id)
                         .hasPermission(Permission.ManageMessages)
                 ) {
-                    respond {
+                    respondEphemeral {
                         content = translate("error.notowned")
+                    }
+                    return@action
+                }
+
+                val modal = EditModal()
+                this@unsafeSlashCommand.componentRegistry.register(modal)
+
+                modal.content.initialValue = note.content
+
+                val result = modal.sendAndDeferEphemeral(this)
+
+                if (result == null) {
+                    // Modal timed out
+                    edit {
+                        content = "Modal timed out."
                     }
                     return@action
                 }
@@ -311,10 +330,10 @@ class ManagementExtension : Extension() {
 
                 noteCollection.set(note)
 
-                respond {
+                result.createEphemeralFollowup {
                     content = translate("extensions.management.edit.success", arrayOf("%06x".format(noteId)))
 
-                    noteEmbed(this@publicSlashCommand.kord, note, true)
+                    noteEmbed(this@unsafeSlashCommand.kord, note, true)
                 }
             }
         }

@@ -32,7 +32,8 @@ repositories {
 }
 
 dependencies {
-    implementation(libs.kord.extensions)
+    implementation(libs.kord.extensions.base)
+    implementation(libs.kord.extensions.unsafe)
     implementation(libs.kotlin.stdlib)
     implementation(libs.kx.ser)
 
