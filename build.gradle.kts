@@ -48,13 +48,12 @@ dependencies {
 }
 
 application {
-    // This is deprecated, but the Shadow plugin requires it
-    mainClassName = "cafe.ferret.kosekata.AppKt"
+    mainClass.set("cafe.ferret.kosekata.AppKt")
 }
 
 tasks.withType<KotlinCompile> {
     // Current LTS version of Java
-    kotlinOptions.jvmTarget = "17"
+    kotlinOptions.jvmTarget = "21"
 
     kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
 }
@@ -69,6 +68,6 @@ tasks.jar {
 
 java {
     // Current LTS version of Java
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
