@@ -100,6 +100,9 @@ class NoteCollection : KordExKoinComponent {
      */
     suspend fun getByUser(user: Snowflake) = col.find(Note::author eq user).toList()
 
+    suspend fun getByGuildAndUser(guild: Snowflake, user: Snowflake) =
+        col.find(and(Note::guild eq guild, Note::author eq user)).toList()
+
     /**
      * Gets [Note]s from a guild's [Snowflake].
      *

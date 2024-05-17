@@ -66,6 +66,51 @@ class UtilityExtension : Extension() {
             }
         }
 
+        ephemeralSlashCommand {
+            name = "userexport"
+            description = "Export your notes"
+
+            ephemeralSubCommand {
+                name = "server"
+                description = "Export your notes from this server"
+
+                check {
+                    anyGuild()
+                }
+
+                action {
+                    val notes = noteCollection.getByGuildAndUser(guild!!.id, user.id)
+                    val json = Json.encodeToString(notes)
+
+                    val timeFormat = SimpleDateFormat("yyyy-MM-dd")
+
+                    respond {
+                        addFile(
+                            "kose-${guild!!.id}-{${timeFormat.format(Date())}.json",
+                            ChannelProvider { json.byteInputStream().toByteReadChannel() })
+                    }
+                }
+            }
+
+            ephemeralSubCommand {
+                name = "all"
+                description = "Export all of your notes"
+
+                action {
+                    val notes = noteCollection.getByUser(user.id)
+                    val json = Json.encodeToString(notes)
+
+                    val timeFormat = SimpleDateFormat("yyyy-MM-dd")
+
+                    respond {
+                        addFile(
+                            "kose-${user.id}-{${timeFormat.format(Date())}.json",
+                            ChannelProvider { json.byteInputStream().toByteReadChannel() })
+                    }
+                }
+            }
+        }
+
         publicSlashCommand {
             name = "import"
             description = "Imports all notes from a file"
@@ -262,5 +307,3 @@ class UtilityExtension : Extension() {
         }
     }
 }
-
-
