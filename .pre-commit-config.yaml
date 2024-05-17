@@ -7,12 +7,7 @@ repos:
         language: system
         types: [python]
       - id: system
-        name: isort
-        entry: pdm run isort src/
-        language: system
-        types: [python]
-      - id: system
-        name: flake9
-        entry: pdm run flake8 src/
+        name: ruff check
+        entry: pdm run ruff check src/ --fix
         language: system
         types: [python]

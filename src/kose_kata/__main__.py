@@ -1,7 +1,8 @@
+import asyncio
 import logging
 import os
 
-import lightbulb
+from sqlalchemy.ext.asyncio import create_async_engine
 
 TOKEN = os.environ["TOKEN"]
 LOG_LEVEL = os.environ["LOG_LEVEL"].upper()
@@ -27,15 +28,15 @@ def init_logger() -> None:
     LOG.addHandler(stream_handler)
 
 
-def main() -> None:
+async def main() -> None:
     init_logger()
 
-    bot = lightbulb.BotApp(token=TOKEN, default_enabled_guilds=TEST_SERVER, logs="INFO")
+    engine = create_async_engine(
+        f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@localhost/{POSTGRES_DB}",
+        echo=True,
+    )
 
-    # Absolute path in Docker
-    bot.load_extensions_from("/project/pkgs/kose_kata/extensions")
-
-    bot.run()
+    await engine.dispose()
 
 
 if __name__ == "__main__":
@@ -44,4 +45,4 @@ if __name__ == "__main__":
 
         uvloop.install()
 
-    main()
+    asyncio.run(main())
