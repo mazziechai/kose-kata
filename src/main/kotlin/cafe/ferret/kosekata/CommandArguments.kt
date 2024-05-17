@@ -21,6 +21,13 @@ open class ByIdArgs : Arguments() {
     }
 }
 
+open class ByNameArgs : Arguments() {
+    val name by string {
+        name = "note"
+        description = "The note's name"
+    }
+}
+
 class UserNotesArgs : Arguments() {
     val user by member {
         name = "user"

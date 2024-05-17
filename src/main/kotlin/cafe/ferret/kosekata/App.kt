@@ -43,6 +43,7 @@ suspend fun main() {
             add(::DebugExtension)
             add(::AliasExtension)
             add(::ChatCommandsExtension)
+            add(::InfoExtension)
         }
     }
 
