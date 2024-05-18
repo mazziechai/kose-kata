@@ -3,11 +3,11 @@ repos:
     hooks:
       - id: system
         name: black
-        entry: pdm run black src/
+        entry: pdm run black kose_kata/
         language: system
         types: [python]
       - id: system
         name: ruff check
-        entry: pdm run ruff check src/ --fix
+        entry: pdm run ruff check kose_kata/ --fix
         language: system
         types: [python]

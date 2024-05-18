@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["cross_platform"]
 lock_version = "4.4.1"
-content_hash = "sha256:cc5726b29918f73b5d13c6c9e5650921fbc4df1e1a0ac83a4c43a65a98be32ff"
+content_hash = "sha256:a43d33a3af90911b253486884d0ea7d71fac618f40bf958eb432770bf2b52363"
 
 [[package]]
 name = "aiodns"
@@ -92,6 +92,19 @@ dependencies = [
 files = [
     {file = "aiosignal-1.3.1-py3-none-any.whl", hash = "sha256:f8376fb07dd1e86a584e4fcdec80b36b7f81aac666ebc724e2c090300dd83b17"},
     {file = "aiosignal-1.3.1.tar.gz", hash = "sha256:54cd96e15e1649b75d6c87526a6ff0b6c1b0dd3459f43d9ca11d48c339b68cfc"},
+]
+
+[[package]]
+name = "aiosqlite"
+version = "0.20.0"
+requires_python = ">=3.8"
+summary = "asyncio bridge to the standard sqlite3 module"
+dependencies = [
+    "typing-extensions>=4.0",
+]
+files = [
+    {file = "aiosqlite-0.20.0-py3-none-any.whl", hash = "sha256:36a1deaca0cac40ebe32aac9977a6e2bbc7f5189f23f4a54d5908986729e5bd6"},
+    {file = "aiosqlite-0.20.0.tar.gz", hash = "sha256:6d35c8c256637f4672f843c31021464090805bf925385ac39473fb16eaaca3d7"},
 ]
 
 [[package]]
@@ -398,6 +411,22 @@ files = [
 ]
 
 [[package]]
+name = "hikari-arc"
+version = "1.3.0"
+requires_python = "<3.13,>=3.10.0"
+summary = "A command handler for hikari with a focus on type-safety and correctness."
+dependencies = [
+    "alluka<0.4,>=0.3.0",
+    "attrs>=23.1",
+    "colorama; sys_platform == \"win32\"",
+    "hikari>=2.0.0.dev122",
+]
+files = [
+    {file = "hikari_arc-1.3.0-py3-none-any.whl", hash = "sha256:fa09b1f4a1e87fa13302115ee66cbd48ff68e9af3c3481fb4e0ad1b52d09207c"},
+    {file = "hikari_arc-1.3.0.tar.gz", hash = "sha256:adc438627cb6e94dd6783548c61905b85e3f14df04932ec070a771d923d84d25"},
+]
+
+[[package]]
 name = "hikari-miru"
 version = "4.1.1"
 requires_python = ">=3.10.0,<3.13"
@@ -625,6 +654,16 @@ summary = "C parser in Python"
 files = [
     {file = "pycparser-2.22-py3-none-any.whl", hash = "sha256:c3702b6d3dd8c7abc1afa565d7e63d53a1d0bd86cdc24edd75470f4de499cfcc"},
     {file = "pycparser-2.22.tar.gz", hash = "sha256:491c8be9c040f5390f5bf44a5b07752bd07f56edf992381b05c701439eec10f6"},
+]
+
+[[package]]
+name = "python-dotenv"
+version = "1.0.1"
+requires_python = ">=3.8"
+summary = "Read key-value pairs from a .env file and set them as environment variables"
+files = [
+    {file = "python-dotenv-1.0.1.tar.gz", hash = "sha256:e324ee90a023d808f1959c46bcbc04446a10ced277783dc6ee09987c37ec10ca"},
+    {file = "python_dotenv-1.0.1-py3-none-any.whl", hash = "sha256:f7b63ef50f1b690dddf550d03497b66d609393b40b564ed0d674909a68ebf16a"},
 ]
 
 [[package]]

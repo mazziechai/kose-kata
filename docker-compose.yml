@@ -6,13 +6,14 @@ services:
       context: "."
       dockerfile: "Dockerfile"
     environment:
-      TOKEN: "${TOKEN}"
-      LOG_LEVEL: "${LOG_LEVEL}"
-      TEST_SERVER: "${TEST_SERVER}"
-      POSTGRES_USER: "${POSTGRES_USER}"
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
-      POSTGRES_DB: "${POSTGRES_DB}"
-      DEVELOPER: "${DEVELOPER}"
+      TOKEN: ${TOKEN}
+      LOG_LEVEL: ${LOG_LEVEL}
+      TEST_SERVER: ${TEST_SERVER}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      DEVELOPER: ${DEVELOPER}
+      DEBUG: ${DEBUG}
     deploy:
       restart_policy:
         condition: "unless-stopped"
@@ -21,12 +22,12 @@ services:
     depends_on:
       - db
   db:
-    image: "postgresql:15"
+    image: postgres
     container_name: "db"
     environment:
-      POSTGRES_USER: "${POSTGRES_USER}"
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
-      POSTGRES_DB: "${POSTGRES_DB}"
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
       # these are the vars docker expects
       # NOTE: You can deliver these variables via `.env`
     healthcheck:
