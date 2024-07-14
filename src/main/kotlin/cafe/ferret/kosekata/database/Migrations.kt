@@ -9,7 +9,7 @@ import cafe.ferret.kosekata.database.entities.Meta
 import cafe.ferret.kosekata.database.migrations.v1
 import cafe.ferret.kosekata.database.migrations.v2
 import com.kotlindiscord.kord.extensions.koin.KordExKoinComponent
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.koin.core.component.inject
 
 object Migrations : KordExKoinComponent {

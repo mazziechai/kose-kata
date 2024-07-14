@@ -23,7 +23,7 @@ import dev.kord.common.entity.Permission
 import dev.kord.common.entity.Snowflake
 import io.ktor.client.request.forms.*
 import io.ktor.util.cio.*
-import kotlinx.datetime.toInstant
+import kotlinx.datetime.Instant
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
@@ -149,7 +149,7 @@ class UtilityExtension : Extension() {
                                     ?: mutableListOf(jsonObject["name"]!!.jsonPrimitive.content),
                                 jsonObject["content"]!!.jsonPrimitive.content,
                                 originalAuthor = Snowflake(jsonObject["originalAuthor"]!!.jsonPrimitive.long),
-                                timeCreated = jsonObject["timeCreated"]!!.jsonPrimitive.content.toInstant()
+                                timeCreated = Instant.parse(jsonObject["timeCreated"]!!.jsonPrimitive.content)
                             )
                         } catch (t: Throwable) {
                             respond {
@@ -205,7 +205,7 @@ class UtilityExtension : Extension() {
                                     jsonObject["name"]!!.jsonPrimitive.content,
                                     mutableListOf(jsonObject["name"]!!.jsonPrimitive.content),
                                     jsonObject["text"]!!.jsonPrimitive.content,
-                                    timeCreated = jsonObject["created_at"]!!.jsonPrimitive.content.toInstant()
+                                    timeCreated = Instant.parse(jsonObject["created_at"]!!.jsonPrimitive.content)
                                 )
                             } else {
                                 notesSkipped++
