@@ -251,7 +251,7 @@ class UtilityExtension : Extension() {
                                 noteCollection.deleteAllGuild(guild!!.id)
 
                                 edit {
-                                    content = translate("extensions.utility.clear.success")
+                                    content = translate("extensions.utility.clear.success", BUNDLE)
 
                                     components = mutableListOf()
                                 }
@@ -264,7 +264,7 @@ class UtilityExtension : Extension() {
 
                             action {
                                 edit {
-                                    content = translate("extensions.management.delete.cancel")
+                                    content = translate("extensions.management.delete.cancel", BUNDLE)
 
                                     components = mutableListOf()
                                 }

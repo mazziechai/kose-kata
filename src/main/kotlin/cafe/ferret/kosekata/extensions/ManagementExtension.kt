@@ -86,7 +86,8 @@ class ManagementExtension : Extension() {
                                     edit {
                                         content = translate(
                                             "extensions.management.delete.success",
-                                            arrayOf("%06x".format(noteId))
+                                            BUNDLE,
+                                            arrayOf("%06x".format(noteId)),
                                         )
 
                                         components = mutableListOf()
@@ -100,7 +101,7 @@ class ManagementExtension : Extension() {
 
                                 action {
                                     edit {
-                                        content = translate("extensions.management.delete.cancel")
+                                        content = translate("extensions.management.delete.cancel", BUNDLE)
 
                                         components = mutableListOf()
                                     }
@@ -155,6 +156,7 @@ class ManagementExtension : Extension() {
                                     edit {
                                         content = translate(
                                             "extensions.management.deleteuser.success",
+                                            BUNDLE,
                                             arrayOf(member.mention)
                                         )
 
@@ -169,7 +171,7 @@ class ManagementExtension : Extension() {
 
                                 action {
                                     edit {
-                                        content = translate("extensions.management.delete.cancel")
+                                        content = translate("extensions.management.delete.cancel", BUNDLE)
 
                                         components = mutableListOf()
                                     }
@@ -247,7 +249,8 @@ class ManagementExtension : Extension() {
                                     edit {
                                         content = translate(
                                             "extensions.management.deletemultiple.success",
-                                            arrayOf(notes.count())
+                                            BUNDLE,
+                                            arrayOf(notes.count()),
                                         )
 
                                         components = mutableListOf()
@@ -261,7 +264,7 @@ class ManagementExtension : Extension() {
 
                                 action {
                                     edit {
-                                        content = translate("extensions.management.delete.cancel")
+                                        content = translate("extensions.management.delete.cancel", BUNDLE)
 
                                         components = mutableListOf()
                                     }
