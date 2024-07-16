@@ -5,15 +5,8 @@
 package cafe.ferret.kosekata.database.migrations
 
 import cafe.ferret.kosekata.database.collections.NoteCollection
-import cafe.ferret.kosekata.database.entities.Note
-import org.litote.kmongo.coroutine.CoroutineDatabase
+import com.mongodb.kotlin.client.coroutine.MongoDatabase
 
-suspend fun v1(database: CoroutineDatabase) {
+suspend fun v1(database: MongoDatabase) {
     database.createCollection(NoteCollection.name)
-
-    val noteCollection = database.getCollection<Note>(NoteCollection.name)
-    // Guild index
-    noteCollection.ensureIndex(Note::guild)
-    // User index
-    noteCollection.ensureIndex(Note::author)
 }

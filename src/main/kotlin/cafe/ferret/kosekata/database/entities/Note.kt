@@ -7,6 +7,7 @@ package cafe.ferret.kosekata.database.entities
 import cafe.ferret.kosekata.database.Entity
 import dev.kord.common.entity.Snowflake
 import kotlinx.datetime.Instant
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -14,6 +15,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Note(
+    @SerialName("_id")
     override val _id: Int,
     val author: Snowflake,
     val guild: Snowflake,

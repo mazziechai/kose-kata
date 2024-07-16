@@ -6,9 +6,8 @@ package cafe.ferret.kosekata.database
 
 import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings
+import com.mongodb.kotlin.client.coroutine.MongoClient
 import org.bson.UuidRepresentation
-import org.litote.kmongo.coroutine.coroutine
-import org.litote.kmongo.reactivestreams.KMongo
 
 
 /**
@@ -23,7 +22,7 @@ class Database(connectionString: String) {
         .applyConnectionString(ConnectionString(connectionString))
         .build()
 
-    private val client = KMongo.createClient(clientSettings).coroutine
+    private val client = MongoClient.create(clientSettings)
 
     val mongo = client.getDatabase("kosekata")
 

@@ -44,7 +44,8 @@ dependencies {
     implementation(libs.logback)
     implementation(libs.logging)
 
-    implementation(libs.kmongo)
+    implementation(libs.mongodb)
+    implementation(libs.bson)
     implementation(libs.fuzzywuzzy)
 }
 

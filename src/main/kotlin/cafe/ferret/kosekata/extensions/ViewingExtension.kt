@@ -57,7 +57,7 @@ class ViewingExtension : Extension() {
                     return@action
                 }
 
-                viewNoteResponse(note, arguments.text ?: true)
+                viewNoteResponse(note, arguments.text != false)
             }
         }
 
@@ -96,7 +96,7 @@ class ViewingExtension : Extension() {
                     return@action
                 }
 
-                viewNoteResponse(note, arguments.text ?: true)
+                viewNoteResponse(note, arguments.text != false)
             }
         }
 
@@ -276,7 +276,7 @@ class ViewingExtension : Extension() {
             return
         }
 
-        viewNoteResponse(note, arguments.text ?: true)
+        viewNoteResponse(note, arguments.text != false)
     }
 
     private suspend fun PublicInteractionContext.publicNoteByIdAction(
@@ -295,6 +295,6 @@ class ViewingExtension : Extension() {
             return
         }
 
-        viewNoteResponse(note, arguments.text ?: true)
+        viewNoteResponse(note, arguments.text != false)
     }
 }

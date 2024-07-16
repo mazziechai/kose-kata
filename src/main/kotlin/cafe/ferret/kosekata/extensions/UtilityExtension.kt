@@ -18,18 +18,20 @@ import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
 import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
 import com.kotlindiscord.kord.extensions.utils.download
+import com.mongodb.client.model.Filters.and
+import com.mongodb.client.model.Filters.eq
 import dev.kord.common.entity.ButtonStyle
 import dev.kord.common.entity.Permission
 import dev.kord.common.entity.Snowflake
 import io.ktor.client.request.forms.*
 import io.ktor.util.cio.*
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
+import org.bson.Document
 import org.koin.core.component.inject
-import org.litote.kmongo.bson
-import org.litote.kmongo.eq
 import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.*
@@ -125,11 +127,10 @@ class UtilityExtension : Extension() {
                 description = "Import notes from a kose kata notes file"
 
                 action {
-                    val koseJson: JsonElement
-
+                    val notes: Array<Note>
                     try {
-                        koseJson = Json.parseToJsonElement(arguments.file.download().toString(Charset.forName("UTF-8")))
-                    } catch (t: SerializationException) {
+                        notes = Json.decodeFromString(arguments.file.download().toString(Charset.forName("UTF-8")))
+                    } catch (t: IllegalArgumentException) {
                         respond {
                             content = translate("error.invalidjson", arrayOf("```\n$t\n```"))
                         }
@@ -137,31 +138,45 @@ class UtilityExtension : Extension() {
                         return@action
                     }
 
-                    for (element in koseJson.jsonArray) {
-                        val jsonObject = element.jsonObject
-
+                    for (note in notes) {
                         try {
-                            noteCollection.new(
-                                Snowflake(jsonObject["author"]!!.jsonPrimitive.long),
-                                guild!!.id,
-                                jsonObject["name"]!!.jsonPrimitive.content,
-                                jsonObject["names"]?.jsonArray?.map { it.jsonPrimitive.content }?.toMutableList()
-                                    ?: mutableListOf(jsonObject["name"]!!.jsonPrimitive.content),
-                                jsonObject["content"]!!.jsonPrimitive.content,
-                                originalAuthor = Snowflake(jsonObject["originalAuthor"]!!.jsonPrimitive.long),
-                                timeCreated = Instant.parse(jsonObject["timeCreated"]!!.jsonPrimitive.content)
-                            )
+                            val previousNote = noteCollection.get(note._id)
+                            if (previousNote == null || previousNote.guild != guild!!.id) {
+                                noteCollection.new(
+                                    guild!!.id,
+                                    note.author,
+                                    note.name,
+                                    note.aliases,
+                                    note.content,
+                                    originalAuthor = note.originalAuthor,
+                                    timeCreated = note.timeCreated
+                                )
+                            } else {
+                                val updatedNote = Note(
+                                    note._id,
+                                    note.author,
+                                    guild!!.id,
+                                    note.name,
+                                    note.aliases,
+                                    note.content,
+                                    originalAuthor = note.originalAuthor,
+                                    timeCreated = note.timeCreated
+                                )
+
+                                noteCollection.set(updatedNote)
+                            }
                         } catch (t: Throwable) {
                             respond {
                                 content = translate("error.partialimport", arrayOf("```\n$t\n```"))
                             }
+                            throw t
 
                             return@action
                         }
                     }
 
                     respond {
-                        content = translate("extensions.utility.import.success", arrayOf(koseJson.jsonArray.count()))
+                        content = translate("extensions.utility.import.success", arrayOf(notes.count()))
                     }
                 }
             }
@@ -190,14 +205,17 @@ class UtilityExtension : Extension() {
                         val jsonObject = element.jsonObject
                         try {
                             if (rawCollection.find(
-                                    Note::author eq Snowflake(jsonObject["user_id"]!!.jsonPrimitive.long),
-                                    Note::guild eq guild!!.id,
-                                    Note::name eq jsonObject["name"]!!.jsonPrimitive.content,
-                                    Note::content eq jsonObject["text"]!!.jsonPrimitive.content,
-                                    // HACK: kmongo keeps changing the type safe query to not match the actual content
-                                    // of the database so this is what we have to do
-                                    "{ timeCreated: '${jsonObject["created_at"]!!.jsonPrimitive.content}' }".bson
-                                ).first() == null
+                                    and(
+                                        eq(
+                                            Note::author.name,
+                                            Snowflake(jsonObject["user_id"]!!.jsonPrimitive.long)
+                                        ),
+                                        eq(Note::guild.name, guild!!.id),
+                                        eq(Note::name.name, jsonObject["name"]!!.jsonPrimitive.content),
+                                        eq(Note::content.name, jsonObject["text"]!!.jsonPrimitive.content),
+                                        Document.parse("{ timeCreated: '${jsonObject["created_at"]!!.jsonPrimitive.content}' }")
+                                    )
+                                ).firstOrNull() == null
                             ) {
                                 noteCollection.new(
                                     Snowflake(jsonObject["user_id"]!!.jsonPrimitive.long),
@@ -301,7 +319,7 @@ class UtilityExtension : Extension() {
 
             validate {
                 failIf(translate("error.filetoobig")) {
-                    value.size > 52428800 // 50 MiB
+                    value.size > 1048576 // 1 MiB
                 }
             }
         }

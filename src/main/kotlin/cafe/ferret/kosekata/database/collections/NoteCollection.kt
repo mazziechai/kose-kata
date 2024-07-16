@@ -8,12 +8,18 @@ import cafe.ferret.kosekata.database.Database
 import cafe.ferret.kosekata.database.DbCollection
 import cafe.ferret.kosekata.database.entities.Note
 import com.kotlindiscord.kord.extensions.koin.KordExKoinComponent
+import com.mongodb.client.model.Aggregates.match
+import com.mongodb.client.model.Aggregates.sample
+import com.mongodb.client.model.Filters.and
+import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.Filters.`in`
+import com.mongodb.client.model.ReplaceOptions
 import dev.kord.common.entity.Snowflake
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.toList
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.koin.core.component.inject
-import org.litote.kmongo.*
-import org.litote.kmongo.coroutine.aggregate
 import kotlin.random.Random
 
 /**
@@ -46,7 +52,7 @@ class NoteCollection : KordExKoinComponent {
 
         do {
             id = Random.nextInt(0x0, 0xFFFFFF)
-        } while (col.countDocuments(Note::_id eq id) != 0L)
+        } while (col.countDocuments(eq(Note::_id.name, id)) != 0L)
 
         val note = Note(id, author, guild, name, aliases, content, originalAuthor, timeCreated)
 
@@ -60,22 +66,22 @@ class NoteCollection : KordExKoinComponent {
      *
      * @param note The [Note] to delete from the collection.
      */
-    suspend fun delete(note: Note) = col.deleteOne(Note::_id eq note._id)
+    suspend fun delete(note: Note) = col.deleteOne(eq(Note::_id.name, note._id))
 
-    suspend fun deleteMany(notes: List<Note>) = col.deleteMany(Note::_id `in` notes.map { it._id })
+    suspend fun deleteMany(notes: List<Note>) = col.deleteMany(`in`(Note::_id.name, notes.map { it._id }))
 
     /**
      * Deletes all notes from a user in a guild.
      */
     suspend fun deleteByUserInGuild(user: Snowflake, guild: Snowflake) =
-        col.deleteMany(and(Note::author eq user, Note::guild eq guild))
+        col.deleteMany(and(eq(Note::author.name, user), eq(Note::guild.name, guild)))
 
     /**
      * Deletes all notes from a guild.
      *
      * @param guild The guild to delete all notes of.
      */
-    suspend fun deleteAllGuild(guild: Snowflake) = col.deleteMany(Note::guild eq guild)
+    suspend fun deleteAllGuild(guild: Snowflake) = col.deleteMany(eq(Note::guild.name, guild))
 
     /**
      * Gets a [Note] from its ID.
@@ -83,14 +89,14 @@ class NoteCollection : KordExKoinComponent {
      * @param id The ID of the note.
      * @return The [Note], if any.
      */
-    suspend fun get(id: Int) = col.findOne(Note::_id eq id)
+    suspend fun get(id: Int) = col.find(eq(Note::_id.name, id)).firstOrNull()
 
     /**
      * Saves a [Note] to the collection.
      *
      * @param note The [Note] to save to the collection.
      */
-    suspend fun set(note: Note) = col.save(note)
+    suspend fun set(note: Note) = col.replaceOne(eq(Note::_id.name, note._id), note, ReplaceOptions().upsert(true))
 
     /**
      * Gets [Note]s from a user's [Snowflake].
@@ -98,10 +104,10 @@ class NoteCollection : KordExKoinComponent {
      * @param user The user's snowflake.
      * @return The [Note]s, if any.
      */
-    suspend fun getByUser(user: Snowflake) = col.find(Note::author eq user).toList()
+    suspend fun getByUser(user: Snowflake) = col.find(eq(Note::author.name, user)).toList()
 
     suspend fun getByGuildAndUser(guild: Snowflake, user: Snowflake) =
-        col.find(and(Note::guild eq guild, Note::author eq user)).toList()
+        col.find(and(eq(Note::guild.name, guild), eq(Note::author.name, user))).toList()
 
     /**
      * Gets [Note]s from a guild's [Snowflake].
@@ -109,7 +115,7 @@ class NoteCollection : KordExKoinComponent {
      * @param guild The guild's snowflake.
      * @return The [Note]s, if any.
      */
-    suspend fun getByGuild(guild: Snowflake) = col.find(Note::guild eq guild).toList()
+    suspend fun getByGuild(guild: Snowflake) = col.find(eq(Note::guild.name, guild)).toList()
 
     /**
      * Gets [Note]s from a guild's [Snowflake] and a name of the note.
@@ -119,21 +125,24 @@ class NoteCollection : KordExKoinComponent {
      * @return The [Note]s, if any.
      */
     suspend fun getByGuildAndName(guild: Snowflake, name: String) =
-        col.find(and(Note::guild eq guild, Note::aliases `in` name)).toList()
+        col.find(and(eq(Note::guild.name, guild), `in`(Note::aliases.name, name))).toList()
 
     suspend fun getRandomNote(guild: Snowflake, name: String) =
         col.aggregate<Note>(
-            match(
-                Note::guild eq guild,
-                Note::aliases `in` name
-            ),
-            sample(1)
-        ).first()
+            listOf(
+                match(
+                    and(
+                        eq(Note::guild.name, guild),
+                        `in`(Note::aliases.name, name)
+                    ),
+                ), sample(1)
+            )
+        ).firstOrNull()
 
     /**
      * Gets multiple Notes by ID.
      */
-    suspend fun getMultipleNotes(ids: List<Int>) = col.find(Note::_id `in` ids).toList()
+    suspend fun getMultipleNotes(ids: List<Int>) = col.find(`in`(Note::_id.name, ids)).toList()
 
     fun rawCollectionAccess() = col
 
