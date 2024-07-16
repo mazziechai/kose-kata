@@ -128,8 +128,17 @@ class AliasExtension : Extension() {
                     }
 
                     respond {
-                        content =
-                            translate("extensions.alias.list.success", arrayOf("%06x".format(noteId), note.aliases))
+                        content = buildString {
+                            appendLine(
+                                translate(
+                                    "extensions.alias.list.success",
+                                    arrayOf(note.name)
+                                )
+                            )
+                            for (alias in note.aliases) {
+                                appendLine(alias)
+                            }
+                        }
                     }
                 }
             }
