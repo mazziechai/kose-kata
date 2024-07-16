@@ -239,8 +239,7 @@ class ViewingExtension : Extension() {
 
         val idReferenceRegex = Regex("\\[\\[(.+?)]]")
         val idReferences =
-            idReferenceRegex.findAll(note.content).distinctBy { it.groupValues[1] }.map { it.groupValues[1].toInt(16) }
-                .toSet()
+            idReferenceRegex.findAll(note.content).distinctBy { it.groupValues[1] }.map { it.groupValues[1] }.toSet()
 
         return components(15.seconds) {
             if (references.isNotEmpty()) {
@@ -255,16 +254,13 @@ class ViewingExtension : Extension() {
                         val note = noteCollection.getByGuildAndName(guild, selected.first()).randomOrNull()
 
                         if (note == null) {
-                            edit {
+                            respond {
                                 content = translate("error.notfound", BUNDLE)
                             }
-
                             return@action
                         }
 
-                        edit {
-                            viewNoteResponse(note, text, guild)
-                        }
+                        viewNoteResponse(note, text, guild)
                     }
                 }
             }
@@ -274,22 +270,29 @@ class ViewingExtension : Extension() {
                     placeholder = "ID referenced notes"
 
                     idReferences.take(25).forEach { reference ->
-                        option("#%06x".format(reference), reference.toString())
+                        option(reference, reference)
                     }
 
                     action {
-                        val note = noteCollection.get(selected.first().toInt(16))
+                        val id = selected.first().toIntOrNull(16)
+
+                        if (id == null) {
+                            respond {
+                                content = translate("arguments.noteid.fail", BUNDLE)
+                            }
+                            return@action
+                        }
+
+                        val note = noteCollection.get(id)
 
                         if (note == null || note.guild != guild) {
-                            edit {
+                            respond {
                                 content = translate("error.notfound", BUNDLE)
                             }
                             return@action
                         }
 
-                        edit {
-                            viewNoteResponse(note, text, guild)
-                        }
+                        viewNoteResponse(note, text, guild)
                     }
                 }
             }
