@@ -24,11 +24,13 @@ import com.kotlindiscord.kord.extensions.i18n.TranslationsProvider
 import com.kotlindiscord.kord.extensions.types.InteractionContext
 import com.kotlindiscord.kord.extensions.types.PublicInteractionContext
 import dev.kord.common.Color
+import dev.kord.common.entity.Snowflake
 import dev.kord.core.behavior.GuildBehavior
 import dev.kord.rest.builder.message.EmbedBuilder
 import dev.kord.rest.builder.message.create.FollowupMessageCreateBuilder
 import dev.kord.rest.builder.message.embed
 import org.koin.core.component.inject
+import kotlin.time.Duration.Companion.seconds
 
 class ViewingExtension : Extension() {
     override val name = "viewing"
@@ -57,7 +59,7 @@ class ViewingExtension : Extension() {
                     return@action
                 }
 
-                viewNoteResponse(note, arguments.text != false)
+                viewNoteResponse(note, arguments.text != false, guild!!.id)
             }
         }
 
@@ -96,7 +98,7 @@ class ViewingExtension : Extension() {
                     return@action
                 }
 
-                viewNoteResponse(note, arguments.text != false)
+                viewNoteResponse(note, arguments.text != false, guild!!.id)
             }
         }
 
@@ -193,7 +195,8 @@ class ViewingExtension : Extension() {
      */
     private suspend fun InteractionContext<*, *, *, *>.viewNoteResponse(
         note: Note,
-        text: Boolean
+        text: Boolean,
+        guild: Snowflake
     ) {
         respond {
             if (!text) {
@@ -201,7 +204,7 @@ class ViewingExtension : Extension() {
             } else {
                 content = "${note.content}\n\n`#%06x` `%s`".format(note._id, note.name)
             }
-            noteReferencesComponents(note, text)
+            noteReferencesComponents(note, text, guild)
         }
 
         val regex = Regex("""<?(http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])>?""")
@@ -227,34 +230,65 @@ class ViewingExtension : Extension() {
      */
     private suspend fun FollowupMessageCreateBuilder.noteReferencesComponents(
         note: Note,
-        text: Boolean
+        text: Boolean,
+        guild: Snowflake
     ): ComponentContainer {
         val referenceRegex = Regex("\\{\\{(.+?)}}")
-        val references = referenceRegex.findAll(note.content).distinctBy { it.groupValues[1] }
+        val references =
+            referenceRegex.findAll(note.content).distinctBy { it.groupValues[1] }.map { it.groupValues[1] }.toSet()
 
-        val referencedNotes = mutableSetOf<Note>()
+        val idReferenceRegex = Regex("\\[\\[(.+?)]]")
+        val idReferences =
+            idReferenceRegex.findAll(note.content).distinctBy { it.groupValues[1] }.map { it.groupValues[1].toInt(16) }
+                .toSet()
 
-        for (reference in references) {
-            referencedNotes.addAll(noteCollection.getByGuildAndName(note.guild, reference.groupValues[1]))
-        }
-
-        return components {
-            if (references.any() && referencedNotes.isNotEmpty()) {
+        return components(15.seconds) {
+            if (references.isNotEmpty()) {
                 ephemeralStringSelectMenu {
                     placeholder = "Referenced notes"
 
-                    references.take(25).forEach { result ->
-                        val noteName = result.groupValues[1]
-
-                        val referencedNote =
-                            referencedNotes.filter { it.aliases.contains(noteName) }.random()
-
-                        option(noteName, referencedNote._id.toString(16))
+                    references.take(25).forEach { reference ->
+                        option(reference, reference)
                     }
 
                     action {
+                        val note = noteCollection.getByGuildAndName(guild, selected.first()).randomOrNull()
+
+                        if (note == null) {
+                            edit {
+                                content = translate("error.notfound", BUNDLE)
+                            }
+
+                            return@action
+                        }
+
                         edit {
-                            viewNoteResponse(referencedNotes.first { it._id.toString(16) == selected.first() }, text)
+                            viewNoteResponse(note, text, guild)
+                        }
+                    }
+                }
+            }
+
+            if (idReferences.isNotEmpty()) {
+                ephemeralStringSelectMenu {
+                    placeholder = "ID referenced notes"
+
+                    idReferences.take(25).forEach { reference ->
+                        option("#%06x".format(reference), reference.toString())
+                    }
+
+                    action {
+                        val note = noteCollection.get(selected.first().toInt(16))
+
+                        if (note == null || note.guild != guild) {
+                            edit {
+                                content = translate("error.notfound", BUNDLE)
+                            }
+                            return@action
+                        }
+
+                        edit {
+                            viewNoteResponse(note, text, guild)
                         }
                     }
                 }
@@ -276,7 +310,7 @@ class ViewingExtension : Extension() {
             return
         }
 
-        viewNoteResponse(note, arguments.text != false)
+        viewNoteResponse(note, arguments.text != false, guild.id)
     }
 
     private suspend fun PublicInteractionContext.publicNoteByIdAction(
@@ -295,6 +329,6 @@ class ViewingExtension : Extension() {
             return
         }
 
-        viewNoteResponse(note, arguments.text != false)
+        viewNoteResponse(note, arguments.text != false, guild.id)
     }
 }
