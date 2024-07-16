@@ -55,7 +55,7 @@ suspend fun FollowupMessageCreateBuilder.noteEmbed(kord: Kord, note: Note, verbo
                 append("#%06x ".format(note._id))
 
                 if (verbose) {
-                    append("| Created on ${note.timeCreated} UTC")
+                    append("| Created on ${note.timeCreated} UTC ")
                     if (note.aliases.count() > 1) {
                         append("| Aliases: ${note.aliases.drop(1)}")
                     }
