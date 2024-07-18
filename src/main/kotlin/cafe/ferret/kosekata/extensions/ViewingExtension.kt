@@ -26,6 +26,7 @@ import com.kotlindiscord.kord.extensions.types.PublicInteractionContext
 import dev.kord.common.Color
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.behavior.GuildBehavior
+import dev.kord.core.entity.effectiveName
 import dev.kord.rest.builder.message.EmbedBuilder
 import dev.kord.rest.builder.message.create.FollowupMessageCreateBuilder
 import dev.kord.rest.builder.message.embed
@@ -155,12 +156,16 @@ class ViewingExtension : Extension() {
                             if (note.aliases.count() > 1) {
                                 appendLine("Aliases: ${note.aliases.drop(1)}")
                             }
+                            if (note.originalAuthor != null) {
+                                val originalAuthor = this@ephemeralSlashCommand.kord.getUser(note.originalAuthor)
+                                appendLine("Original author: ${originalAuthor?.effectiveName} (${originalAuthor?.username})")
+                            }
                         }
 
                         color = Color(note._id)
 
                         footer {
-                            text = "%06x".format(note._id)
+                            text = "#%06x".format(note._id)
                         }
                     })
                 }
