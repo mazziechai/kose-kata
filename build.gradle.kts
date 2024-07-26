@@ -13,6 +13,8 @@ plugins {
 
     id("dev.kordex.gradle.docker")
     id("dev.kordex.gradle.kordex") version "1.0.2"
+
+    id("io.sentry.jvm.gradle") version "4.10.0"
 }
 
 group = "cafe.ferret"
@@ -85,4 +87,12 @@ docker {
             "-jar", "/bot/bot.jar"
         )
     }
+}
+
+sentry {
+    includeSourceContext = true
+
+    org = System.getenv("SENTRY_ORG")
+    projectName = "kose-kata"
+    authToken = System.getenv("SENTRY_AUTH_TOKEN")
 }

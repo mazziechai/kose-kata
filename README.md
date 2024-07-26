@@ -56,9 +56,8 @@ kose kata's only functionality is managing notes, but it does it very well.
 - [x] Dropdown menus for note references
 - [ ] Deduplicate code
 - [ ] Case normalization for note names
-- [ ] PostgreSQL support (in the far future)
 - [ ] More logging
-- [ ] Lazy pagination to improve performance
+-
 
 ## Setup
 
@@ -71,6 +70,8 @@ TEST_SERVER=your server ID
 ENVIRONMENT=production
 DB_URI=mongodb://localhost
 DEVELOPER=your ID
+SENTRY_DSN=blablabla
+SENTRY_AUTH_TOKEN=blablabla
 ```
 
 - Download the main JAR from the CI artifacts

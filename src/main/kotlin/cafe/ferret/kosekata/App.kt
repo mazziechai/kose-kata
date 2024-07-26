@@ -9,6 +9,7 @@ import cafe.ferret.kosekata.extensions.*
 import com.kotlindiscord.kord.extensions.ExtensibleBot
 import com.kotlindiscord.kord.extensions.utils.env
 import dev.kord.common.entity.Snowflake
+import dev.kord.rest.builder.message.allowedMentions
 
 val TEST_SERVER_ID = Snowflake(
     env("TEST_SERVER").toLong()
@@ -17,6 +18,7 @@ val TEST_SERVER_ID = Snowflake(
 val ENVIRONMENT = env("ENVIRONMENT")
 
 private val token = env("TOKEN")
+private val sentry_dsn = env("SENTRY_DSN")
 
 const val BUNDLE = "kose.strings"
 
@@ -35,7 +37,27 @@ suspend fun main() {
             prefix { "." }
         }
 
+        errorResponse { message, error ->
+            allowedMentions { }
+            content = buildString {
+                append("There was an **unexpected error** while handling this command. ")
+                appendLine("Please let us know on Discord or GitHub about it!")
+                appendLine("`$error`")
+            }
+        }
+
         extensions {
+            sentry {
+                enable = true
+
+                if (ENVIRONMENT == "dev") {
+                    debug = true
+                }
+
+                dsn = sentry_dsn
+                environment = ENVIRONMENT
+            }
+
             add(::CreationExtension)
             add(::ManagementExtension)
             add(::ViewingExtension)
