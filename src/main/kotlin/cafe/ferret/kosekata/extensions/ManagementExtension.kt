@@ -21,6 +21,7 @@ import com.kotlindiscord.kord.extensions.modules.unsafe.annotations.UnsafeAPI
 import com.kotlindiscord.kord.extensions.modules.unsafe.extensions.unsafeSlashCommand
 import com.kotlindiscord.kord.extensions.modules.unsafe.types.InitialSlashCommandResponse
 import com.kotlindiscord.kord.extensions.modules.unsafe.types.edit
+import com.kotlindiscord.kord.extensions.modules.unsafe.types.respondPublic
 import com.kotlindiscord.kord.extensions.utils.hasPermission
 import dev.kord.common.entity.ButtonStyle
 import dev.kord.common.entity.Permission
@@ -297,7 +298,7 @@ class ManagementExtension : Extension() {
                 val note = noteCollection.get(noteId)
 
                 if (note == null || note.guild != guild!!.id) {
-                    edit {
+                    respondPublic {
                         content = translate("error.notfound")
                     }
 
@@ -307,7 +308,7 @@ class ManagementExtension : Extension() {
                 if (note.author != user.id && !member!!.asMember(guild!!.id)
                         .hasPermission(Permission.ManageMessages)
                 ) {
-                    edit {
+                    respondPublic {
                         content = translate("error.notowned")
                     }
                     return@action
