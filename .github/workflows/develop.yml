@@ -3,7 +3,7 @@ name: Build & Publish
 on:
   push:
     branches:
-      - root
+      - develop
 
 jobs:
   build:
@@ -21,9 +21,6 @@ jobs:
 
       - name: Gradle (Setup)
         uses: gradle/actions/setup-gradle@v3
-
-        with:
-          dependency-graph: generate-and-submit
 
       - name: Gradle (Build)
         run: "./gradlew build"
