@@ -3,10 +3,9 @@
 
 FROM openjdk:21-jdk-slim
 
-RUN mkdir -p /bot/plugins
-RUN mkdir -p /bot/data
+RUN mkdir -p /bot
 
-COPY [ "build/libs/kose-kata-*-all.jar", "/bot/bot.jar" ]
+COPY [ "kose-kata-*-all.jar", "/bot/bot.jar" ]
 
 WORKDIR /bot
 

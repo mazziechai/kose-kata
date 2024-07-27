@@ -71,10 +71,9 @@ ENVIRONMENT=production
 DB_URI=mongodb://localhost
 DEVELOPER=your ID
 SENTRY_DSN=blablabla
-SENTRY_AUTH_TOKEN=blablabla
 ```
 
 - Download the main JAR from the CI artifacts
-- Run `java -jar kosekata-X.Y-SNAPSHOT.jar`
+- Run `java -jar kose-kata-X.Y-SNAPSHOT.jar`
 
 Congratulations, you now have an instance of kose kata!

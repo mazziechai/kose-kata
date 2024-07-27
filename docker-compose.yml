@@ -1,0 +1,17 @@
+---
+version: "3.8"
+services:
+  kose_kata:
+    build:
+      context: "."
+      dockerfile: "Dockerfile"
+    environment:
+      TOKEN: "${TOKEN}"
+      TEST_SERVER: "${TEST_SERVER}"
+      ENVIRONMENT: "${ENVIRONMENT}"
+      DB_URI: "${DB_URI}"
+      DEVELOPER: "${DEVELOPER}"
+      SENTRY_DSN: "${SENTRY_DSN}"
+    deploy:
+      restart_policy:
+        condition: "unless-stopped"

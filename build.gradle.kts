@@ -2,7 +2,6 @@
  * Copyright (c) 2023 mazziechai
  */
 
-import dev.kordex.gradle.docker.file.*
 import dev.kordex.gradle.plugins.kordex.DataCollection
 
 plugins {
@@ -11,7 +10,6 @@ plugins {
 
     id("com.github.johnrengelman.shadow")
 
-    id("dev.kordex.gradle.docker")
     id("dev.kordex.gradle.kordex") version "1.0.2"
 
     id("io.sentry.jvm.gradle") version "4.10.0"
@@ -53,40 +51,6 @@ kordEx {
     mainClass = "cafe.ferret.kosekata.AppKt"
 
     module("unsafe")
-}
-
-// Automatically generate a Dockerfile. Set `generateOnBuild` to `false` if you'd prefer to manually run the
-// `createDockerfile` task instead of having it run whenever you build.
-docker {
-    // Create the Dockerfile in the root folder.
-    file(rootProject.file("Dockerfile"))
-
-    commands {
-        // Each function (aside from comment/emptyLine) corresponds to a Dockerfile instruction.
-        // See: https://docs.docker.com/reference/dockerfile/
-
-        from("openjdk:21-jdk-slim")
-
-        emptyLine()
-
-        runShell("mkdir -p /bot/plugins")
-        runShell("mkdir -p /bot/data")
-
-        emptyLine()
-
-        copy("build/libs/$name-*-all.jar", "/bot/bot.jar")
-
-        emptyLine()
-
-        workdir("/bot")
-
-        emptyLine()
-
-        entryPointExec(
-            "java", "-Xms2G", "-Xmx2G",
-            "-jar", "/bot/bot.jar"
-        )
-    }
 }
 
 sentry {
