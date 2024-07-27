@@ -117,7 +117,7 @@ class ViewingExtension : Extension() {
             }
         }
 
-        ephemeralSlashCommand(::ByIdArgs) {
+        publicSlashCommand(::ByIdArgs) {
             name = "info"
             description = "Gets information about a note. Does not display contents."
 
@@ -135,7 +135,7 @@ class ViewingExtension : Extension() {
                     return@action
                 }
 
-                val noteUser = this@ephemeralSlashCommand.kord.getUser(note.author)
+                val noteUser = this@publicSlashCommand.kord.getUser(note.author)
                 val noteMember = noteUser?.asMemberOrNull(note.guild)
 
                 respond {
@@ -157,7 +157,7 @@ class ViewingExtension : Extension() {
                                 appendLine("Aliases: ${note.aliases.drop(1)}")
                             }
                             if (note.originalAuthor != null) {
-                                val originalAuthor = this@ephemeralSlashCommand.kord.getUser(note.originalAuthor)
+                                val originalAuthor = this@publicSlashCommand.kord.getUser(note.originalAuthor)
                                 appendLine("Original author: ${originalAuthor?.effectiveName} (${originalAuthor?.username})")
                             }
                         }
