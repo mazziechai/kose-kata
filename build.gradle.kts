@@ -10,7 +10,7 @@ plugins {
 
     id("com.github.johnrengelman.shadow")
 
-    id("dev.kordex.gradle.kordex") version "1.0.2"
+    id("dev.kordex.gradle.kordex") version "1.0.4"
 
     id("io.sentry.jvm.gradle") version "4.10.0"
 }
