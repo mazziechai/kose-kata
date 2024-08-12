@@ -12,7 +12,7 @@ plugins {
 
     id("dev.kordex.gradle.kordex") version "1.0.2"
 
-    id("io.sentry.jvm.gradle") version "4.10.0"
+    id("io.sentry.jvm.gradle") version "4.11.0"
 }
 
 group = "cafe.ferret"
