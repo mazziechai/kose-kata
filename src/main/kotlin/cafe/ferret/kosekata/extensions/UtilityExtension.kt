@@ -4,25 +4,25 @@
 
 package cafe.ferret.kosekata.extensions
 
-import cafe.ferret.kosekata.BUNDLE
 import cafe.ferret.kosekata.database.collections.NoteCollection
 import cafe.ferret.kosekata.database.entities.Note
-import com.kotlindiscord.kord.extensions.checks.anyGuild
-import com.kotlindiscord.kord.extensions.checks.hasPermission
-import com.kotlindiscord.kord.extensions.commands.Arguments
-import com.kotlindiscord.kord.extensions.commands.application.slash.ephemeralSubCommand
-import com.kotlindiscord.kord.extensions.commands.converters.impl.attachment
-import com.kotlindiscord.kord.extensions.components.components
-import com.kotlindiscord.kord.extensions.components.ephemeralButton
-import com.kotlindiscord.kord.extensions.extensions.Extension
-import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
-import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
-import com.kotlindiscord.kord.extensions.utils.download
+import cafe.ferret.kosekata.i18n.Translations
 import com.mongodb.client.model.Filters.and
 import com.mongodb.client.model.Filters.eq
 import dev.kord.common.entity.ButtonStyle
 import dev.kord.common.entity.Permission
 import dev.kord.common.entity.Snowflake
+import dev.kordex.core.checks.anyGuild
+import dev.kordex.core.checks.hasPermission
+import dev.kordex.core.commands.Arguments
+import dev.kordex.core.commands.application.slash.ephemeralSubCommand
+import dev.kordex.core.commands.converters.impl.attachment
+import dev.kordex.core.components.components
+import dev.kordex.core.components.ephemeralButton
+import dev.kordex.core.extensions.Extension
+import dev.kordex.core.extensions.ephemeralSlashCommand
+import dev.kordex.core.extensions.publicSlashCommand
+import dev.kordex.core.utils.download
 import io.ktor.client.request.forms.*
 import io.ktor.util.cio.*
 import kotlinx.coroutines.flow.firstOrNull
@@ -40,14 +40,12 @@ import kotlin.time.Duration.Companion.seconds
 class UtilityExtension : Extension() {
     override val name = "utility"
 
-    override val bundle = BUNDLE
-
     private val noteCollection: NoteCollection by inject()
 
     override suspend fun setup() {
         publicSlashCommand {
-            name = "export"
-            description = "Exports all notes to a file"
+            name = Translations.Extensions.Utility.Export.name
+            description = Translations.Extensions.Utility.Export.description
 
             check {
                 anyGuild()
@@ -69,12 +67,12 @@ class UtilityExtension : Extension() {
         }
 
         ephemeralSlashCommand {
-            name = "userexport"
-            description = "Export your notes"
+            name = Translations.Extensions.Utility.Userexport.name
+            description = Translations.Extensions.Utility.Userexport.description
 
             ephemeralSubCommand {
-                name = "server"
-                description = "Export your notes from this server"
+                name = Translations.Extensions.Utility.Userexport.Server.name
+                description = Translations.Extensions.Utility.Userexport.Server.description
 
                 check {
                     anyGuild()
@@ -95,8 +93,8 @@ class UtilityExtension : Extension() {
             }
 
             ephemeralSubCommand {
-                name = "all"
-                description = "Export all of your notes"
+                name = Translations.Extensions.Utility.Userexport.All.name
+                description = Translations.Extensions.Utility.Userexport.All.description
 
                 action {
                     val notes = noteCollection.getByUser(user.id)
@@ -114,8 +112,8 @@ class UtilityExtension : Extension() {
         }
 
         publicSlashCommand {
-            name = "import"
-            description = "Imports all notes from a file"
+            name = Translations.Extensions.Utility.Import.name
+            description = Translations.Extensions.Utility.Import.description
 
             check {
                 anyGuild()
@@ -123,8 +121,8 @@ class UtilityExtension : Extension() {
             }
 
             ephemeralSubCommand(::ImportArgs) {
-                name = "kose"
-                description = "Import notes from a kose kata notes file"
+                name = Translations.Extensions.Utility.Importkose.name
+                description = Translations.Extensions.Utility.Importkose.description
 
                 action {
                     val notes: Array<Note>
@@ -132,7 +130,7 @@ class UtilityExtension : Extension() {
                         notes = Json.decodeFromString(arguments.file.download().toString(Charset.forName("UTF-8")))
                     } catch (t: IllegalArgumentException) {
                         respond {
-                            content = translate("error.invalidjson", arrayOf("```\n$t\n```"))
+                            content = Translations.Error.invalidjson.translate("```\n$t\n```")
                         }
 
                         return@action
@@ -167,7 +165,7 @@ class UtilityExtension : Extension() {
                             }
                         } catch (t: Throwable) {
                             respond {
-                                content = translate("error.partialimport", arrayOf("```\n$t\n```"))
+                                content = Translations.Error.partialimport.translate("```\n$t\n```")
                             }
                             throw t
 
@@ -176,14 +174,14 @@ class UtilityExtension : Extension() {
                     }
 
                     respond {
-                        content = translate("extensions.utility.import.success", arrayOf(notes.count()))
+                        content = Translations.Extensions.Utility.Import.success.translate(notes.count())
                     }
                 }
             }
 
             ephemeralSubCommand(::ImportArgs) {
-                name = "qbot"
-                description = "Import notes from a qbot notes file"
+                name = Translations.Extensions.Utility.Importqbot.name
+                description = Translations.Extensions.Utility.Importqbot.description
 
                 action {
                     val rawCollection = noteCollection.rawCollectionAccess()
@@ -193,7 +191,7 @@ class UtilityExtension : Extension() {
                         qbotJson = Json.parseToJsonElement(arguments.file.download().toString(Charset.forName("UTF-8")))
                     } catch (t: SerializationException) {
                         respond {
-                            content = translate("error.invalidjson", arrayOf("```\n$t\n```"))
+                            content = Translations.Error.invalidjson.translate("```\n$t\n```")
                         }
 
                         return@action
@@ -230,7 +228,7 @@ class UtilityExtension : Extension() {
                             }
                         } catch (t: Throwable) {
                             respond {
-                                content = translate("error.partialimport", arrayOf("```\n$t\n```"))
+                                content = Translations.Error.partialimport.translate("```\n$t\n```")
                             }
 
                             return@action
@@ -248,8 +246,8 @@ class UtilityExtension : Extension() {
         }
 
         publicSlashCommand {
-            name = "clear"
-            description = "Deletes ALL notes. This is IRREVERSIBLE!"
+            name = Translations.Extensions.Utility.Clear.name
+            description = Translations.Extensions.Utility.Clear.description
 
             check {
                 anyGuild()
@@ -258,18 +256,18 @@ class UtilityExtension : Extension() {
 
             action {
                 respond {
-                    content = translate("extensions.utility.clear.confirmation")
+                    content = Translations.Extensions.Utility.Clear.confirmation.translate()
 
                     components(15.seconds) {
                         ephemeralButton {
-                            label = translate("button.deleteall.label")
+                            label = Translations.Button.Deleteall.label
                             style = ButtonStyle.Danger
 
                             action {
                                 noteCollection.deleteAllGuild(guild!!.id)
 
                                 edit {
-                                    content = translate("extensions.utility.clear.success", BUNDLE)
+                                    content = Translations.Extensions.Utility.Clear.success.translate()
 
                                     components = mutableListOf()
                                 }
@@ -277,12 +275,12 @@ class UtilityExtension : Extension() {
                         }
 
                         ephemeralButton {
-                            label = "Cancel"
+                            label = Translations.Button.Cancel.label
                             style = ButtonStyle.Secondary
 
                             action {
                                 edit {
-                                    content = translate("extensions.management.delete.cancel", BUNDLE)
+                                    content = Translations.Extensions.Management.Delete.cancel.translate()
 
                                     components = mutableListOf()
                                 }
@@ -301,12 +299,12 @@ class UtilityExtension : Extension() {
         }
 
         ephemeralSlashCommand {
-            name = "help"
-            description = "Sends the help page"
+            name = Translations.Extensions.Utility.Help.name
+            description = Translations.Extensions.Utility.Help.description
 
             action {
                 respond {
-                    content = translate("extensions.utility.help.message")
+                    content = Translations.Extensions.Utility.Help.message.translate()
                 }
             }
         }
@@ -314,11 +312,11 @@ class UtilityExtension : Extension() {
 
     inner class ImportArgs : Arguments() {
         val file by attachment {
-            name = "file"
-            description = "The notes you want to import"
+            name = Translations.Arguments.Importfile.name
+            description = Translations.Arguments.Importfile.description
 
             validate {
-                failIf(translate("error.filetoobig")) {
+                failIf(Translations.Error.filetoobig) {
                     value.size > 1048576 // 1 MiB
                 }
             }

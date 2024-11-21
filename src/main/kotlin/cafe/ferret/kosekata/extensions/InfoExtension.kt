@@ -4,12 +4,12 @@
 
 package cafe.ferret.kosekata.extensions
 
-import cafe.ferret.kosekata.BUNDLE
 import cafe.ferret.kosekata.ByNameArgs
 import cafe.ferret.kosekata.database.collections.NoteCollection
-import com.kotlindiscord.kord.extensions.checks.anyGuild
-import com.kotlindiscord.kord.extensions.extensions.Extension
-import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
+import cafe.ferret.kosekata.i18n.Translations
+import dev.kordex.core.checks.anyGuild
+import dev.kordex.core.extensions.Extension
+import dev.kordex.core.extensions.publicSlashCommand
 import org.koin.core.component.inject
 
 class InfoExtension : Extension() {
@@ -17,12 +17,10 @@ class InfoExtension : Extension() {
 
     private val noteCollection: NoteCollection by inject()
 
-    override val bundle = BUNDLE
-
     override suspend fun setup() {
         publicSlashCommand(::ByNameArgs) {
-            name = "ids"
-            description = "List the IDs of notes under a name"
+            name = Translations.Extensions.Info.Ids.name
+            description = Translations.Extensions.Info.Ids.description
 
             check {
                 anyGuild()
@@ -33,15 +31,14 @@ class InfoExtension : Extension() {
 
                 if (notes.isEmpty()) {
                     respond {
-                        content = "I couldn't find any notes under that name."
+                        content = Translations.Error.notfoundname.translate()
                     }
                     return@action
                 }
 
                 if (notes.count() > 200) {
                     respond {
-                        content =
-                            "This name has too many note IDs to display without going over the message length limit."
+                        content = Translations.Error.toomanynotes.translate()
                     }
                     return@action
                 }

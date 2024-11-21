@@ -4,25 +4,12 @@
 
 package cafe.ferret.kosekata.extensions
 
-import cafe.ferret.kosekata.BUNDLE
 import cafe.ferret.kosekata.ByIdArgs
 import cafe.ferret.kosekata.database.collections.NoteCollection
 import cafe.ferret.kosekata.database.entities.Note
 import cafe.ferret.kosekata.formatTime
+import cafe.ferret.kosekata.i18n.Translations
 import cafe.ferret.kosekata.noteEmbed
-import com.kotlindiscord.kord.extensions.checks.anyGuild
-import com.kotlindiscord.kord.extensions.commands.Arguments
-import com.kotlindiscord.kord.extensions.commands.converters.impl.optionalBoolean
-import com.kotlindiscord.kord.extensions.commands.converters.impl.string
-import com.kotlindiscord.kord.extensions.components.ComponentContainer
-import com.kotlindiscord.kord.extensions.components.components
-import com.kotlindiscord.kord.extensions.components.ephemeralStringSelectMenu
-import com.kotlindiscord.kord.extensions.extensions.Extension
-import com.kotlindiscord.kord.extensions.extensions.ephemeralSlashCommand
-import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
-import com.kotlindiscord.kord.extensions.i18n.TranslationsProvider
-import com.kotlindiscord.kord.extensions.types.InteractionContext
-import com.kotlindiscord.kord.extensions.types.PublicInteractionContext
 import dev.kord.common.Color
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.behavior.GuildBehavior
@@ -30,6 +17,19 @@ import dev.kord.core.entity.effectiveName
 import dev.kord.rest.builder.message.EmbedBuilder
 import dev.kord.rest.builder.message.create.FollowupMessageCreateBuilder
 import dev.kord.rest.builder.message.embed
+import dev.kordex.core.checks.anyGuild
+import dev.kordex.core.commands.Arguments
+import dev.kordex.core.commands.converters.impl.optionalBoolean
+import dev.kordex.core.commands.converters.impl.string
+import dev.kordex.core.components.ComponentContainer
+import dev.kordex.core.components.components
+import dev.kordex.core.components.ephemeralStringSelectMenu
+import dev.kordex.core.extensions.Extension
+import dev.kordex.core.extensions.ephemeralSlashCommand
+import dev.kordex.core.extensions.publicSlashCommand
+import dev.kordex.core.i18n.toKey
+import dev.kordex.core.types.InteractionContext
+import dev.kordex.core.types.PublicInteractionContext
 import org.koin.core.component.inject
 import kotlin.time.Duration.Companion.seconds
 
@@ -38,15 +38,13 @@ class ViewingExtension : Extension() {
 
     private val noteCollection: NoteCollection by inject()
 
-    override val bundle = BUNDLE
-
     override suspend fun setup() {
         /**
          * Gets a note by name and then sends its contents ephemerally.
          */
         ephemeralSlashCommand(::ViewByNameCommandArgs) {
-            name = "peek"
-            description = "View a note ephemerally"
+            name = Translations.Extensions.Viewing.Peek.name
+            description = Translations.Extensions.Viewing.Peek.description
 
             check { anyGuild() }
 
@@ -55,7 +53,7 @@ class ViewingExtension : Extension() {
 
                 if (note == null) {
                     respond {
-                        content = translate("error.notfound")
+                        content = Translations.Error.notfound.translate()
                     }
                     return@action
                 }
@@ -68,13 +66,13 @@ class ViewingExtension : Extension() {
          * Gets a note by name and sends its contents publicly.
          */
         publicSlashCommand(::ViewByNameCommandArgs) {
-            name = "post"
-            description = "Send a note to chat"
+            name = Translations.Extensions.Viewing.Post.name
+            description = Translations.Extensions.Viewing.Post.description
 
             check { anyGuild() }
 
             action {
-                publicNoteByNameAction(guild!!.asGuild(), arguments, translationsProvider)
+                publicNoteByNameAction(guild!!.asGuild(), arguments)
             }
         }
 
@@ -82,8 +80,8 @@ class ViewingExtension : Extension() {
          * Gets a note by ID and then sends its contents ephemerally.
          */
         ephemeralSlashCommand(::ViewByIdCommandArgs) {
-            name = "peekid"
-            description = "View a note ephemerally by its ID"
+            name = Translations.Extensions.Viewing.Peekid.name
+            description = Translations.Extensions.Viewing.Peekid.description
 
             check { anyGuild() }
 
@@ -94,7 +92,7 @@ class ViewingExtension : Extension() {
 
                 if (note == null || note.guild != guild!!.id) {
                     respond {
-                        content = translate("error.notfound")
+                        content = Translations.Error.notfound.translate()
                     }
                     return@action
                 }
@@ -107,19 +105,19 @@ class ViewingExtension : Extension() {
          * Gets a note by ID and then sends its contents publicly.
          */
         publicSlashCommand(::ViewByIdCommandArgs) {
-            name = "postid"
-            description = "Send a note to chat by its ID"
+            name = Translations.Extensions.Viewing.Postid.name
+            description = Translations.Extensions.Viewing.Postid.description
 
             check { anyGuild() }
 
             action {
-                publicNoteByIdAction(guild!!, arguments, translationsProvider)
+                publicNoteByIdAction(guild!!, arguments)
             }
         }
 
         publicSlashCommand(::ByIdArgs) {
-            name = "info"
-            description = "Gets information about a note. Does not display contents."
+            name = Translations.Extensions.Viewing.Info.name
+            description = Translations.Extensions.Viewing.Info.description
 
             check { anyGuild() }
 
@@ -130,7 +128,7 @@ class ViewingExtension : Extension() {
 
                 if (note == null || note.guild != guild!!.id) {
                     respond {
-                        content = translate("error.notfound")
+                        content = Translations.Error.notfound.translate()
                     }
                     return@action
                 }
@@ -175,20 +173,20 @@ class ViewingExtension : Extension() {
 
     inner class ViewByNameCommandArgs : Arguments() {
         val noteName by string {
-            name = "note"
-            description = "The note's name"
+            name = Translations.Arguments.Notename.name
+            description = Translations.Arguments.Notename.description
         }
 
         val text by optionalBoolean {
-            name = "text"
-            description = "Toggles a text-only note view. Defaults to true."
+            name = Translations.Arguments.Text.name
+            description = Translations.Arguments.Text.description
         }
     }
 
     inner class ViewByIdCommandArgs : ByIdArgs() {
         val text by optionalBoolean {
-            name = "text"
-            description = "Toggles a text-only note view. Defaults to true."
+            name = Translations.Arguments.Text.name
+            description = Translations.Arguments.Text.description
         }
     }
 
@@ -249,10 +247,10 @@ class ViewingExtension : Extension() {
         return components(15.seconds) {
             if (references.isNotEmpty()) {
                 ephemeralStringSelectMenu {
-                    placeholder = "Referenced notes"
+                    placeholder = "Referenced notes".toKey()
 
                     references.take(25).forEach { reference ->
-                        option(reference, reference)
+                        option(reference.toKey(), reference)
                     }
 
                     action {
@@ -260,7 +258,7 @@ class ViewingExtension : Extension() {
 
                         if (note == null) {
                             respond {
-                                content = translate("error.notfound", BUNDLE)
+                                content = Translations.Error.notfound.translate()
                             }
                             return@action
                         }
@@ -272,10 +270,10 @@ class ViewingExtension : Extension() {
 
             if (idReferences.isNotEmpty()) {
                 ephemeralStringSelectMenu {
-                    placeholder = "ID referenced notes"
+                    placeholder = "ID referenced notes".toKey()
 
                     idReferences.take(25).forEach { reference ->
-                        option(reference, reference)
+                        option(reference.toKey(), reference)
                     }
 
                     action {
@@ -283,7 +281,7 @@ class ViewingExtension : Extension() {
 
                         if (id == null) {
                             respond {
-                                content = translate("arguments.noteid.fail", BUNDLE)
+                                content = Translations.Arguments.Noteid.fail.translate()
                             }
                             return@action
                         }
@@ -292,7 +290,7 @@ class ViewingExtension : Extension() {
 
                         if (note == null || note.guild != guild) {
                             respond {
-                                content = translate("error.notfound", BUNDLE)
+                                content = Translations.Error.notfound.translate()
                             }
                             return@action
                         }
@@ -306,14 +304,13 @@ class ViewingExtension : Extension() {
 
     private suspend fun PublicInteractionContext.publicNoteByNameAction(
         guild: GuildBehavior,
-        arguments: ViewByNameCommandArgs,
-        translationsProvider: TranslationsProvider
+        arguments: ViewByNameCommandArgs
     ) {
         val note = noteCollection.getRandomNote(guild.id, arguments.noteName)
 
         if (note == null) {
             respond {
-                content = translationsProvider.translate("error.notfound", bundleName = BUNDLE)
+                content = Translations.Error.notfound.translate()
             }
             return
         }
@@ -323,8 +320,7 @@ class ViewingExtension : Extension() {
 
     private suspend fun PublicInteractionContext.publicNoteByIdAction(
         guild: GuildBehavior,
-        arguments: ViewByIdCommandArgs,
-        translationsProvider: TranslationsProvider
+        arguments: ViewByIdCommandArgs
     ) {
         val noteId = arguments.noteId.toInt(16)
 
@@ -332,7 +328,7 @@ class ViewingExtension : Extension() {
 
         if (note == null || note.guild != guild.id) {
             respond {
-                content = translationsProvider.translate("error.notfound", bundleName = BUNDLE)
+                content = Translations.Error.notfound.translate()
             }
             return
         }

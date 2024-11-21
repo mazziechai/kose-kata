@@ -7,7 +7,6 @@ package cafe.ferret.kosekata.database.collections
 import cafe.ferret.kosekata.database.Database
 import cafe.ferret.kosekata.database.DbCollection
 import cafe.ferret.kosekata.database.entities.Note
-import com.kotlindiscord.kord.extensions.koin.KordExKoinComponent
 import com.mongodb.client.model.Aggregates.match
 import com.mongodb.client.model.Aggregates.sample
 import com.mongodb.client.model.Filters.and
@@ -15,6 +14,7 @@ import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Filters.`in`
 import com.mongodb.client.model.ReplaceOptions
 import dev.kord.common.entity.Snowflake
+import dev.kordex.core.koin.KordExKoinComponent
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
 import kotlinx.datetime.Clock

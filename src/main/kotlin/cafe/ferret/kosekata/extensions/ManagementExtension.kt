@@ -4,28 +4,27 @@
 
 package cafe.ferret.kosekata.extensions
 
-import cafe.ferret.kosekata.BUNDLE
 import cafe.ferret.kosekata.ByIdArgs
 import cafe.ferret.kosekata.UserNotesArgs
 import cafe.ferret.kosekata.database.collections.NoteCollection
+import cafe.ferret.kosekata.i18n.Translations
 import cafe.ferret.kosekata.noteEmbed
-import com.kotlindiscord.kord.extensions.checks.anyGuild
-import com.kotlindiscord.kord.extensions.checks.hasPermission
-import com.kotlindiscord.kord.extensions.commands.application.slash.publicSubCommand
-import com.kotlindiscord.kord.extensions.components.components
-import com.kotlindiscord.kord.extensions.components.ephemeralButton
-import com.kotlindiscord.kord.extensions.components.forms.ModalForm
-import com.kotlindiscord.kord.extensions.extensions.Extension
-import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
-import com.kotlindiscord.kord.extensions.modules.unsafe.annotations.UnsafeAPI
-import com.kotlindiscord.kord.extensions.modules.unsafe.extensions.unsafeSlashCommand
-import com.kotlindiscord.kord.extensions.modules.unsafe.types.InitialSlashCommandResponse
-import com.kotlindiscord.kord.extensions.modules.unsafe.types.edit
-import com.kotlindiscord.kord.extensions.modules.unsafe.types.respondPublic
-import com.kotlindiscord.kord.extensions.utils.hasPermission
 import dev.kord.common.entity.ButtonStyle
 import dev.kord.common.entity.Permission
 import dev.kord.core.behavior.interaction.response.createPublicFollowup
+import dev.kordex.core.checks.anyGuild
+import dev.kordex.core.checks.hasPermission
+import dev.kordex.core.commands.application.slash.publicSubCommand
+import dev.kordex.core.components.components
+import dev.kordex.core.components.ephemeralButton
+import dev.kordex.core.components.forms.ModalForm
+import dev.kordex.core.extensions.Extension
+import dev.kordex.core.extensions.publicSlashCommand
+import dev.kordex.core.i18n.toKey
+import dev.kordex.core.utils.hasPermission
+import dev.kordex.modules.dev.unsafe.annotations.UnsafeAPI
+import dev.kordex.modules.dev.unsafe.commands.slash.InitialSlashCommandResponse
+import dev.kordex.modules.dev.unsafe.extensions.unsafeSlashCommand
 import org.koin.core.component.inject
 import kotlin.time.Duration.Companion.seconds
 
@@ -34,19 +33,17 @@ class ManagementExtension : Extension() {
 
     private val noteCollection: NoteCollection by inject()
 
-    override val bundle = BUNDLE
-
     @OptIn(UnsafeAPI::class)
     override suspend fun setup() {
         publicSlashCommand {
-            name = "delete"
-            description = "Note deletion"
+            name = Translations.Extensions.Management.Delete.name
+            description = Translations.Extensions.Management.Delete.description
 
             check { anyGuild() }
 
             publicSubCommand(::ByIdArgs) {
-                name = "id"
-                description = "Delete a note by its ID. This is irreversible!"
+                name = Translations.Extensions.Management.Deleteid.name
+                description = Translations.Extensions.Management.Deleteid.description
 
                 action {
                     val noteId = arguments.noteId.toInt(16)
@@ -55,39 +52,36 @@ class ManagementExtension : Extension() {
 
                     if (note == null || note.guild != guild!!.id) {
                         respond {
-                            content = translate("error.notfound")
+                            content = Translations.Error.notfound.translate()
                         }
 
                         return@action
                     }
 
-                    if (note.author != user.id && !member!!.asMember(guild!!.id)
-                            .hasPermission(Permission.ManageMessages)
+                    if (note.author != user.id && !member!!.asMember().hasPermission(Permission.ManageMessages)
                     ) {
                         respond {
-                            content = translate("error.notowned")
+                            content = Translations.Error.notowned.translate()
                         }
                         return@action
                     }
 
                     respond {
-                        content = translate("extensions.management.delete.confirmation")
+                        content = Translations.Extensions.Management.Delete.confirmation.translate()
 
                         noteEmbed(this@publicSlashCommand.kord, note, true)
 
                         components(15.seconds) {
                             ephemeralButton {
-                                label = translate("button.delete.label")
+                                label = Translations.Button.Delete.label
                                 style = ButtonStyle.Danger
 
                                 action {
                                     noteCollection.delete(note)
 
                                     edit {
-                                        content = translate(
-                                            "extensions.management.delete.success",
-                                            BUNDLE,
-                                            arrayOf("%06x".format(noteId)),
+                                        content = Translations.Extensions.Management.Delete.success.translate(
+                                            "%06x".format(noteId)
                                         )
 
                                         components = mutableListOf()
@@ -96,12 +90,12 @@ class ManagementExtension : Extension() {
                             }
 
                             ephemeralButton {
-                                label = translate("button.cancel.label")
+                                label = Translations.Button.Cancel.label
                                 style = ButtonStyle.Secondary
 
                                 action {
                                     edit {
-                                        content = translate("extensions.management.delete.cancel", BUNDLE)
+                                        content = Translations.Extensions.Management.Delete.cancel.translate()
 
                                         components = mutableListOf()
                                     }
@@ -120,8 +114,8 @@ class ManagementExtension : Extension() {
             }
 
             publicSubCommand(::UserNotesArgs) {
-                name = "user"
-                description = "Delete all notes from a user. This is irreversible!"
+                name = Translations.Extensions.Management.Deleteuser.name
+                description = Translations.Extensions.Management.Deleteuser.description
 
                 check {
                     hasPermission(Permission.ManageMessages)
@@ -136,29 +130,26 @@ class ManagementExtension : Extension() {
 
                     if (notes.isEmpty()) {
                         respond {
-                            content = translate("error.usernonotes")
+                            content = Translations.Error.usernonotes.translate()
                         }
 
                         return@action
                     }
 
                     respond {
-                        content = translate("extensions.management.deleteuser.confirmation", arrayOf(member.mention))
+                        content = Translations.Extensions.Management.Deleteuser.confirmation.translate(member.mention)
 
                         components(15.seconds) {
                             ephemeralButton {
-                                label = translate("button.delete.label")
+                                label = Translations.Button.Delete.label
                                 style = ButtonStyle.Danger
 
                                 action {
                                     noteCollection.deleteByUserInGuild(member.id, guild!!.id)
 
                                     edit {
-                                        content = translate(
-                                            "extensions.management.deleteuser.success",
-                                            BUNDLE,
-                                            arrayOf(member.mention)
-                                        )
+                                        content =
+                                            Translations.Extensions.Management.Deleteuser.success.translate(member.mention)
 
                                         components = mutableListOf()
                                     }
@@ -166,12 +157,12 @@ class ManagementExtension : Extension() {
                             }
 
                             ephemeralButton {
-                                label = translate("button.cancel.label")
+                                label = Translations.Button.Cancel.label
                                 style = ButtonStyle.Secondary
 
                                 action {
                                     edit {
-                                        content = translate("extensions.management.delete.cancel", BUNDLE)
+                                        content = Translations.Extensions.Management.Delete.cancel.translate()
 
                                         components = mutableListOf()
                                     }
@@ -190,8 +181,8 @@ class ManagementExtension : Extension() {
             }
 
             publicSubCommand(::DeleteMultipleModal) {
-                name = "multiple"
-                description = "Delete multiple notes by their IDs. This is irreversible!"
+                name = Translations.Extensions.Management.Deletemultiple.name
+                description = Translations.Extensions.Management.Deletemultiple.description
 
                 check {
                     hasPermission(Permission.ManageMessages)
@@ -209,7 +200,7 @@ class ManagementExtension : Extension() {
                             it.toInt(16)
                         } catch (_: NumberFormatException) {
                             respond {
-                                content = translate("extensions.management.deletemultiple.invalidid", arrayOf(it))
+                                content = Translations.Extensions.Management.Deletemultiple.invalidid.translate(it)
                             }
 
                             return@action
@@ -221,7 +212,7 @@ class ManagementExtension : Extension() {
 
                     if (notes.isEmpty()) {
                         respond {
-                            content = translate("extensions.management.deletemultiple.nonotes")
+                            content = Translations.Extensions.Management.Deletemultiple.nonotes.translate()
                         }
 
                         return@action
@@ -229,29 +220,24 @@ class ManagementExtension : Extension() {
 
                     respond {
                         // TODO: List more information about the notes being deleted
-                        content = translate("extensions.management.deletemultiple.confirmation", arrayOf(notes.count()))
+                        content =
+                            Translations.Extensions.Management.Deletemultiple.confirmation.translate(notes.count())
 
                         if (notes.count() != noteIds.count()) {
-                            content += translate(
-                                "extensions.management.deletemultiple.notfound",
-                                arrayOf(noteIds.count() - notes.count())
-                            )
+                            content += Translations.Extensions.Management.Deletemultiple.notfound.translate(noteIds.count() - notes.count())
                         }
 
                         components(15.seconds) {
                             ephemeralButton {
-                                label = translate("button.deleteall.label")
+                                label = Translations.Button.Deleteall.label
                                 style = ButtonStyle.Danger
 
                                 action {
                                     noteCollection.deleteMany(notes)
 
                                     edit {
-                                        content = translate(
-                                            "extensions.management.deletemultiple.success",
-                                            BUNDLE,
-                                            arrayOf(notes.count()),
-                                        )
+                                        content =
+                                            Translations.Extensions.Management.Deletemultiple.success.translate(notes.count())
 
                                         components = mutableListOf()
                                     }
@@ -259,12 +245,12 @@ class ManagementExtension : Extension() {
                             }
 
                             ephemeralButton {
-                                label = "Cancel"
+                                label = Translations.Button.Cancel.label
                                 style = ButtonStyle.Secondary
 
                                 action {
                                     edit {
-                                        content = translate("extensions.management.delete.cancel", BUNDLE)
+                                        content = Translations.Extensions.Management.Delete.cancel.translate()
 
                                         components = mutableListOf()
                                     }
@@ -285,8 +271,8 @@ class ManagementExtension : Extension() {
         }
 
         unsafeSlashCommand(::ByIdArgs) {
-            name = "edit"
-            description = "Edit a note by its ID. Opens a text box."
+            name = Translations.Extensions.Management.Edit.name
+            description = Translations.Extensions.Management.Edit.description
 
             initialResponse = InitialSlashCommandResponse.None
 
@@ -299,7 +285,7 @@ class ManagementExtension : Extension() {
 
                 if (note == null || note.guild != guild!!.id) {
                     respondPublic {
-                        content = translate("error.notfound")
+                        content = Translations.Error.notfound.translate()
                     }
 
                     return@action
@@ -309,7 +295,7 @@ class ManagementExtension : Extension() {
                         .hasPermission(Permission.ManageMessages)
                 ) {
                     respondPublic {
-                        content = translate("error.notowned")
+                        content = Translations.Error.notowned.translate()
                     }
                     return@action
                 }
@@ -317,7 +303,7 @@ class ManagementExtension : Extension() {
                 val modal = EditModal()
                 this@unsafeSlashCommand.componentRegistry.register(modal)
 
-                modal.content.initialValue = note.content
+                modal.content.initialValue = note.content.toKey()
 
                 val result = modal.sendAndDeferPublic(this)
 
@@ -334,7 +320,7 @@ class ManagementExtension : Extension() {
                 noteCollection.set(note)
 
                 result.createPublicFollowup {
-                    content = translate("extensions.management.edit.success", arrayOf("%06x".format(noteId)))
+                    content = Translations.Extensions.Management.Edit.success.translate("%06x".format(noteId))
 
                     noteEmbed(this@unsafeSlashCommand.kord, note, true)
                 }
@@ -343,20 +329,20 @@ class ManagementExtension : Extension() {
     }
 
     inner class EditModal : ModalForm() {
-        override var title = "Edit note"
+        override var title = Translations.Modals.Editnote.title
 
         val content = paragraphText {
-            label = "Content of the note"
+            label = Translations.Modals.content
             required = true
             maxLength = 2000
         }
     }
 
     inner class DeleteMultipleModal : ModalForm() {
-        override var title = "Delete multiple notes"
+        override var title = Translations.Modals.Deletemultiple.title
 
         val notes = paragraphText {
-            label = "Notes to delete, separated by spaces"
+            label = Translations.Modals.Deletemultiple.content
             required = true
             maxLength = 2000
         }

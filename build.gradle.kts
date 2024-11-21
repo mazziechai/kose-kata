@@ -10,9 +10,9 @@ plugins {
 
     id("com.github.johnrengelman.shadow")
 
-    id("dev.kordex.gradle.kordex") version "1.0.2"
+    id("dev.kordex.gradle.kordex")
 
-    id("io.sentry.jvm.gradle") version "4.10.0"
+//    id("io.sentry.jvm.gradle") version "4.10.0"
 }
 
 group = "cafe.ferret"
@@ -46,17 +46,24 @@ dependencies {
 
 kordEx {
     // https://kordex.dev/blog/2024-07-23/kordex-2#levels
-    dataCollection(DataCollection.Standard)
+    bot {
+        dataCollection(DataCollection.Standard)
 
-    mainClass = "cafe.ferret.kosekata.AppKt"
+        mainClass = "cafe.ferret.kosekata.AppKt"
+    }
 
-    module("unsafe")
+    i18n {
+        classPackage = "cafe.ferret.kosekata.i18n"
+        translationBundle = "kose.strings"
+    }
+
+    module("dev-unsafe")
 }
 
-sentry {
-    includeSourceContext = true
-
-    org = System.getenv("SENTRY_ORG")
-    projectName = "kose-kata"
-    authToken = System.getenv("SENTRY_AUTH_TOKEN")
-}
+//sentry {
+//    includeSourceContext = true
+//
+//    org = System.getenv("SENTRY_ORG")
+//    projectName = "kose-kata"
+//    authToken = System.getenv("SENTRY_AUTH_TOKEN")
+//}

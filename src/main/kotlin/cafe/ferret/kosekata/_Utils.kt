@@ -5,9 +5,6 @@
 package cafe.ferret.kosekata
 
 import cafe.ferret.kosekata.database.entities.Note
-import com.kotlindiscord.kord.extensions.time.TimestampType
-import com.kotlindiscord.kord.extensions.time.toDiscord
-import com.kotlindiscord.kord.extensions.types.EphemeralInteractionContext
 import dev.kord.common.Color
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
@@ -17,6 +14,9 @@ import dev.kord.rest.Image
 import dev.kord.rest.builder.message.EmbedBuilder
 import dev.kord.rest.builder.message.create.FollowupMessageCreateBuilder
 import dev.kord.rest.builder.message.embed
+import dev.kordex.core.time.TimestampType
+import dev.kordex.core.time.toDiscord
+import dev.kordex.core.types.EphemeralInteractionContext
 import kotlinx.datetime.Instant
 import java.text.SimpleDateFormat
 
@@ -94,10 +94,8 @@ suspend fun EphemeralInteractionContext.guildNotes(
                     chunkedNotes.forEach { note ->
                         var user = cachedUsers.find { it.id == note.author }
 
-                        if (user == null) {
-                            if (note.author !in unknownUsers) {
-                                user = kord.getUser(note.author)
-                            }
+                        if (user == null && note.author !in unknownUsers) {
+                            user = kord.getUser(note.author)
                         }
 
                         if (user == null) {

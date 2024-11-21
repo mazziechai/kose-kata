@@ -4,14 +4,14 @@
 
 package cafe.ferret.kosekata.extensions
 
-import cafe.ferret.kosekata.BUNDLE
 import cafe.ferret.kosekata.database.collections.NoteCollection
-import com.kotlindiscord.kord.extensions.checks.anyGuild
-import com.kotlindiscord.kord.extensions.commands.Arguments
-import com.kotlindiscord.kord.extensions.commands.converters.impl.string
-import com.kotlindiscord.kord.extensions.extensions.Extension
-import com.kotlindiscord.kord.extensions.extensions.chatCommand
-import com.kotlindiscord.kord.extensions.utils.respond
+import cafe.ferret.kosekata.i18n.Translations
+import dev.kordex.core.checks.anyGuild
+import dev.kordex.core.commands.Arguments
+import dev.kordex.core.commands.converters.impl.string
+import dev.kordex.core.extensions.Extension
+import dev.kordex.core.extensions.chatCommand
+import dev.kordex.core.utils.respond
 import org.koin.core.component.inject
 
 class ChatCommandsExtension : Extension() {
@@ -19,16 +19,14 @@ class ChatCommandsExtension : Extension() {
 
     private val noteCollection: NoteCollection by inject()
 
-    override val bundle = BUNDLE
-
     override suspend fun setup() {
         /**
          * Reimplementation of the /post command as a chat command.
          */
         chatCommand(::PostCommandArgs) {
-            name = "post"
-            aliases = arrayOf("n", "note")
-            description = "Sends to note as a chat (chat command shortcut)"
+            name = Translations.Extensions.Viewing.Post.name
+            aliasKey = Translations.Extensions.Viewing.Post.Chatcommand.aliases
+            description = Translations.Extensions.Viewing.Post.Chatcommand.description
 
             check { anyGuild() }
 
@@ -37,7 +35,7 @@ class ChatCommandsExtension : Extension() {
 
                 if (note == null) {
                     message.respond {
-                        content = translate("error.notfound")
+                        content = Translations.Error.notfound.translate()
                     }
                     return@action
                 }
@@ -58,8 +56,8 @@ class ChatCommandsExtension : Extension() {
 
     inner class PostCommandArgs : Arguments() {
         val noteName by string {
-            name = "note"
-            description = "The note's name"
+            name = Translations.Arguments.Notename.name
+            description = Translations.Arguments.Notename.description
         }
     }
 }

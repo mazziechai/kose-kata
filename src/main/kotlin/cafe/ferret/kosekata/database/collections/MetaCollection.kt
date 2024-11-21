@@ -7,9 +7,9 @@ package cafe.ferret.kosekata.database.collections
 import cafe.ferret.kosekata.database.Database
 import cafe.ferret.kosekata.database.DbCollection
 import cafe.ferret.kosekata.database.entities.Meta
-import com.kotlindiscord.kord.extensions.koin.KordExKoinComponent
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.ReplaceOptions
+import dev.kordex.core.koin.KordExKoinComponent
 import kotlinx.coroutines.flow.firstOrNull
 import org.koin.core.component.inject
 

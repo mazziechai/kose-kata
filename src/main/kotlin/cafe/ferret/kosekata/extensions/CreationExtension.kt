@@ -4,14 +4,14 @@
 
 package cafe.ferret.kosekata.extensions
 
-import cafe.ferret.kosekata.BUNDLE
 import cafe.ferret.kosekata.database.collections.NoteCollection
+import cafe.ferret.kosekata.i18n.Translations
 import cafe.ferret.kosekata.noteEmbed
-import com.kotlindiscord.kord.extensions.checks.anyGuild
-import com.kotlindiscord.kord.extensions.components.forms.ModalForm
-import com.kotlindiscord.kord.extensions.extensions.Extension
-import com.kotlindiscord.kord.extensions.extensions.publicMessageCommand
-import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
+import dev.kordex.core.checks.anyGuild
+import dev.kordex.core.components.forms.ModalForm
+import dev.kordex.core.extensions.Extension
+import dev.kordex.core.extensions.publicMessageCommand
+import dev.kordex.core.extensions.publicSlashCommand
 import org.koin.core.component.inject
 
 class CreationExtension : Extension() {
@@ -19,14 +19,12 @@ class CreationExtension : Extension() {
 
     private val noteCollection: NoteCollection by inject()
 
-    override val bundle = BUNDLE
-
     override suspend fun setup() {
         /**
          * Context command to create a note from an existing message.
          */
         publicMessageCommand(::CreateNoteFromMessageModal) {
-            name = "New note"
+            name = Translations.Extensions.Creation.Newmessage.name
 
             check { anyGuild() }
 
@@ -44,7 +42,7 @@ class CreationExtension : Extension() {
                 )
 
                 respond {
-                    content = translate("extensions.creation.success", arrayOf(noteName, "%06x".format(note._id)))
+                    content = Translations.Extensions.Creation.success.translate(noteName, "%06x".format(note._id))
                 }
             }
         }
@@ -53,8 +51,8 @@ class CreationExtension : Extension() {
          * Slash command to create a note.
          */
         publicSlashCommand(::CreateNoteFromCommandModal) {
-            name = "new"
-            description = "Create a new note. Opens a text box."
+            name = Translations.Extensions.Creation.New.name
+            description = Translations.Extensions.Creation.New.description
 
             check { anyGuild() }
 
@@ -65,7 +63,7 @@ class CreationExtension : Extension() {
                 val note = noteCollection.new(user.id, guild!!.id, noteName, mutableListOf(noteName), noteContent)
 
                 respond {
-                    content = translate("extensions.creation.success", arrayOf(noteName, "%06x".format(note._id)))
+                    content = Translations.Extensions.Creation.success.translate(noteName, "%06x".format(note._id))
                     noteEmbed(this@publicSlashCommand.kord, note, false)
                 }
             }
@@ -73,26 +71,26 @@ class CreationExtension : Extension() {
     }
 
     inner class CreateNoteFromMessageModal : ModalForm() {
-        override var title = "Create note"
+        override var title = Translations.Modals.Createnote.title
 
         val name = lineText {
-            label = "Name of the note"
+            label = Translations.Modals.notename
             required = true
             maxLength = 32
         }
     }
 
     inner class CreateNoteFromCommandModal : ModalForm() {
-        override var title = "Create note"
+        override var title = Translations.Modals.Createnote.title
 
         val name = lineText {
-            label = "Name of the note"
+            label = Translations.Modals.notename
             required = true
             maxLength = 32
         }
 
         val content = paragraphText {
-            label = "Content of the note"
+            label = Translations.Modals.content
             required = true
             maxLength = 2000
         }

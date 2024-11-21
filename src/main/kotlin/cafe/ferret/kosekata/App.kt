@@ -6,10 +6,10 @@ package cafe.ferret.kosekata
 
 import cafe.ferret.kosekata.database.database
 import cafe.ferret.kosekata.extensions.*
-import com.kotlindiscord.kord.extensions.ExtensibleBot
-import com.kotlindiscord.kord.extensions.utils.env
 import dev.kord.common.entity.Snowflake
 import dev.kord.rest.builder.message.allowedMentions
+import dev.kordex.core.ExtensibleBot
+import dev.kordex.core.utils.env
 
 val TEST_SERVER_ID = Snowflake(
     env("TEST_SERVER").toLong()
@@ -19,8 +19,6 @@ val ENVIRONMENT = env("ENVIRONMENT")
 
 private val token = env("TOKEN")
 private val sentry_dsn = env("SENTRY_DSN")
-
-const val BUNDLE = "kose.strings"
 
 suspend fun main() {
     val bot = ExtensibleBot(token) {
@@ -47,16 +45,16 @@ suspend fun main() {
         }
 
         extensions {
-            sentry {
-                enable = true
-
-                if (ENVIRONMENT == "dev") {
-                    debug = true
-                }
-
-                dsn = sentry_dsn
-                environment = ENVIRONMENT
-            }
+//            sentry {
+//                enable = true
+//
+//                if (ENVIRONMENT == "dev") {
+//                    debug = true
+//                }
+//
+//                dsn = sentry_dsn
+//                environment = ENVIRONMENT
+//            }
 
             add(::CreationExtension)
             add(::ManagementExtension)

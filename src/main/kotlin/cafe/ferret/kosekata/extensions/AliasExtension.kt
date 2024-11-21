@@ -4,18 +4,18 @@
 
 package cafe.ferret.kosekata.extensions
 
-import cafe.ferret.kosekata.BUNDLE
 import cafe.ferret.kosekata.ByIdArgs
 import cafe.ferret.kosekata.database.collections.NoteCollection
-import com.kotlindiscord.kord.extensions.checks.anyGuild
-import com.kotlindiscord.kord.extensions.commands.Arguments
-import com.kotlindiscord.kord.extensions.commands.application.slash.ephemeralSubCommand
-import com.kotlindiscord.kord.extensions.commands.application.slash.publicSubCommand
-import com.kotlindiscord.kord.extensions.commands.converters.impl.string
-import com.kotlindiscord.kord.extensions.extensions.Extension
-import com.kotlindiscord.kord.extensions.extensions.publicSlashCommand
-import com.kotlindiscord.kord.extensions.utils.hasPermission
+import cafe.ferret.kosekata.i18n.Translations
 import dev.kord.common.entity.Permission
+import dev.kordex.core.checks.anyGuild
+import dev.kordex.core.commands.Arguments
+import dev.kordex.core.commands.application.slash.ephemeralSubCommand
+import dev.kordex.core.commands.application.slash.publicSubCommand
+import dev.kordex.core.commands.converters.impl.string
+import dev.kordex.core.extensions.Extension
+import dev.kordex.core.extensions.publicSlashCommand
+import dev.kordex.core.utils.hasPermission
 import org.koin.core.component.inject
 
 class AliasExtension : Extension() {
@@ -23,18 +23,16 @@ class AliasExtension : Extension() {
 
     private val noteCollection: NoteCollection by inject()
 
-    override val bundle = BUNDLE
-
     override suspend fun setup() {
         publicSlashCommand {
-            name = "alias"
-            description = "Manage note aliases"
+            name = Translations.Extensions.Alias.Alias.name
+            description = Translations.Extensions.Alias.Alias.description
 
             check { anyGuild() }
 
             publicSubCommand(::UpdateAliasArgs) {
-                name = "new"
-                description = "Create a new alias for a note."
+                name = Translations.Extensions.Alias.New.name
+                description = Translations.Extensions.Alias.New.description
 
                 action {
                     val noteId = arguments.noteId.toInt(16)
@@ -43,7 +41,7 @@ class AliasExtension : Extension() {
 
                     if (note == null || note.guild != guild!!.id) {
                         respond {
-                            content = translate("error.notfound")
+                            content = Translations.Error.notfound.translate()
                         }
                         return@action
                     }
@@ -52,7 +50,7 @@ class AliasExtension : Extension() {
                             .hasPermission(Permission.ManageMessages)
                     ) {
                         respond {
-                            content = translate("error.notowned")
+                            content = Translations.Error.notowned.translate()
                         }
                         return@action
                     }
@@ -61,15 +59,14 @@ class AliasExtension : Extension() {
                     noteCollection.set(note)
 
                     respond {
-                        content =
-                            translate("extensions.alias.new.success", arrayOf(arguments.alias, "%06x".format(noteId)))
+                        content = Translations.Extensions.Alias.New.success.translate("%06x".format(noteId))
                     }
                 }
             }
 
             publicSubCommand(::UpdateAliasArgs) {
-                name = "remove"
-                description = "Remove an alias for a note."
+                name = Translations.Extensions.Alias.Remove.name
+                description = Translations.Extensions.Alias.Remove.description
 
                 action {
                     val noteId = arguments.noteId.toInt(16)
@@ -78,7 +75,7 @@ class AliasExtension : Extension() {
 
                     if (note == null || note.guild != guild!!.id) {
                         respond {
-                            content = translate("error.notfound")
+                            content = Translations.Error.notfound.translate()
                         }
                         return@action
                     }
@@ -87,14 +84,14 @@ class AliasExtension : Extension() {
                             .hasPermission(Permission.ManageMessages)
                     ) {
                         respond {
-                            content = translate("error.notowned")
+                            content = Translations.Error.notowned.translate()
                         }
                         return@action
                     }
 
                     if (note.aliases.count() <= 1) {
                         respond {
-                            content = translate("extensions.alias.remove.error")
+                            content = Translations.Extensions.Alias.Remove.error.translate()
                         }
                         return@action
                     }
@@ -103,17 +100,14 @@ class AliasExtension : Extension() {
                     noteCollection.set(note)
 
                     respond {
-                        content = translate(
-                            "extensions.alias.remove.success",
-                            arrayOf(arguments.alias, "%06x".format(noteId))
-                        )
+                        content = Translations.Extensions.Alias.Remove.success.translate("%06x".format(noteId))
                     }
                 }
             }
 
             ephemeralSubCommand(::ByIdArgs) {
-                name = "list"
-                description = "List a note's aliases"
+                name = Translations.Extensions.Alias.List.name
+                description = Translations.Extensions.Alias.List.description
 
                 action {
                     val noteId = arguments.noteId.toInt(16)
@@ -122,7 +116,7 @@ class AliasExtension : Extension() {
 
                     if (note == null || note.guild != guild!!.id) {
                         respond {
-                            content = translate("error.notfound")
+                            content = Translations.Error.notfound.translate()
                         }
                         return@action
                     }
@@ -130,10 +124,7 @@ class AliasExtension : Extension() {
                     respond {
                         content = buildString {
                             appendLine(
-                                translate(
-                                    "extensions.alias.list.success",
-                                    arrayOf(note.name)
-                                )
+                                Translations.Extensions.Alias.List.success.translate(arrayOf(note.name))
                             )
                             for (alias in note.aliases) {
                                 appendLine(alias)
@@ -147,19 +138,19 @@ class AliasExtension : Extension() {
 
     inner class UpdateAliasArgs : Arguments() {
         val noteId by string {
-            name = "note"
-            description = "The note's ID"
+            name = Translations.Arguments.Noteid.name
+            description = Translations.Arguments.Noteid.description
 
             validate {
-                failIf(translate("arguments.noteid.fail")) {
+                failIf(Translations.Arguments.Noteid.fail) {
                     value.toIntOrNull(16) == null
                 }
             }
         }
 
         val alias by string {
-            name = "alias"
-            description = "The alias to add or remove"
+            name = Translations.Arguments.Alias.name
+            description = Translations.Arguments.Alias.description
             maxLength = 32
         }
     }
