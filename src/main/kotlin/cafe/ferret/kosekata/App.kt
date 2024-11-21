@@ -18,7 +18,6 @@ val TEST_SERVER_ID = Snowflake(
 val ENVIRONMENT = env("ENVIRONMENT")
 
 private val token = env("TOKEN")
-private val sentry_dsn = env("SENTRY_DSN")
 
 suspend fun main() {
     val bot = ExtensibleBot(token) {
