@@ -112,3 +112,4 @@ build/
 .env
 
 .idea
+data
