@@ -31,6 +31,10 @@ class ChatCommandsExtension : Extension() {
             check { anyGuild() }
 
             action {
+                if (user == null) {
+                    return@action
+                }
+
                 val note = noteCollection.getRandomNote(guild!!.id, arguments.noteName)
 
                 if (note == null) {
@@ -42,7 +46,6 @@ class ChatCommandsExtension : Extension() {
 
                 val referenceRegex = Regex("\\{\\{(.+?)}}")
                 val references = referenceRegex.findAll(note.content).distinctBy { it.groupValues[1] }
-
 
                 message.respond {
                     content = "${note.content}\n\n`#%06x` `%s`".format(note._id, note.name)
