@@ -28,13 +28,14 @@ class ChatCommandsExtension : Extension() {
             aliasKey = Translations.Extensions.Viewing.Post.Chatcommand.aliases
             description = Translations.Extensions.Viewing.Post.Chatcommand.description
 
-            check { anyGuild() }
+            check {
+                anyGuild()
+                failIf {
+                    event.member == null
+                }
+            }
 
             action {
-                if (user == null) {
-                    return@action
-                }
-
                 val note = noteCollection.getRandomNote(guild!!.id, arguments.noteName)
 
                 if (note == null) {
