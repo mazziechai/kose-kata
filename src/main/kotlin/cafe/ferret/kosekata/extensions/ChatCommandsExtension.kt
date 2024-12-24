@@ -69,13 +69,13 @@ class ChatCommandsExtension : Extension() {
                     failIf(event.emoji.name != "❌")
                     if (interaction == null) {
                         failIf(
-                            event.userId != event.getMessage().referencedMessage?.author?.id || event.getUserAsMember()
+                            event.userId != event.getMessage().referencedMessage?.author?.id && event.getUserAsMember()
                                 ?.hasPermission(Permission.ManageMessages) == false
                         )
                     } else {
                         failIfNot(interaction.name in listOf("post", "peek", "postid", "peekid"))
                         failIf(
-                            event.userId != interaction.user.id || event.getUserAsMember()
+                            event.userId != interaction.user.id && event.getUserAsMember()
                                 ?.hasPermission(Permission.ManageMessages) == false
                         )
                     }
