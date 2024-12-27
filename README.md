@@ -38,9 +38,9 @@ kose kata's only functionality is managing notes, but it does it very well.
 - [x] Exporting notes to a JSON file
 - [x] Importing notes from a JSON file
   - [x] qbot format
-- [x] Getting a list of a user's notes in a guild
-- [x] Getting a list of a user's notes in general
-- [x] Getting a list of a guild's notes
+- [ ] Getting a list of a user's notes in a guild
+- [ ] Getting a list of a user's notes in general
+- [ ] Getting a list of a guild's notes
 - [x] Clearing notes in a guild
 - [x] Note aliases
 - [x] Deleting multiple notes at once, with various options for that
