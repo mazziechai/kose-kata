@@ -59,7 +59,8 @@ class AliasExtension : Extension() {
                     noteCollection.set(note)
 
                     respond {
-                        content = Translations.Extensions.Alias.New.success.translate("%06x".format(noteId))
+                        content =
+                            Translations.Extensions.Alias.New.success.translate(arguments.alias, "%06x".format(noteId))
                     }
                 }
             }
@@ -100,7 +101,10 @@ class AliasExtension : Extension() {
                     noteCollection.set(note)
 
                     respond {
-                        content = Translations.Extensions.Alias.Remove.success.translate("%06x".format(noteId))
+                        content = Translations.Extensions.Alias.Remove.success.translate(
+                            arguments.alias,
+                            "%06x".format(noteId)
+                        )
                     }
                 }
             }
@@ -124,7 +128,7 @@ class AliasExtension : Extension() {
                     respond {
                         content = buildString {
                             appendLine(
-                                Translations.Extensions.Alias.List.success.translate(arrayOf(note.name))
+                                Translations.Extensions.Alias.List.success.translate(note.name)
                             )
                             for (alias in note.aliases) {
                                 appendLine(alias)
