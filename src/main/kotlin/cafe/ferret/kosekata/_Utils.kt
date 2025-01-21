@@ -2,6 +2,8 @@
  * Copyright (c) 2023 mazziechai
  */
 
+@file:OptIn(ExperimentalStdlibApi::class)
+
 package cafe.ferret.kosekata
 
 import cafe.ferret.kosekata.database.entities.Note
@@ -20,6 +22,11 @@ import dev.kordex.core.types.EphemeralInteractionContext
 import kotlinx.datetime.Instant
 import java.text.SimpleDateFormat
 
+private val ID_FORMAT = HexFormat {
+    number.minLength = 6
+    number.removeLeadingZeros = true
+}
+
 /**
  * Formats an Instant to a string.
  */
@@ -28,6 +35,7 @@ fun formatTime(instant: Instant): String {
     return format.format(instant.epochSeconds * 1000L) + " UTC"
 }
 
+@OptIn(ExperimentalStdlibApi::class)
 suspend fun FollowupMessageCreateBuilder.noteEmbed(kord: Kord, note: Note, verbose: Boolean) {
     val noteUser = kord.getUser(note.author)
     val noteMember = noteUser?.asMemberOrNull(note.guild)
@@ -52,7 +60,7 @@ suspend fun FollowupMessageCreateBuilder.noteEmbed(kord: Kord, note: Note, verbo
 
         footer {
             text = buildString {
-                append("#%06x ".format(note._id))
+                append(note._id.toId())
 
                 if (verbose) {
                     append("| Created on ${formatTime(note.timeCreated)} UTC ")
@@ -105,7 +113,7 @@ suspend fun EphemeralInteractionContext.guildNotes(
                         }
 
                         append("${user?.username ?: "Unknown user"} → ")
-                        append("*${note.name}* | #%06x | ".format(note._id))
+                        append("*${note.name}* | ${note._id.toId()} | ")
                         append("Created on ${note.timeCreated.toDiscord(TimestampType.ShortDate)} ")
                         appendLine("at ${note.timeCreated.toDiscord(TimestampType.ShortTime)}")
                     }
@@ -118,3 +126,6 @@ suspend fun EphemeralInteractionContext.guildNotes(
         }
     }.send()
 }
+
+fun Int.toId(): String = this.toHexString(ID_FORMAT).removePrefix("00")
+

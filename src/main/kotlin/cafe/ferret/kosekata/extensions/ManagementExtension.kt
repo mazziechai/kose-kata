@@ -2,6 +2,8 @@
  * Copyright (c) 2023 mazziechai
  */
 
+@file:OptIn(ExperimentalStdlibApi::class)
+
 package cafe.ferret.kosekata.extensions
 
 import cafe.ferret.kosekata.ByIdArgs
@@ -9,6 +11,7 @@ import cafe.ferret.kosekata.UserNotesArgs
 import cafe.ferret.kosekata.database.collections.NoteCollection
 import cafe.ferret.kosekata.i18n.Translations
 import cafe.ferret.kosekata.noteEmbed
+import cafe.ferret.kosekata.toId
 import dev.kord.common.entity.ButtonStyle
 import dev.kord.common.entity.Permission
 import dev.kord.core.behavior.interaction.response.createPublicFollowup
@@ -81,7 +84,7 @@ class ManagementExtension : Extension() {
 
                                     edit {
                                         content = Translations.Extensions.Management.Delete.success.translate(
-                                            "%06x".format(noteId)
+                                            note._id.toId()
                                         )
 
                                         components = mutableListOf()
@@ -320,7 +323,7 @@ class ManagementExtension : Extension() {
                 noteCollection.set(note)
 
                 result.createPublicFollowup {
-                    content = Translations.Extensions.Management.Edit.success.translate("%06x".format(noteId))
+                    content = Translations.Extensions.Management.Edit.success.translate(note._id.toId())
 
                     noteEmbed(this@unsafeSlashCommand.kord, note, true)
                 }

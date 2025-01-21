@@ -2,11 +2,14 @@
  * Copyright (c) 2023 mazziechai
  */
 
+@file:OptIn(ExperimentalStdlibApi::class)
+
 package cafe.ferret.kosekata.extensions
 
 import cafe.ferret.kosekata.ByIdArgs
 import cafe.ferret.kosekata.database.collections.NoteCollection
 import cafe.ferret.kosekata.i18n.Translations
+import cafe.ferret.kosekata.toId
 import dev.kord.common.entity.Permission
 import dev.kordex.core.checks.anyGuild
 import dev.kordex.core.commands.Arguments
@@ -60,7 +63,10 @@ class AliasExtension : Extension() {
 
                     respond {
                         content =
-                            Translations.Extensions.Alias.New.success.translate(arguments.alias, "%06x".format(noteId))
+                            Translations.Extensions.Alias.New.success.translate(
+                                arguments.alias,
+                                note._id.toId()
+                            )
                     }
                 }
             }
@@ -103,7 +109,7 @@ class AliasExtension : Extension() {
                     respond {
                         content = Translations.Extensions.Alias.Remove.success.translate(
                             arguments.alias,
-                            "%06x".format(noteId)
+                            note._id.toId()
                         )
                     }
                 }

@@ -2,6 +2,8 @@
  * Copyright (c) 2023 mazziechai
  */
 
+@file:OptIn(ExperimentalStdlibApi::class)
+
 package cafe.ferret.kosekata.extensions
 
 import cafe.ferret.kosekata.ByIdArgs
@@ -10,6 +12,7 @@ import cafe.ferret.kosekata.database.entities.Note
 import cafe.ferret.kosekata.formatTime
 import cafe.ferret.kosekata.i18n.Translations
 import cafe.ferret.kosekata.noteEmbed
+import cafe.ferret.kosekata.toId
 import dev.kord.common.Color
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.behavior.GuildBehavior
@@ -163,7 +166,7 @@ class ViewingExtension : Extension() {
                         color = Color(note._id)
 
                         footer {
-                            text = "#%06x".format(note._id)
+                            text = note._id.toId()
                         }
                     })
                 }
@@ -205,7 +208,7 @@ class ViewingExtension : Extension() {
             if (!text) {
                 noteEmbed(kord, note, false)
             } else {
-                content = "${note.content}\n\n`#%06x` `%s`".format(note._id, note.name)
+                content = "${note.content}\n\n`${note._id.toId()}` `${note.name}`"
             }
             noteReferencesComponents(note, text, guild)
         }

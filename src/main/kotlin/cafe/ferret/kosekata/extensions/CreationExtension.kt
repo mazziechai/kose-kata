@@ -2,11 +2,14 @@
  * Copyright (c) 2023 mazziechai
  */
 
+@file:OptIn(ExperimentalStdlibApi::class)
+
 package cafe.ferret.kosekata.extensions
 
 import cafe.ferret.kosekata.database.collections.NoteCollection
 import cafe.ferret.kosekata.i18n.Translations
 import cafe.ferret.kosekata.noteEmbed
+import cafe.ferret.kosekata.toId
 import dev.kordex.core.checks.anyGuild
 import dev.kordex.core.components.forms.ModalForm
 import dev.kordex.core.extensions.Extension
@@ -42,7 +45,8 @@ class CreationExtension : Extension() {
                 )
 
                 respond {
-                    content = Translations.Extensions.Creation.success.translate(noteName, "%06x".format(note._id))
+                    content =
+                        Translations.Extensions.Creation.success.translate(noteName, note._id.toId())
                 }
             }
         }
@@ -63,7 +67,8 @@ class CreationExtension : Extension() {
                 val note = noteCollection.new(user.id, guild!!.id, noteName, mutableListOf(noteName), noteContent)
 
                 respond {
-                    content = Translations.Extensions.Creation.success.translate(noteName, "%06x".format(note._id))
+                    content =
+                        Translations.Extensions.Creation.success.translate(noteName, note._id.toId())
                     noteEmbed(this@publicSlashCommand.kord, note, false)
                 }
             }

@@ -2,10 +2,13 @@
  * Copyright (c) 2023 mazziechai
  */
 
+@file:OptIn(ExperimentalStdlibApi::class)
+
 package cafe.ferret.kosekata.extensions
 
 import cafe.ferret.kosekata.database.collections.NoteCollection
 import cafe.ferret.kosekata.i18n.Translations
+import cafe.ferret.kosekata.toId
 import dev.kord.common.entity.Permission
 import dev.kord.core.behavior.edit
 import dev.kord.core.event.message.ReactionAddEvent
@@ -54,9 +57,10 @@ class ChatCommandsExtension : Extension() {
                 val references = referenceRegex.findAll(note.content).distinctBy { it.groupValues[1] }
 
                 message.respond {
-                    content = "${note.content}\n\n`#%06x` `%s`".format(note._id, note.name)
+                    content = "${note.content}\n\n`${note._id.toId()}` `${note.name}`"
                     if (references.any()) {
-                        content += "\nThis note contains note references, which are only available in the slash command equivalents of this command."
+                        content += "\nThis note contains note references, which are only available in the slash " +
+                                "command equivalents of this command."
                     }
                 }
             }
