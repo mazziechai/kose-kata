@@ -104,10 +104,9 @@ class NoteCollection : KordExKoinComponent {
      * @param user The user's snowflake.
      * @return The [Note]s, if any.
      */
-    suspend fun getByUser(user: Snowflake) = col.find(eq(Note::author.name, user)).toList()
+    suspend fun getByUser(user: Snowflake) = getByUserFlow(user).toList()
 
-    suspend fun getByGuildAndUser(guild: Snowflake, user: Snowflake) =
-        col.find(and(eq(Note::guild.name, guild), eq(Note::author.name, user))).toList()
+    suspend fun getByGuildAndUser(guild: Snowflake, user: Snowflake) = getByGuildAndUserFlow(guild, user).toList()
 
     /**
      * Gets [Note]s from a guild's [Snowflake].
@@ -115,7 +114,7 @@ class NoteCollection : KordExKoinComponent {
      * @param guild The guild's snowflake.
      * @return The [Note]s, if any.
      */
-    suspend fun getByGuild(guild: Snowflake) = col.find(eq(Note::guild.name, guild)).toList()
+    suspend fun getByGuild(guild: Snowflake) = getByGuildFlow(guild).toList()
 
     /**
      * Gets [Note]s from a guild's [Snowflake] and a name of the note.
@@ -124,8 +123,7 @@ class NoteCollection : KordExKoinComponent {
      * @param name The name of the note.
      * @return The [Note]s, if any.
      */
-    suspend fun getByGuildAndName(guild: Snowflake, name: String) =
-        col.find(and(eq(Note::guild.name, guild), `in`(Note::aliases.name, name))).toList()
+    suspend fun getByGuildAndName(guild: Snowflake, name: String) = getByGuildAndNameFlow(guild, name).toList()
 
     suspend fun getRandomNote(guild: Snowflake, name: String) =
         col.aggregate<Note>(
@@ -142,7 +140,19 @@ class NoteCollection : KordExKoinComponent {
     /**
      * Gets multiple Notes by ID.
      */
-    suspend fun getMultipleNotes(ids: List<Int>) = col.find(`in`(Note::_id.name, ids)).toList()
+    suspend fun getMultipleNotes(ids: List<Int>) = getMultipleNotesFlow(ids).toList()
+
+    fun getMultipleNotesFlow(ids: List<Int>) = col.find(`in`(Note::_id.name, ids))
+
+    fun getByUserFlow(user: Snowflake) = col.find(eq(Note::author.name, user))
+
+    fun getByGuildAndUserFlow(guild: Snowflake, user: Snowflake) =
+        col.find(and(eq(Note::guild.name, guild), eq(Note::author.name, user)))
+
+    fun getByGuildFlow(guild: Snowflake) = col.find(eq(Note::guild.name, guild))
+
+    fun getByGuildAndNameFlow(guild: Snowflake, name: String) =
+        col.find(and(eq(Note::guild.name, guild), `in`(Note::aliases.name, name)))
 
     fun rawCollectionAccess() = col
 
