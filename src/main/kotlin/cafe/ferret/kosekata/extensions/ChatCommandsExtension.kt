@@ -44,7 +44,7 @@ class ChatCommandsExtension : Extension() {
             }
 
             action {
-                val note = noteCollection.getRandomNote(guild!!.id, arguments.noteName)
+                val note = noteCollection.getRandomNoteFilter(guild!!.id, arguments.noteName)
 
                 if (note == null) {
                     message.respond {

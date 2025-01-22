@@ -125,14 +125,25 @@ class NoteCollection : KordExKoinComponent {
      */
     suspend fun getByGuildAndName(guild: Snowflake, name: String) = getByGuildAndNameFlow(guild, name).toList()
 
-    suspend fun getRandomNote(guild: Snowflake, name: String) =
+    suspend fun getRandomNoteFilter(guild: Snowflake, filter: String) =
         col.aggregate<Note>(
             listOf(
                 match(
                     and(
                         eq(Note::guild.name, guild),
-                        `in`(Note::aliases.name, name)
+                        `in`(Note::aliases.name, filter)
                     ),
+                ), sample(1)
+            )
+        ).firstOrNull()
+
+    suspend fun getRandomNote(guild: Snowflake) =
+        col.aggregate<Note>(
+            listOf(
+                match(
+                    and(
+                        eq(Note::guild.name, guild)
+                    )
                 ), sample(1)
             )
         ).firstOrNull()

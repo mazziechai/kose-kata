@@ -52,7 +52,7 @@ class ViewingExtension : Extension() {
             check { anyGuild() }
 
             action {
-                val note = noteCollection.getRandomNote(guild!!.id, arguments.noteName)
+                val note = noteCollection.getRandomNoteFilter(guild!!.id, arguments.noteName)
 
                 if (note == null) {
                     respond {
@@ -172,6 +172,25 @@ class ViewingExtension : Extension() {
                 }
             }
         }
+
+        ephemeralSlashCommand(::ViewRandomCommandArgs) {
+            name = Translations.Extensions.Viewing.Random.name
+            description = Translations.Extensions.Viewing.Random.description
+
+            check { anyGuild() }
+            action {
+                val note = noteCollection.getRandomNote(guild!!.id)
+
+                if (note == null) {
+                    respond {
+                        content = Translations.Error.servernonotes.translate()
+                    }
+                    return@action
+                }
+
+                viewNoteResponse(note, arguments.text != false, guild!!.id)
+            }
+        }
     }
 
     inner class ViewByNameCommandArgs : Arguments() {
@@ -187,6 +206,13 @@ class ViewingExtension : Extension() {
     }
 
     inner class ViewByIdCommandArgs : ByIdArgs() {
+        val text by optionalBoolean {
+            name = Translations.Arguments.Text.name
+            description = Translations.Arguments.Text.description
+        }
+    }
+
+    inner class ViewRandomCommandArgs : Arguments() {
         val text by optionalBoolean {
             name = Translations.Arguments.Text.name
             description = Translations.Arguments.Text.description
@@ -309,7 +335,7 @@ class ViewingExtension : Extension() {
         guild: GuildBehavior,
         arguments: ViewByNameCommandArgs
     ) {
-        val note = noteCollection.getRandomNote(guild.id, arguments.noteName)
+        val note = noteCollection.getRandomNoteFilter(guild.id, arguments.noteName)
 
         if (note == null) {
             respond {
