@@ -9,6 +9,8 @@
 This is useful for creating reusable answers to common questions, creating resources, making fun quotes or jokes, and
 much more.
 
+*kose kata*'s name comes from the constructed language Nemune. In Nemune, "kose kata" vaguely means "message tool".
+
 ## What does *kose kata* do differently?
 
 kose kata's only functionality is managing notes, but it does it very well.
